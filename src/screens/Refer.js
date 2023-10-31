@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { globalStyles } from '../constants/globalStyles'
 
 const Refer = () => {
   return (
     <View>
-      <Text>Refer</Text>
+      <Text style={[globalStyles.text,{color:'black'}]}>Refer</Text>
     </View>
   )
 }

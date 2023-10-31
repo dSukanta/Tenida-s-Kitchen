@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity,ScrollView } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { globalStyles } from '../constants/globalStyles';
 import ProductCard from '../components/ProductCard';
@@ -17,7 +17,8 @@ const Menu = ({ route, navigation }) => {
     { id: 0, name: 'Family', category: 'Family Pack', image: require('../images/slider_image.jpg') },
     { id: 1, name: 'All-In-1 Meals', category: 'All-In-1 Meals', image: require('../images/slider_image.jpg') },
     { id: 2, name: 'Mini Meals', category: 'Mini Meals', image: require('../images/slider_image.jpg') },
-    { id: 3, name: 'Chicken Starters', category: 'Chicken Starters', image: require('../images/slider_image.jpg') }
+    { id: 3, name: 'Chicken Starters', category: 'Chicken Starters', image: require('../images/slider_image.jpg') },
+    { id:4, name: 'Family', category: 'Family Pack', image: require('../images/slider_image.jpg') },
   ]);
 
   const handleClick = (index, category) => {
@@ -38,7 +39,7 @@ const Menu = ({ route, navigation }) => {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.listcontainer}>
         <FlatList
           horizontal
@@ -52,14 +53,15 @@ const Menu = ({ route, navigation }) => {
           )}
         />
       </View>
-      <View>
-        {
-          productData?.filter((data, i) => data.category === currentCategory).map((category, i) =>
-            <ProductCard data={category} key={category?.id} />
-          )
-        }
+      <View style={{marginHorizontal:10}}>
+        <FlatList
+          data={productData?.filter((data, i) => data.category === currentCategory)}
+          numColumns={2}
+          keyExtractor={({item,index}) => index}
+          renderItem={({ item, index }) => <ProductCard data={item} key={item?.id} />}
+        />
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
