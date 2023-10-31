@@ -14,11 +14,19 @@ import {Button} from '@rneui/base';
 import {Card} from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {globalStyles} from '../constants/globalStyles';
+import RedLine from '../components/RedLine';
+import CategoriesCard from '../components/CategoriesCard';
 
 const {height, width} = Dimensions.get('window');
 
 const Home = ({navigation}) => {
   const data = [1, 1, 1];
+  const categories= [
+    {category:'Family Pack',image:require('../images/slider_image.jpg')},
+    {category:'All-In-1 Meals',image:require('../images/slider_image.jpg')},
+    {category:'Mini Meals',image:require('../images/slider_image.jpg')},
+    {category:'Chicken Starters',image:require('../images/slider_image.jpg')}
+  ];
 
   const renderCard = item => (
     <TouchableOpacity
@@ -88,10 +96,8 @@ const Home = ({navigation}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={[styles.loginTextContainer, {marginVertical: 10}]}>
-        <View style={styles.redLine} />
-        <Text style={[globalStyles.text, {color: 'red'}]}>OFFERS FOR YOU</Text>
-        <View style={styles.redLine} />
+      <View>
+        <RedLine text={'offers for you'}/>
       </View>
       <View>
         <FlatList
@@ -142,17 +148,15 @@ const Home = ({navigation}) => {
         />
       </View>
 
-      <View style={[styles.loginTextContainer, {marginVertical: 10}]}>
-        <View style={styles.redLine} />
-        <Text style={[globalStyles.text, {color: 'red'}]}>TOP PICKS</Text>
-        <View style={styles.redLine} />
+      <View>
+        <RedLine text={'Shop by Categories'}/>
       </View>
 
       <View style={{alignSelf: 'center', marginBottom: '18%'}}>
         <FlatList
           numColumns={2}
-          data={data}
-          renderItem={({item}) => renderCard(item)}
+          data={categories}
+          renderItem={({item,index}) => <CategoriesCard data={item} navigation={navigation} index={index}/>}
         />
       </View>
     </ScrollView>

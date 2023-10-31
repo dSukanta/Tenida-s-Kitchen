@@ -1,24 +1,12 @@
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import RedLine from '../components/RedLine';
 
 const Orders = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={{flexDirection: 'row', paddingVertical: 10}}>
-        <View style={styles.redLine} />
-        <View style={{flex: 1,justifyContent:'center',alignItems:'center'}}>
-          <Text
-            style={{
-              color: 'red',
-              fontSize: 15,
-              fontWeight: '900',
-              flexWrap: 'wrap',
-              textAlign:'center'
-            }}>
-           YOUR PREVIOUS ORDERS
-          </Text>
-        </View>
-        <View style={styles.redLine} />
+      <View>
+        <RedLine text={'yours previous orders'} fontSize={12}/>
       </View>
     </ScrollView>
   );
