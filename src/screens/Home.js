@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import React from 'react';
 import {Button} from '@rneui/base';
@@ -15,28 +15,79 @@ import {Card} from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {globalStyles} from '../constants/globalStyles';
 
-const {height,width}= Dimensions.get('window')
+const {height, width} = Dimensions.get('window');
 
 const Home = ({navigation}) => {
-  const data = [1, 1, 1,];
+  const data = [1, 1, 1];
 
   const renderCard = item => (
-    <Card containerStyle={{padding:10,margin:5,borderRadius:10}}>
-        <Card.Image source={require('../images/slider_image.jpg')} style={{width:160,borderRadius:10}}/>
-        <View>
-        <Text style={[globalStyles.text,{color:'black'}]}>Name</Text>
-        <Text style={{color:'black',fontWeight:'400',fontSize:12}}>Subtitle</Text>
+    <TouchableOpacity
+      style={{
+        padding: 10,
+        margin: 5,
+        borderRadius: 10,
+        width: width / 2.2,
+        backgroundColor: 'white',
+        overflow: 'hidden', // Add this line
+      }}
+      onPress={()=>navigation.navigate('ProductDetails',{id:1})}
+      >
+      <View style={{position: 'relative'}}>
+        <Card.Image
+          source={require('../images/slider_image.jpg')}
+          style={{borderRadius: 10, resizeMode: 'cover'}}
+        />
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            top: '90%',
+            left: '30%',
+            backgroundColor: 'transparent',
+          }}>
+          <Text
+            style={{
+              backgroundColor: '#f12a2a',
+              color: 'white',
+              padding: 5,
+              paddingHorizontal: 15,
+              borderRadius: 5,
+            }}>
+            Add
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: '#74c93f',
+            padding: 5,
+            paddingVertical:2,
+            borderRadius: 5,
+            gap: 5,
+            alignSelf: 'flex-end',
+            marginTop:10,
+          }}>
+          <Text style={[globalStyles.text, {color: 'white'}]}>{'4.5'}</Text>
+          <AntDesign name="star" color={'white'} size={12} />
         </View>
-    </Card>
+        <View style={{paddingHorizontal: 7}}>
+        <Text style={[globalStyles.text, {color: 'black'}]} numberOfLines={1}>
+          Name
+        </Text>
+        <Text
+          style={{color: 'black', fontWeight: '400', fontSize: 12}}
+          numberOfLines={2}>
+          Subtitle
+        </Text>
+      </View>
+      </View>
+    </TouchableOpacity>
   );
 
   return (
-    <ScrollView>
-      <Button
-        title="Login/Signup"
-        onPress={() => navigation.navigate('Auth')}
-        color={'red'}
-      />
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={[styles.loginTextContainer, {marginVertical: 10}]}>
         <View style={styles.redLine} />
         <Text style={[globalStyles.text, {color: 'red'}]}>OFFERS FOR YOU</Text>
@@ -97,7 +148,7 @@ const Home = ({navigation}) => {
         <View style={styles.redLine} />
       </View>
 
-      <View style={{alignSelf:'center',marginBottom:'18%'}}>
+      <View style={{alignSelf: 'center', marginBottom: '18%'}}>
         <FlatList
           numColumns={2}
           data={data}
@@ -111,6 +162,9 @@ const Home = ({navigation}) => {
 export default Home;
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'black',
+  },
   secondSlider: {
     width: 250,
     height: 150,
