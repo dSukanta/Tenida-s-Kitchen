@@ -3,10 +3,13 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Home from '../screens/Home';
 import Profile from '../screens/Profile';
 import Feather from 'react-native-vector-icons/Feather';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 import colors from '../constants/colors';
 import {BottomFabBar} from 'rn-wave-bottom-bar';
 import Menu from '../screens/Menu';
 import Orders from '../screens/Orders';
+import FoodReels from '../screens/FoodReels';
+import Cart from '../screens/Cart';
 
 const Tab = createBottomTabNavigator();
 
@@ -59,22 +62,22 @@ function TabNavigator() {
         options={{
           headerShown: false,
           tabBarIcon: ({color, size, focused}) => (
-            <Feather name="file-text" color={color} size={size} />
+            <Feather name="video" color={color} size={size} />
           ),
         }}
-        name="Menu"
-        component={Menu}
+        name="FoodReels"
+        component={FoodReels}
       />
 
       <Tab.Screen
         options={{
           headerShown: false,
           tabBarIcon: ({color, size, focused}) => (
-            <Feather name="truck" color={color} size={size} />
+            <Fontisto name="shopping-bag-1" color={color} size={size} />
           ),
         }}
-        name="Orders"
-        component={Orders}
+        name="Cart"
+        component={Cart}
       />
 
       <Tab.Screen

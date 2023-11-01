@@ -10,7 +10,7 @@ const {height, width} = Dimensions.get('window');
 
 
 const Profile = ({navigation}) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const handlenavigate= async(path)=>{
       if(isLoggedIn || path === 'Help' || path === 'Refer'){
@@ -41,11 +41,16 @@ const Profile = ({navigation}) => {
       icon: <MaterialIcons name='fingerprint' size={30} color={'white'}/>,
       onPress:()=> handlenavigate('Passwords')
     },
-    {
-      title:'Food Reels',
-      icon: <MaterialIcons name='videocam' size={30} color={'white'}/>,
-      onPress:()=> handlenavigate('FoodReels')
-    },
+    // {
+    //   title:'Video Engagement and Rewards',
+    //   icon: <MaterialIcons name='videocam' size={30} color={'white'}/>,
+    //   onPress:()=> handlenavigate('FoodReels')
+    // },
+    // {
+    //   title:'Orders',
+    //   icon: <Feather name="truck" size={30} color={'white'} />,
+    //   onPress:()=> handlenavigate('Orders')
+    // },
   ];
 
   const renderRow = ({ item }) => {
@@ -94,7 +99,7 @@ const Profile = ({navigation}) => {
               />
             </View>
           </View>
-          <View style={{margin:20}}>
+          <View style={{margin:20,marginTop:30}}>
             <FlatList
             data={listItems}
             keyExtractor={(index) => index.toString()}
@@ -143,6 +148,13 @@ const Profile = ({navigation}) => {
               style={[globalStyles.text, {color: 'red', marginHorizontal: 10}]}>
               {'user@email'}
             </Text>
+          </View>
+          <View style={{margin:20,marginTop:30}}>
+            <FlatList
+            data={listItems}
+            keyExtractor={(index) => index.toString()}
+            renderItem={renderRow}
+            />
           </View>
         </View>
       )}

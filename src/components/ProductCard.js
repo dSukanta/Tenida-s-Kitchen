@@ -1,92 +1,77 @@
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
 import React from 'react';
-import {Button, Card} from '@rneui/base';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {globalStyles} from '../constants/globalStyles';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import { globalStyles } from '../constants/globalStyles';
+import { Button } from '@rneui/base';
 
-const {height, width} = Dimensions.get('window');
-
-const ProductCard = ({data}) => {
+const ProductCard = ({ data }) => {
   return (
-    <TouchableOpacity style={styles.cardStyle}>
-      <View style={{position: 'relative'}}>
-        <Card.Image
-          source={require('../images/slider_image.jpg')}
-          style={{borderRadius: 10, resizeMode: 'cover'}}
-        />
+    <View style={styles.card}>
+      <View style={styles.leftSide}>
+        <Text style={styles.title}>{data?.name}</Text>
         <View style={styles.ratingContainer}>
-          <Text style={[globalStyles.text, {color: 'white'}]}>{'4.5'}</Text>
-          <AntDesign name="star" color={'white'} size={12} />
+          <Text style={styles.rating}>{4.5}</Text>
+          <Text style={styles.ratingCount}>({96})</Text>
+        </View>
+        <Text style={[globalStyles.text,{color:'black'}]}>${299}</Text>
+        <Text style={[globalStyles.text,{color:'grey'}]}>{'details'}</Text>
+      </View>
+      <View style={styles.rightSide}>
+        <Image source={data?.image} style={styles.image} />
+        <View style={styles.buttonContainer}>
+          <Button title="Add" buttonStyle={{backgroundColor:'red'}}/>
         </View>
       </View>
-      <View>
-        <View style={{paddingHorizontal: 7}}>
-          <Text style={[globalStyles.text, {color: 'black'}]} numberOfLines={1}>
-            {data?.name}
-          </Text>
-          <Text
-            style={{color: 'black', fontWeight: '400', fontSize: 12}}
-            numberOfLines={2}>
-            Subtitle
-          </Text>
-        </View>
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        <View>
-          <Text style={[globalStyles.text, {color: 'green'}]}>₹{300}</Text>
-        </View>
-        <Button
-          title={'Add'}
-          buttonStyle={{backgroundColor: 'red', width: '100%'}}
-        />
-      </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
-export default ProductCard;
-
 const styles = StyleSheet.create({
-  cardStyle: {
-    padding: 10,
-    margin: 5,
-    borderRadius: 10,
-    width: width / 2.2,
+  card: {
+    flexDirection: 'row',
     backgroundColor: 'white',
-    overflow: 'hidden',
+    margin: 10,
+    padding: 10,
+    borderRadius: 10,
   },
-  addToCartBtn: {
-    backgroundColor: 'transparent',
+  leftSide: {
+    flex: 1,
+    marginRight: 10,
+    padding: 10,
   },
-  addToCartText: {
-    backgroundColor: '#f12a2a',
-    color: 'white',
-    padding: 5,
-    // paddingHorizontal: 15,
-    borderRadius: 5,
+  rightSide: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color:'black'
   },
   ratingContainer: {
-    position: 'absolute',
-    width:'30%',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#74c93f',
-    padding: 5,
-    paddingVertical: 2,
-    borderRadius: 5,
-    gap: 5,
-    top:0,
-    right:0
+  },
+  rating: {
+    fontSize: 16,
+    marginRight: 5,
+  },
+  ratingCount: {
+    fontSize: 14,
+    color: 'gray',
+  },
+  image: {
+    width: '100%',
+    height: 120,
+    resizeMode: 'cover',
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: '25%',
+    width: '50%',
+    backgroundColor: 'white',
   },
 });
+
+export default ProductCard;

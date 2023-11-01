@@ -54,12 +54,11 @@ const Menu = ({ route, navigation }) => {
         />
       </View>
       <View style={{marginHorizontal:10}}>
-        <FlatList
-          data={productData?.filter((data, i) => data.category === currentCategory)}
-          numColumns={2}
-          keyExtractor={({item,index}) => index}
-          renderItem={({ item, index }) => <ProductCard data={item} key={item?.id} />}
-        />
+        {
+          productData?.filter((data, i) => data.category === currentCategory)?.map((product, index) =>
+          <ProductCard data={product} key={product?.id} />
+          )
+        }
       </View>
     </ScrollView>
   )
