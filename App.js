@@ -7,6 +7,7 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './src/navigator/AppNavigator';
 import SplashScreen from 'react-native-splash-screen';
+import { AppContextProvider } from './src/context/AppContext';
 
 
 
@@ -17,9 +18,11 @@ useEffect(() => {
 }, [])
 
   return (
+    <AppContextProvider>
     <NavigationContainer>
       <AppNavigator/>
     </NavigationContainer>
+    </AppContextProvider>
   );
 }
 
