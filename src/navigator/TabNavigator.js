@@ -17,9 +17,10 @@ function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: 'red',
-        tabBarActiveBackgroundColor: 'red',
-        tabBarInactiveBackgroundColor: 'red',
+        tabBarActiveTintColor: colors.red,
+        tabBarActiveBackgroundColor: colors.red,
+        tabBarInactiveBackgroundColor: colors.red,
+        tabBarHideOnKeyboard:true
       }}
       tabBar={props => (
         <BottomFabBar
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 5,
     height: 60,
-    backgroundColor: 'red',
+    backgroundColor: colors.red,
   },
   activeIconStyle: {
     height: 50,

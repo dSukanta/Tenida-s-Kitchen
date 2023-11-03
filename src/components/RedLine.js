@@ -1,5 +1,6 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import colors from '../constants/colors';
 
 const RedLine = ({text="",fontSize=15}) => {
   return (
@@ -8,7 +9,7 @@ const RedLine = ({text="",fontSize=15}) => {
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text
           style={{
-            color: 'red',
+            color: colors.red,
             fontSize: fontSize,
             fontWeight: '900',
             flexWrap: 'wrap',
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
   redLine: {
     flex: 1,
     height: 2,
-    backgroundColor: 'red',
+    backgroundColor: colors.red,
     margin: 10,
   },
 });
