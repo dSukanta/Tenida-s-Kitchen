@@ -50,7 +50,7 @@ const CartCard = ({ data }) => {
               <TouchableOpacity onPress={handleDecreaseQuantity}>
                 <Text style={styles.quantityButton}>-</Text>
               </TouchableOpacity>
-              <Text style={globalStyles.text}>{quantity}</Text>
+              <Text style={globalStyles.text}>{data?.quantity}</Text>
               <TouchableOpacity onPress={handleIncreaseQuantity}>
                 <Text style={styles.quantityButton}>+</Text>
               </TouchableOpacity>

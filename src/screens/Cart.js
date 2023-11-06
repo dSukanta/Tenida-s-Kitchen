@@ -9,7 +9,7 @@ import colors from '../constants/colors';
 
 const {height, width} = Dimensions.get('window');
 
-const Cart = () => {
+const Cart = ({navigation,route}) => {
   const {userCart} = useContext(Appcontext);
 
   const getCartTotal = () => {
@@ -21,9 +21,8 @@ const Cart = () => {
   };
 
   return (
-    <View style={styles.container}>
       <ScrollView
-        style={{height: Math.round((height * 87) / 100)}}
+        style={styles.container}
         showsVerticalScrollIndicator={false}>
         <View>
           <RedLine text={'your cart'} />
@@ -45,6 +44,7 @@ const Cart = () => {
               }}
               containerStyle={{width:'90%',alignSelf: 'center'}}
               titleStyle={globalStyles.text}
+              onPress={()=>navigation.navigate('Menu')}
             />
             <View style={styles.rowContainer}>
             <View style={styles.row}>
@@ -72,6 +72,7 @@ const Cart = () => {
                 borderWidth: 1,
                 borderColor: colors.red,
               }}
+              containerStyle={{width:'90%',borderRadius:10,marginBottom:'18%',alignSelf: 'center'}}
             />
           </View>
         ) : (
@@ -81,7 +82,6 @@ const Cart = () => {
           </View>
         )}
       </ScrollView>
-    </View>
   );
 };
 

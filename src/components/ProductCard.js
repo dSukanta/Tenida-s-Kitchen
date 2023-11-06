@@ -13,6 +13,7 @@ const ProductCard = ({ data }) => {
 
   const handleAddToCart = async (product) => {
     const cartData = userCart?.find((item) => item.id === product.id);
+    // console.log(cartData,'cart')
 
     if (cartData) {
       // Product already in cart, increment quantity
@@ -43,6 +44,9 @@ const ProductCard = ({ data }) => {
       setUserCart(updatedCart);
     }
   };
+
+  // console.log(userCart,'cartitem')
+
 
   return (
     <View style={styles.card}>

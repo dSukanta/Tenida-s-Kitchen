@@ -15,6 +15,7 @@ import {Button, ListItem} from '@rneui/base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import RedLine from '../components/RedLine';
+import colors from '../constants/colors';
 
 const Help = ({navigation}) => {
   const [expanded, setExpanded] = useState({status: false, id: null});
@@ -46,17 +47,17 @@ const Help = ({navigation}) => {
   const actions = [
     {
       title: 'Call',
-      icon: <Ionicons name="call" size={30} color={'red'} />,
+      icon: <Ionicons name="call" size={30} color={colors.red} />,
       onPress: () => Linking.openURL('tel:8777111223'),
     },
     {
       title: 'Email',
-      icon: <Ionicons name="mail" size={30} color={'red'} />,
+      icon: <Ionicons name="mail" size={30} color={colors.red} />,
       onPress: () => Linking.openURL('mailto:abc@xyz.com'),
     },
     {
       title: 'Send Feedback',
-      icon: <MaterialIcons name="feedback" size={30} color={'red'} />,
+      icon: <MaterialIcons name="feedback" size={30} color={colors.red} />,
       onPress: () => setFeedBackVisible(true),
     },
   ];
@@ -74,7 +75,7 @@ const Help = ({navigation}) => {
         }}>
         {item.icon}
         <ListItem.Content>
-          <ListItem.Title style={[globalStyles.text,{color:'red',marginHorizontal:10}]}>
+          <ListItem.Title style={[globalStyles.text,{color:colors.red,marginHorizontal:10}]}>
             {item.title}
           </ListItem.Title>
         </ListItem.Content>
@@ -84,17 +85,6 @@ const Help = ({navigation}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* <View
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: 10,
-          margin: 10,
-        }}>
-        <Text style={[globalStyles.text, {fontSize: 18}]}>
-          
-        </Text>
-      </View> */}
       <View>
         <RedLine text='Frequently asked questions' fontSize={12}/>
       </View>
@@ -105,7 +95,7 @@ const Help = ({navigation}) => {
               backgroundColor:
                 expanded.status && expanded.id === i ? 'white' : 'black',
               borderWidth: expanded.status && expanded.id === i ? 0 : 1,
-              borderColor: 'red',
+              borderColor: colors.red,
               borderRadius: 10,
               margin: 5,
               marginBottom: expanded.status && expanded.id === i ? 0 : 5,
@@ -119,7 +109,7 @@ const Help = ({navigation}) => {
                 <ListItem.Title
                   style={{
                     color:
-                      expanded.status && expanded.id === i ? 'black' : 'red',
+                      expanded.status && expanded.id === i ? 'black' : colors.red,
                   }}>
                   {question.q}
                 </ListItem.Title>
@@ -129,7 +119,7 @@ const Help = ({navigation}) => {
               name: 'downcircleo',
               type: 'antdesign',
               size: 25,
-              color: 'red',
+              color: colors.red,
             }}
             isExpanded={expanded.status && expanded.id === i}
             onPress={() => {
@@ -175,8 +165,8 @@ const Help = ({navigation}) => {
           <RedLine text='Share valuable Feedback' fontSize={13}/>
         </View>
         <View>
-          <TextInput style={styles.inputStyle} placeholderTextColor={'red'} placeholder='Enter your Email*'/>
-          <TextInput multiline numberOfLines={4} style={[styles.inputStyle,{marginTop:0}]} placeholderTextColor={'red'} placeholder='Your Suggestion*'/>
+          <TextInput style={styles.inputStyle} placeholderTextColor={colors.red} placeholder='Enter your Email*'/>
+          <TextInput multiline numberOfLines={4} style={[styles.inputStyle,{marginTop:0}]} placeholderTextColor={colors.red} placeholder='Your Suggestion*'/>
         </View>
         <View>
           <Text style={globalStyles.text}>How much you Rate us (between 0-5) </Text>
@@ -192,6 +182,7 @@ export default Help;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: 'black',
   },
   accordianContainer: {
