@@ -61,7 +61,7 @@ const Menu = ({route, navigation}) => {
     },
   ]);
 
-  const {userCart} = useContext(Appcontext);
+  const {userCart,cartTotal} = useContext(Appcontext);
 
   const handleClick = (index, category) => {
     setCurrentIndex(index);
@@ -80,10 +80,10 @@ const Menu = ({route, navigation}) => {
     }, [route?.params?.index]),
   );
 
-  const getCartTotal= ()=>{
-    const total= userCart.reduce((init,next)=> init+(Number(next.price)* Number(next.quantity)),0);
-    return total;
-  }
+  // const getCartTotal= ()=>{
+  //   const total= userCart.reduce((init,next)=> init+(Number(next.price)* Number(next.quantity)),0);
+  //   return total;
+  // }
 
   return (
     <View style={styles.container}>
@@ -124,7 +124,7 @@ const Menu = ({route, navigation}) => {
               />
               <View>
               <Text style={[globalStyles.text,{color:'black'}]}>{userCart[userCart?.length - 1]?.name} {userCart.length>=2 ? <Text>{`+${userCart?.length-1} more`}</Text>:null}</Text>
-              <Text style={[globalStyles.text,{color:'black'}]}>{userCart?.length} Items | <Text style={[globalStyles.text,{color:'black'}]}>Total: ₹{getCartTotal()}</Text></Text>
+              <Text style={[globalStyles.text,{color:'black'}]}>{userCart?.length} Item(s) | <Text style={[globalStyles.text,{color:'black'}]}>Total: ₹{cartTotal}</Text></Text>
               </View>
             </View>
             <View>

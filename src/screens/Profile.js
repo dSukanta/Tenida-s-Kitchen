@@ -5,15 +5,16 @@ import {globalStyles} from '../constants/globalStyles';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import colors from '../constants/colors';
 
 const {height, width} = Dimensions.get('window');
 
 
 const Profile = ({navigation}) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handlenavigate= async(path)=>{
-      if(isLoggedIn || path === 'Help' || path === 'Refer'){
+      if(isLoggedIn || path === 'Help'){
         navigation.navigate(path);
       }else{
         navigation.navigate('Auth')
@@ -23,13 +24,13 @@ const Profile = ({navigation}) => {
   const listItems=[
     {
       title:'Settings & Personalization',
-      icon: <Feather name='settings' size={30} color={'white'}/>,
+      icon: <MaterialIcons name='settings' size={30} color={'white'}/>,
       onPress:()=> handlenavigate('Settings')
     },
     {
-      title:'Refer & Earn',
-      icon: <FontAwesome6 name='sack-dollar' size={30} color={'white'}/>,
-      onPress:()=> handlenavigate('Refer')
+      title:'Addresses',
+      icon: <MaterialIcons name='add-home-work' size={30} color={'white'}/>,
+      onPress:()=> handlenavigate('Addresses')
     },
     {
       title:'Help & Support',
@@ -93,8 +94,8 @@ const Profile = ({navigation}) => {
               <Button
                 title="Login"
                 onPress={() => navigation.navigate('Auth')}
-                color={'red'}
-                buttonStyle={{paddingHorizontal:width/9}}
+                color={colors.red}
+                buttonStyle={{paddingHorizontal:width/9,borderRadius:10}}
                 containerStyle={{justifyContent: 'center',alignItems: 'center'}}
               />
             </View>

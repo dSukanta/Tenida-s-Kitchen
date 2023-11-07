@@ -5,12 +5,12 @@ import TabNavigator from './TabNavigator';
 import Auth from '../screens/Auth';
 import ProductDetails from '../screens/ProductDetails';
 import Settings from '../screens/Settings';
-import Refer from '../screens/Refer';
 import Help from '../screens/Help';
 import Passwords from '../screens/Passwords';
 import FoodReels from '../screens/FoodReels';
 import Menu from '../screens/Menu';
 import Orders from '../screens/Orders';
+import Addresses from '../screens/Addresses';
 
 const Stack = createStackNavigator();
 
@@ -22,7 +22,7 @@ function AppNavigator() {
       <Stack.Screen name="Menu" component={Menu} options={{headerShown:false}}/>
       <Stack.Screen name="ProductDetails" component={ProductDetails} options={{headerShown:false}}/>
       <Stack.Screen name="Settings" component={Settings} options={{headerShown:false}}/>
-      <Stack.Screen name="Refer" component={Refer} options={{headerShown:false}}/>
+      <Stack.Screen name="Addresses" component={Addresses} options={{headerShown:false}}/>
       <Stack.Screen name="Help" component={Help} options={{headerShown:false}}/>
       <Stack.Screen name="Passwords" component={Passwords} options={{headerShown:false}}/>
       <Stack.Screen name="Orders" component={Orders} options={{headerShown:false}}/>

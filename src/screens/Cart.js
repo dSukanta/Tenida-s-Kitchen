@@ -10,15 +10,15 @@ import colors from '../constants/colors';
 const {height, width} = Dimensions.get('window');
 
 const Cart = ({navigation,route}) => {
-  const {userCart} = useContext(Appcontext);
+  const {userCart,cartTotal} = useContext(Appcontext);
 
-  const getCartTotal = () => {
-    const total = userCart.reduce(
-      (init, next) => init + Number(next.price) * Number(next.quantity),
-      0,
-    );
-    return total;
-  };
+  // const getCartTotal = () => {
+  //   const total = userCart.reduce(
+  //     (init, next) => init + Number(next.price) * Number(next.quantity),
+  //     0,
+  //   );
+  //   return total;
+  // };
 
   return (
       <ScrollView
@@ -49,18 +49,18 @@ const Cart = ({navigation,route}) => {
             <View style={styles.rowContainer}>
             <View style={styles.row}>
               <Text style={[globalStyles.text]}>Total Price :</Text>
-              <Text style={[globalStyles.text]}>{getCartTotal()}</Text>
+              <Text style={[globalStyles.text]}>{cartTotal}</Text>
             </View>
             <View style={styles.row}>
               <Text style={[globalStyles.text]}>GST :</Text>
               <Text style={[globalStyles.text]}>
-                {(getCartTotal() * 18) / 100}
+                {(cartTotal * 18) / 100}
               </Text>
             </View>
             <View style={styles.row}>
               <Text style={[globalStyles.text]}>Grand Total :</Text>
               <Text style={[globalStyles.text]}>
-                {getCartTotal() + (getCartTotal() * 18) / 100}
+                {cartTotal + (cartTotal * 18) / 100}
               </Text>
             </View>
             </View>

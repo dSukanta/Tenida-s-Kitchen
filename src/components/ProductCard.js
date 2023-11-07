@@ -9,35 +9,31 @@ import colors from '../constants/colors';
 const ProductCard = ({ data }) => {
   const { userData, userCart, setUserCart } = useContext(Appcontext);
   const [readMore, setReadMore] = useState(false);
-  const [quantity, setQuantity] = useState(1);
+  const cartData = userCart.find((item) => item.id === data.id);
+  const quantity = cartData ? cartData.quantity : 0;
 
   const handleAddToCart = async (product) => {
-    const cartData = userCart?.find((item) => item.id === product.id);
-    // console.log(cartData,'cart')
-
     if (cartData) {
-      // Product already in cart, increment quantity
       const updatedCart = userCart.map((item) =>
-        item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === data.id ? { ...item, quantity: item.quantity + 1 } : item
       );
       setUserCart(updatedCart);
-      setQuantity(quantity + 1);
     } else {
-      setUserCart([...userCart, { id: product.id,image:product.image, name: product.name, price: 299, quantity: 1 }]);
+      setUserCart([...userCart, { id: data.id, image: data.image, name: data.name, price: 299, quantity: 1 }]);
     }
   };
 
   const handleIncreaseQuantity = () => {
-    setQuantity(quantity + 1);
-    const updatedCart = userCart.map((item) =>
-      item.id === data.id ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    setUserCart(updatedCart);
+    if (cartData) {
+      const updatedCart = userCart.map((item) =>
+        item.id === data.id ? { ...item, quantity: item.quantity + 1 } : item
+      );
+      setUserCart(updatedCart);
+    }
   };
 
   const handleDecreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
+    if (cartData && quantity > 1) {
       const updatedCart = userCart.map((item) =>
         item.id === data.id ? { ...item, quantity: item.quantity - 1 } : item
       );
@@ -89,7 +85,7 @@ const ProductCard = ({ data }) => {
       <View style={styles.rightSide}>
         <Image source={data?.image} style={styles.image} />
         <View style={styles.buttonContainer}>
-          {userCart?.find((item) => item.id === data.id) ? (
+          {cartData ? (
             <View style={styles.quantityContainer}>
               <TouchableOpacity onPress={handleDecreaseQuantity}>
                 <Text style={styles.quantityButton}>-</Text>

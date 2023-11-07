@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Linking,
   Modal,
-  TextInput
+  TextInput,
 } from 'react-native';
 import React, {useState} from 'react';
 import {globalStyles} from '../constants/globalStyles';
@@ -16,10 +16,18 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import RedLine from '../components/RedLine';
 import colors from '../constants/colors';
+import {Rating} from 'react-native-ratings';
+import { Alert } from 'react-native';
 
 const Help = ({navigation}) => {
   const [expanded, setExpanded] = useState({status: false, id: null});
-  const [feedBackVisible,setFeedBackVisible] = useState(false);
+  const [feedBackVisible, setFeedBackVisible] = useState(false);
+  const [userFeedBack, setUserFeedBack] = useState({
+    email: '',
+    name: '',
+    message: '',
+    rating: 0,
+  });
 
   const questions = [
     {
@@ -75,7 +83,11 @@ const Help = ({navigation}) => {
         }}>
         {item.icon}
         <ListItem.Content>
-          <ListItem.Title style={[globalStyles.text,{color:colors.red,marginHorizontal:10}]}>
+          <ListItem.Title
+            style={[
+              globalStyles.text,
+              {color: colors.red, marginHorizontal: 10},
+            ]}>
             {item.title}
           </ListItem.Title>
         </ListItem.Content>
@@ -83,98 +95,184 @@ const Help = ({navigation}) => {
     );
   };
 
+  const completeRating = rating => {
+    setUserFeedBack({...userFeedBack, rating: rating});
+  };
+
+  const handleSubmit = () => {
+    if(!userFeedBack.name){
+      return Alert.alert('Name required', `Please enter a valid name.`)
+    };
+    if(!userFeedBack.email){
+       return Alert.alert('Email required', `Please enter a valid email.`)
+    };
+    if(!userFeedBack.message){
+      return Alert.alert('Message required', `Please enter a valid message.`)
+    };
+    if(!userFeedBack.rating){
+      return Alert.alert('Rating required', `Please rate us.`)
+    };
+    console.log(userFeedBack,'userfeedback')
+  };
+
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View>
-        <RedLine text='Frequently asked questions' fontSize={12}/>
-      </View>
-      <View style={styles.accordianContainer}>
-        {questions?.map((question, i) => (
-          <ListItem.Accordion
-            containerStyle={{
-              backgroundColor:
-                expanded.status && expanded.id === i ? 'white' : 'black',
-              borderWidth: expanded.status && expanded.id === i ? 0 : 1,
-              borderColor: colors.red,
-              borderRadius: 10,
-              margin: 5,
-              marginBottom: expanded.status && expanded.id === i ? 0 : 5,
-              borderBottomLeftRadius:
-                expanded.status && expanded.id === i ? 0 : 10,
-              borderBottomRightRadius:
-                expanded.status && expanded.id === i ? 0 : 10,
-            }}
-            content={
-              <ListItem.Content>
-                <ListItem.Title
-                  style={{
-                    color:
-                      expanded.status && expanded.id === i ? 'black' : colors.red,
-                  }}>
-                  {question.q}
-                </ListItem.Title>
-              </ListItem.Content>
-            }
-            icon={{
-              name: 'downcircleo',
-              type: 'antdesign',
-              size: 25,
-              color: colors.red,
-            }}
-            isExpanded={expanded.status && expanded.id === i}
-            onPress={() => {
-              if (expanded.status) {
-                setExpanded({status: false, id: null});
-                if (expanded.status && expanded.id !== i) {
-                  setExpanded({status: true, id: i});
-                }
-              } else {
-                setExpanded({status: !expanded.status, id: i});
-              }
-            }}>
-            <ListItem
+    <View style={styles.container}>
+      <ScrollView>
+        <View>
+          <RedLine text="Frequently asked questions" fontSize={12} />
+        </View>
+        <View style={styles.accordianContainer}>
+          {questions?.map((question, i) => (
+            <ListItem.Accordion
               containerStyle={{
-                margin: 5,
-                margintop: expanded.status && expanded.id === i ? 0 : 5,
+                backgroundColor:
+                  expanded.status && expanded.id === i ? 'white' : 'black',
+                borderWidth: expanded.status && expanded.id === i ? 0 : 1,
+                borderColor: colors.red,
                 borderRadius: 10,
-                borderTopLeftRadius:
+                margin: 5,
+                marginBottom: expanded.status && expanded.id === i ? 0 : 5,
+                borderBottomLeftRadius:
                   expanded.status && expanded.id === i ? 0 : 10,
-                borderTopRightRadius:
+                borderBottomRightRadius:
                   expanded.status && expanded.id === i ? 0 : 10,
+              }}
+              content={
+                <ListItem.Content>
+                  <ListItem.Title
+                    style={{
+                      color:
+                        expanded.status && expanded.id === i
+                          ? 'black'
+                          : colors.red,
+                    }}>
+                    {question.q}
+                  </ListItem.Title>
+                </ListItem.Content>
+              }
+              icon={{
+                name: 'downcircleo',
+                type: 'antdesign',
+                size: 25,
+                color: colors.red,
+              }}
+              isExpanded={expanded.status && expanded.id === i}
+              onPress={() => {
+                if (expanded.status) {
+                  setExpanded({status: false, id: null});
+                  if (expanded.status && expanded.id !== i) {
+                    setExpanded({status: true, id: i});
+                  }
+                } else {
+                  setExpanded({status: !expanded.status, id: i});
+                }
               }}>
-              <ListItem.Content>
-                <Text>{question.a}</Text>
-              </ListItem.Content>
-            </ListItem>
-          </ListItem.Accordion>
-        ))}
-      </View>
-     <View>
-      <RedLine text='Contact Us'/>
-     </View>
-      <View style={{padding: 10, margin: 10}}>
-        <FlatList
-          data={actions}
-          keyExtractor={(item, index) => index}
-          renderItem={renderRow}
-        />
-      </View>
-      <Modal visible={feedBackVisible} animationType='slide'>
-        <View style={[styles.container,{flex:1}]}>
-        <View>
-          <RedLine text='Share valuable Feedback' fontSize={13}/>
+              <ListItem
+                containerStyle={{
+                  margin: 5,
+                  margintop: expanded.status && expanded.id === i ? 0 : 5,
+                  borderRadius: 10,
+                  borderTopLeftRadius:
+                    expanded.status && expanded.id === i ? 0 : 10,
+                  borderTopRightRadius:
+                    expanded.status && expanded.id === i ? 0 : 10,
+                }}>
+                <ListItem.Content>
+                  <Text>{question.a}</Text>
+                </ListItem.Content>
+              </ListItem>
+            </ListItem.Accordion>
+          ))}
         </View>
         <View>
-          <TextInput style={styles.inputStyle} placeholderTextColor={colors.red} placeholder='Enter your Email*'/>
-          <TextInput multiline numberOfLines={4} style={[styles.inputStyle,{marginTop:0}]} placeholderTextColor={colors.red} placeholder='Your Suggestion*'/>
+          <RedLine text="Contact Us" />
         </View>
-        <View>
-          <Text style={globalStyles.text}>How much you Rate us (between 0-5) </Text>
+        <View style={{padding: 10, margin: 10}}>
+          <FlatList
+            data={actions}
+            keyExtractor={(item, index) => index}
+            renderItem={renderRow}
+          />
         </View>
-        <Button title={'Close'} onPress={()=>setFeedBackVisible(false)} />
-        </View>
-      </Modal>
-    </ScrollView>
+        <Modal visible={feedBackVisible} animationType="slide">
+          <View style={[styles.container, {flex: 1}]}>
+            <View>
+              <RedLine text="Share valuable Feedback" fontSize={13} />
+            </View>
+            <ScrollView>
+            <View>
+              <TextInput
+                style={[styles.inputStyle,{marginVertical:0}]}
+                placeholderTextColor={colors.red}
+                placeholder="Enter your Name*"
+                onChangeText={text =>
+                  setUserFeedBack({...userFeedBack, name: text})
+                }
+              />
+              <TextInput
+                style={styles.inputStyle}
+                placeholderTextColor={colors.red}
+                placeholder="Enter your Email*"
+                onChangeText={text =>
+                  setUserFeedBack({...userFeedBack, email: text})
+                }
+              />
+              <TextInput
+                multiline
+                numberOfLines={4}
+                style={[
+                  styles.inputStyle,
+                  {marginVertical: 0, textAlignVertical: 'top'},
+                ]}
+                placeholderTextColor={colors.red}
+                placeholder="Your Message*"
+                onChangeText={text =>
+                  setUserFeedBack({...userFeedBack, message: text})
+                }
+              />
+            </View>
+            <View style={{marginHorizontal: 25, marginVertical:15}}>
+              <Text style={globalStyles.text}>Rate Us (between 0-5) </Text>
+              <View style={{alignSelf: 'flex-start', marginVertical: 10}}>
+                <Rating
+                  type="star"
+                  ratingCount={5}
+                  startingValue={0}
+                  onFinishRating={completeRating}
+                />
+              </View>
+            </View>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Button
+                title={'Close'}
+                onPress={() => setFeedBackVisible(false)}
+                buttonStyle={{
+                  width: '80%',
+                  alignSelf: 'center',
+                  borderRadius: 10,
+                  paddingVertical: 10,
+                }}
+                containerStyle={{margin: 10}}
+              />
+              <Button
+                title={'Submit'}
+                onPress={handleSubmit}
+                buttonStyle={{
+                  width: '80%',
+                  alignSelf: 'flex-start',
+                  borderRadius: 10,
+                  paddingVertical: 10,
+                }}
+                containerStyle={{margin: 10}}
+              />
+            </View>
+            </ScrollView>
+          </View>
+        </Modal>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -188,13 +286,13 @@ const styles = StyleSheet.create({
   accordianContainer: {
     marginHorizontal: 10,
   },
-  inputStyle:{
-    borderWidth:1,
-    borderColor:'red',
-    padding:10,
-    paddingHorizontal:20,
-    margin:'5%',
-    borderRadius:10,
-    color:'white'
-  }
+  inputStyle: {
+    borderWidth: 1,
+    borderColor: colors.red,
+    padding: 10,
+    paddingHorizontal: 20,
+    margin: '5%',
+    borderRadius: 10,
+    color: 'white',
+  },
 });

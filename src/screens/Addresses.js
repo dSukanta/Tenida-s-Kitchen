@@ -2,14 +2,14 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { globalStyles } from '../constants/globalStyles'
 
-const Refer = () => {
+const Addresses = () => {
   return (
     <View>
-      <Text style={[globalStyles.text,{color:'black'}]}>Refer</Text>
+      <Text style={[globalStyles.text,{color:'black'}]}>Addresses</Text>
     </View>
   )
 }
 
-export default Refer
+export default Addresses
 
 const styles = StyleSheet.create({})

@@ -8,11 +8,14 @@ export const AppContextProvider= ({children})=>{
     const [userData,setUserData] = useState([]);
     const [userCart,setUserCart] = useState([]);
 
+    const cartTotal= userCart.reduce((init,next)=> init+(Number(next.price)* Number(next.quantity)),0);
+
     const values={
         userData,
         setUserData,
         userCart,
-        setUserCart
+        setUserCart,
+        cartTotal,
     }
 
     return<Appcontext.Provider value={values}>
