@@ -7,6 +7,7 @@ export const Appcontext= createContext();
 export const AppContextProvider= ({children})=>{
     const [userData,setUserData] = useState([]);
     const [userCart,setUserCart] = useState([]);
+    const [userAddress,setUserAddress] = useState();
 
     const cartTotal= userCart.reduce((init,next)=> init+(Number(next.price)* Number(next.quantity)),0);
 
@@ -16,6 +17,8 @@ export const AppContextProvider= ({children})=>{
         userCart,
         setUserCart,
         cartTotal,
+        userAddress,
+        setUserAddress
     }
 
     return<Appcontext.Provider value={values}>

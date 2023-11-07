@@ -5,8 +5,9 @@ import {
   View,
   Dimensions,
   Image,
+  Modal,
 } from 'react-native';
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import RedLine from '../components/RedLine';
 import {globalStyles} from '../constants/globalStyles';
 import {Appcontext} from '../context/AppContext';
@@ -17,15 +18,31 @@ import colors from '../constants/colors';
 const {height, width} = Dimensions.get('window');
 
 const Cart = ({navigation, route}) => {
-  const {userCart, cartTotal} = useContext(Appcontext);
+  const {userCart, cartTotal,userAddress, setUserAddress} = useContext(Appcontext);
 
-  // const getCartTotal = () => {
-  //   const total = userCart.reduce(
-  //     (init, next) => init + Number(next.price) * Number(next.quantity),
-  //     0,
-  //   );
-  //   return total;
-  // };
+  const defAdd= userAddress.filter((add)=>add.default)
+
+  useEffect(()=>{
+    setUserAddress([{
+      id: 1,
+      landmark: 'Abc',
+      city: 'city1',
+      state: 'state1',
+      pincode: '1111111',
+      default: true,
+    },
+    {
+      id: 2,
+      landmark: 'Def',
+      city: 'city2',
+      state: 'state2',
+      pincode: '222222',
+      default: false,
+    }]);
+  },[]);
+
+  // console.log(userAddress,'userAddress')
+
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -69,6 +86,37 @@ const Cart = ({navigation, route}) => {
               </Text>
             </View>
           </View>
+          <View style={{width: '90%', alignSelf: 'center'}}>
+            <Text style={[globalStyles.text]}>Address:</Text>
+          </View>
+          <View
+            style={{
+              width: '90%',
+              alignSelf: 'center',
+              marginVertical: 10,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              borderWidth: 1,
+              borderColor: colors.red,
+              padding: 10,
+              borderRadius: 10,
+            }}>
+            <View>
+              <Text style={[globalStyles.text]}>Name</Text>
+              <Text style={[globalStyles.text]}>{defAdd[0]?.landmark}</Text>
+              <Text style={[globalStyles.text]}>{`${defAdd[0]?.city} ${defAdd[0]?.state} ${defAdd[0]?.pincode}`}</Text>
+              <Text style={[globalStyles.text]}>phone no.</Text>
+            </View>
+            <View>
+              <Button
+                title={'Change'}
+                buttonStyle={{backgroundColor: colors.red, borderRadius: 10}}
+                containerStyle={{margin: 10}}
+                titleStyle={{fontSize:15}}
+                onPress={()=>navigation.navigate('Addresses')}
+              />
+            </View>
+          </View>
           <Button
             title={'Proceed to Checkout'}
             buttonStyle={{
@@ -99,8 +147,16 @@ const Cart = ({navigation, route}) => {
           <Button
             title={'Explore Menu'}
             onPress={() => navigation.navigate('Menu')}
-            buttonStyle={{paddingVertical:10,borderRadius:10,backgroundColor:colors.red}}
-            containerStyle={{width: '90%', alignSelf: 'center',marginVertical:15}}
+            buttonStyle={{
+              paddingVertical: 10,
+              borderRadius: 10,
+              backgroundColor: colors.red,
+            }}
+            containerStyle={{
+              width: '90%',
+              alignSelf: 'center',
+              marginVertical: 15,
+            }}
           />
         </View>
       )}
