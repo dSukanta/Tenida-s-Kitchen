@@ -11,7 +11,7 @@ const {height, width} = Dimensions.get('window');
 
 
 const Profile = ({navigation}) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const handlenavigate= async(path)=>{
       if(isLoggedIn || path === 'Help'){

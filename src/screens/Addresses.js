@@ -1,33 +1,44 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import React, { useContext, useState } from 'react';
-import { globalStyles } from '../constants/globalStyles';
+import {Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {useContext, useState} from 'react';
+import {globalStyles} from '../constants/globalStyles';
 import RedLine from '../components/RedLine';
-import { Appcontext } from '../context/AppContext';
+import {Appcontext} from '../context/AppContext';
 import colors from '../constants/colors';
-import { Button } from '@rneui/base';
+import {BottomSheet, Button, ListItem} from '@rneui/base';
+import ManualAdd from '../components/ManualAdd';
 
 const Addresses = () => {
-  const { userAddress, setUserAddress } = useContext(Appcontext);
+  const {userAddress, setUserAddress} = useContext(Appcontext);
+  const [isVisible, setIsVisible] = useState(false);
+  const [visibleManual, setVisibleManual] = useState(false);
+  const list = [
+    {title: 'Add Manually', onPress: () => handleManuallyadd()},
+    {title: 'Add from Map', onPress: () => setIsVisible(false)},
+    {
+      title: 'Cancel',
+      containerStyle: {backgroundColor: 'red'},
+      titleStyle: {color: 'white'},
+      onPress: () => setIsVisible(false),
+    },
+  ];
 
-  // Function to set the default address
-  const setDefaultAddress = (addressId) => {
-    const updatedAddresses = userAddress.map((address) => ({
+  const handleManuallyadd = () => {
+    setIsVisible(false);
+    setVisibleManual(true);
+  };
+
+  const setDefaultAddress = addressId => {
+    const updatedAddresses = userAddress.map(address => ({
       ...address,
       default: address.id === addressId,
     }));
-    // Update the state with the new default address
-    // console.log(updatedAddresses,'addresses')
-    // setUserAddress(updatedAddresses);
-    // setAddresses(updatedAddresses);
-    // setUserAddress(updatedAddresses.filter((add,i)=>add.default))
-      setUserAddress(updatedAddresses)
+    setUserAddress(updatedAddresses);
   };
-
 
   return (
     <View style={styles.container}>
       <View>
-        <RedLine text='Addresses' />
+        <RedLine text="Addresses" />
       </View>
       <ScrollView>
         {userAddress.map((address, i) => (
@@ -45,7 +56,10 @@ const Addresses = () => {
             <View>
               <Text style={[globalStyles.text]}>Name</Text>
               <Text style={[globalStyles.text]}>{address.landmark}</Text>
-              <Text style={[globalStyles.text]}>{`${address.city}, ${address.state}, ${address.pincode}`}</Text>
+              <Text
+                style={[
+                  globalStyles.text,
+                ]}>{`${address.city}, ${address.state}, ${address.pincode}`}</Text>
               <Text style={[globalStyles.text]}>phone no.</Text>
             </View>
             <View>
@@ -57,8 +71,11 @@ const Addresses = () => {
                   borderColor: colors.red,
                   borderRadius: 10,
                 }}
-                containerStyle={{ margin: 10 }}
-                titleStyle={{ fontSize: 15, color: address.default ? 'black' : 'white' }}
+                containerStyle={{margin: 10}}
+                titleStyle={{
+                  fontSize: 15,
+                  color: address.default ? 'black' : 'white',
+                }}
                 disabled={address.default}
                 onPress={() => setDefaultAddress(address.id)} // Call the function to set as default
               />
@@ -66,6 +83,31 @@ const Addresses = () => {
           </View>
         ))}
       </ScrollView>
+      <Button
+        title={'+ Add New Address '}
+        containerStyle={{width: '90%', alignSelf: 'center'}}
+        buttonStyle={{
+          paddingVertical: 10,
+          backgroundColor: colors.red,
+          borderRadius: 10,
+        }}
+        onPress={() => setIsVisible(true)}
+      />
+      <BottomSheet isVisible={isVisible}>
+        {list.map((l, i) => (
+          <ListItem
+            key={i}
+            containerStyle={l.containerStyle}
+            onPress={l.onPress}>
+            <ListItem.Content>
+              <ListItem.Title>{l.title}</ListItem.Title>
+            </ListItem.Content>
+          </ListItem>
+        ))}
+      </BottomSheet>
+      <Modal visible={visibleManual} animationType="slide">
+        <ManualAdd manualVisible={visibleManual} setManualvisible={setVisibleManual}/>
+      </Modal>
     </View>
   );
 };

@@ -20,7 +20,7 @@ const {height, width} = Dimensions.get('window');
 const Cart = ({navigation, route}) => {
   const {userCart, cartTotal,userAddress, setUserAddress} = useContext(Appcontext);
 
-  const defAdd= userAddress.filter((add)=>add.default)
+  const defAdd= userAddress?.filter((add)=>add?.default)
 
   useEffect(()=>{
     setUserAddress([{
@@ -89,7 +89,7 @@ const Cart = ({navigation, route}) => {
           <View style={{width: '90%', alignSelf: 'center'}}>
             <Text style={[globalStyles.text]}>Address:</Text>
           </View>
-          <View
+          {defAdd && <View
             style={{
               width: '90%',
               alignSelf: 'center',
@@ -104,7 +104,7 @@ const Cart = ({navigation, route}) => {
             <View>
               <Text style={[globalStyles.text]}>Name</Text>
               <Text style={[globalStyles.text]}>{defAdd[0]?.landmark}</Text>
-              <Text style={[globalStyles.text]}>{`${defAdd[0]?.city} ${defAdd[0]?.state} ${defAdd[0]?.pincode}`}</Text>
+              <Text style={[globalStyles.text]}>{`${defAdd[0]?.city}, ${defAdd[0]?.state}, ${defAdd[0]?.pincode}`}</Text>
               <Text style={[globalStyles.text]}>phone no.</Text>
             </View>
             <View>
@@ -116,7 +116,7 @@ const Cart = ({navigation, route}) => {
                 onPress={()=>navigation.navigate('Addresses')}
               />
             </View>
-          </View>
+          </View>}
           <Button
             title={'Proceed to Checkout'}
             buttonStyle={{
