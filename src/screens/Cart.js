@@ -14,13 +14,47 @@ import {Appcontext} from '../context/AppContext';
 import CartCard from '../components/CartCard';
 import {Button} from '@rneui/base';
 import colors from '../constants/colors';
+import RazorpayCheckout from 'react-native-razorpay';
+import {RAZORPAY_KEY} from '@env';
 
 const {height, width} = Dimensions.get('window');
 
 const Cart = ({navigation, route}) => {
   const {userCart, cartTotal,userAddress} = useContext(Appcontext);
 
-  const defAdd= userAddress?.filter((add)=>add?.default)
+  const defAdd= userAddress?.filter((add)=>add?.default);
+
+  // console.log(RAZORPAY_KEY,'key');
+
+
+
+  const handleCheckout=()=>{
+    var options = {
+      description: 'Credits towards consultation',
+      image: 'https://i.imgur.com/3g7nmJC.jpg',
+      currency: 'INR',
+      key: RAZORPAY_KEY,
+      amount: cartTotal*100,
+      name: `User Name`,
+      order_id: '',
+      prefill: {
+        email: 'sukanta@example.com',
+        contact: '9191919191',
+        name: 'Sukanta Dolai'
+      },
+      theme: {color: colors.red}
+    };
+
+    RazorpayCheckout.open(options).then((data) => {
+      // handle success
+    //  console.log(`Success: ${data}`);
+     navigation.navigate('Success',{data: data});
+    }).catch((error) => {
+      // handle failure
+      console.log(`Error: ${error.code} | ${error.description}`);
+     navigation.navigate('Error',{data:error});
+    });
+  }
 
 
 
@@ -111,6 +145,7 @@ const Cart = ({navigation, route}) => {
               marginBottom: '18%',
               alignSelf: 'center',
             }}
+            onPress={handleCheckout}
           />
         </View>
       ) : (

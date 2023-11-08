@@ -11,6 +11,8 @@ import FoodReels from '../screens/FoodReels';
 import Menu from '../screens/Menu';
 import Orders from '../screens/Orders';
 import Addresses from '../screens/Addresses';
+import Success from '../screens/Success';
+import Error from '../screens/Error';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +28,8 @@ function AppNavigator() {
       <Stack.Screen name="Help" component={Help} options={{headerShown:false}}/>
       <Stack.Screen name="Passwords" component={Passwords} options={{headerShown:false}}/>
       <Stack.Screen name="Orders" component={Orders} options={{headerShown:false}}/>
+      <Stack.Screen name="Success" component={Success} options={{headerShown:false}}/>
+      <Stack.Screen name="Error" component={Error} options={{headerShown:false}}/>
     </Stack.Navigator>
   );
 }
