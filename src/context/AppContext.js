@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react"
+import React, { createContext, useEffect, useState } from "react"
 
 
 export const Appcontext= createContext();
@@ -10,6 +10,26 @@ export const AppContextProvider= ({children})=>{
     const [userAddress,setUserAddress] = useState();
 
     const cartTotal= userCart.reduce((init,next)=> init+(Number(next.price)* Number(next.quantity)),0);
+
+
+    useEffect(()=>{
+        setUserAddress([{
+          id: 1,
+          landmark: 'Abc',
+          city: 'city1',
+          state: 'state1',
+          pincode: '1111111',
+          default: true,
+        },
+        {
+          id: 2,
+          landmark: 'Def',
+          city: 'city2',
+          state: 'state2',
+          pincode: '222222',
+          default: false,
+        }]);
+      },[]);
 
     const values={
         userData,

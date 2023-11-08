@@ -1,14 +1,17 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import {StyleSheet, Text, View} from 'react-native';
+import React from 'react';
+import RedLine from '../components/RedLine';
 
 const FoodReels = () => {
   return (
     <View>
-      <Text>FoodReels</Text>
+      <View>
+        <RedLine text="Food Reels" />
+      </View>
     </View>
-  )
-}
+  );
+};
 
-export default FoodReels
+export default FoodReels;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

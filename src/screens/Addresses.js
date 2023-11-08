@@ -6,14 +6,17 @@ import {Appcontext} from '../context/AppContext';
 import colors from '../constants/colors';
 import {BottomSheet, Button, ListItem} from '@rneui/base';
 import ManualAdd from '../components/ManualAdd';
+import MapModal from '../components/MapModal';
 
 const Addresses = () => {
   const {userAddress, setUserAddress} = useContext(Appcontext);
   const [isVisible, setIsVisible] = useState(false);
   const [visibleManual, setVisibleManual] = useState(false);
+  const [mapVisible, setMapVisible] = useState(false);
+  
   const list = [
     {title: 'Add Manually', onPress: () => handleManuallyadd()},
-    {title: 'Add from Map', onPress: () => setIsVisible(false)},
+    {title: 'Add from Map', onPress: () => handleMapView(false)},
     {
       title: 'Cancel',
       containerStyle: {backgroundColor: 'red'},
@@ -26,6 +29,11 @@ const Addresses = () => {
     setIsVisible(false);
     setVisibleManual(true);
   };
+
+  const handleMapView=()=>{
+    setIsVisible(false);
+    setMapVisible(true);
+  }
 
   const setDefaultAddress = addressId => {
     const updatedAddresses = userAddress.map(address => ({
@@ -41,7 +49,7 @@ const Addresses = () => {
         <RedLine text="Addresses" />
       </View>
       <ScrollView>
-        {userAddress.map((address, i) => (
+        {userAddress?.map((address, i) => (
           <View
             key={address.id}
             style={{
@@ -107,6 +115,9 @@ const Addresses = () => {
       </BottomSheet>
       <Modal visible={visibleManual} animationType="slide">
         <ManualAdd manualVisible={visibleManual} setManualvisible={setVisibleManual}/>
+      </Modal>
+      <Modal visible={mapVisible} animationType="slide">
+         <MapModal visible={mapVisible} setVisible={setMapVisible}/>
       </Modal>
     </View>
   );

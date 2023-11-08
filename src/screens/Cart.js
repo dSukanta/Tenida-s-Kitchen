@@ -18,30 +18,10 @@ import colors from '../constants/colors';
 const {height, width} = Dimensions.get('window');
 
 const Cart = ({navigation, route}) => {
-  const {userCart, cartTotal,userAddress, setUserAddress} = useContext(Appcontext);
+  const {userCart, cartTotal,userAddress} = useContext(Appcontext);
 
   const defAdd= userAddress?.filter((add)=>add?.default)
 
-  useEffect(()=>{
-    setUserAddress([{
-      id: 1,
-      landmark: 'Abc',
-      city: 'city1',
-      state: 'state1',
-      pincode: '1111111',
-      default: true,
-    },
-    {
-      id: 2,
-      landmark: 'Def',
-      city: 'city2',
-      state: 'state2',
-      pincode: '222222',
-      default: false,
-    }]);
-  },[]);
-
-  // console.log(userAddress,'userAddress')
 
 
   return (
