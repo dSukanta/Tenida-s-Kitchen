@@ -20,22 +20,27 @@ import {RAZORPAY_KEY} from '@env';
 const {height, width} = Dimensions.get('window');
 
 const Cart = ({navigation, route}) => {
-  const {userCart, cartTotal,userAddress} = useContext(Appcontext);
+  const {
+    userCart,
+    cartTotal,
+    userAddress,
+    setUserCart,
+    userOrders,
+    setUserOrders,
+  } = useContext(Appcontext);
 
-  const defAdd= userAddress?.filter((add)=>add?.default);
+  const defAdd = userAddress?.filter(add => add?.default);
 
   // console.log(RAZORPAY_KEY,'key');
 
-
-
-  const handleCheckout=()=>{
+  const handleCheckout = () => {
     var options = {
-      description: 'Credits towards consultation',
+      description: 'Payment for checkout',
       image: 'https://i.imgur.com/3g7nmJC.jpg',
       currency: 'INR',
       key: RAZORPAY_KEY,
       amount: cartTotal*100,
-      name: `User Name`,
+      name: `Sukanta`,
       order_id: '',
       prefill: {
         email: 'sukanta@example.com',
@@ -44,19 +49,39 @@ const Cart = ({navigation, route}) => {
       },
       theme: {color: colors.red}
     };
+   
+    
 
     RazorpayCheckout.open(options).then((data) => {
-      // handle success
-    //  console.log(`Success: ${data}`);
-     navigation.navigate('Success',{data: data});
+      const order= {
+          order_data:data,
+          orderId: data.data.razorpay_payment_id,
+          totalAmount: cartTotal,
+          products:[]
+      };
+      userCart?.forEach((item) => {
+        order.products.push(item)
+      });
+      setUserOrders([...userOrders,order]);
+      setUserCart([]);
+      navigation.navigate('Success',{data: data});
     }).catch((error) => {
-      // handle failure
       console.log(`Error: ${error.code} | ${error.description}`);
      navigation.navigate('Error',{data:error});
     });
-  }
-
-
+    // const order = {
+    //   orderId: Date.now(),
+    //   orderedAt: new Date(),
+    //   totalAmount: cartTotal,
+    //   products: [],
+    // };
+    // userCart?.forEach(item => {
+    //   order.products.push(item);
+    // });
+    // setUserOrders([...userOrders, order]);
+    // setUserCart([]);
+    // navigation.navigate('Orders');
+  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -103,34 +128,39 @@ const Cart = ({navigation, route}) => {
           <View style={{width: '90%', alignSelf: 'center'}}>
             <Text style={[globalStyles.text]}>Address:</Text>
           </View>
-          {defAdd && <View
-            style={{
-              width: '90%',
-              alignSelf: 'center',
-              marginVertical: 10,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              borderWidth: 1,
-              borderColor: colors.red,
-              padding: 10,
-              borderRadius: 10,
-            }}>
-            <View>
-              <Text style={[globalStyles.text]}>Name</Text>
-              <Text style={[globalStyles.text]}>{defAdd[0]?.landmark}</Text>
-              <Text style={[globalStyles.text]}>{`${defAdd[0]?.city}, ${defAdd[0]?.state}, ${defAdd[0]?.pincode}`}</Text>
-              <Text style={[globalStyles.text]}>phone no.</Text>
+          {defAdd && (
+            <View
+              style={{
+                width: '90%',
+                alignSelf: 'center',
+                marginVertical: 10,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                borderWidth: 1,
+                borderColor: colors.red,
+                padding: 10,
+                borderRadius: 10,
+              }}>
+              <View>
+                <Text style={[globalStyles.text]}>Name</Text>
+                <Text style={[globalStyles.text]}>{defAdd[0]?.landmark}</Text>
+                <Text
+                  style={[
+                    globalStyles.text,
+                  ]}>{`${defAdd[0]?.city}, ${defAdd[0]?.state}, ${defAdd[0]?.pincode}`}</Text>
+                <Text style={[globalStyles.text]}>phone no.</Text>
+              </View>
+              <View>
+                <Button
+                  title={'Change'}
+                  buttonStyle={{backgroundColor: colors.red, borderRadius: 10}}
+                  containerStyle={{margin: 10}}
+                  titleStyle={{fontSize: 15}}
+                  onPress={() => navigation.navigate('Addresses')}
+                />
+              </View>
             </View>
-            <View>
-              <Button
-                title={'Change'}
-                buttonStyle={{backgroundColor: colors.red, borderRadius: 10}}
-                containerStyle={{margin: 10}}
-                titleStyle={{fontSize:15}}
-                onPress={()=>navigation.navigate('Addresses')}
-              />
-            </View>
-          </View>}
+          )}
           <Button
             title={'Proceed to Checkout'}
             buttonStyle={{

@@ -30,7 +30,7 @@ const SuccessPage = ({route, navigation }) => {
     // Handle the "Explore More" action
     // You can navigate to another screen or perform any desired action
     // For now, we'll go back to the previous screen
-    navigation.goBack();
+    navigation.navigate('Menu')
   };
 
   return (
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: 'white',
-    width: '80%',
+    width: '85%',
     padding: 20,
     borderRadius: 10,
     shadowColor: 'black',

@@ -47,11 +47,11 @@ const Profile = ({navigation}) => {
     //   icon: <MaterialIcons name='videocam' size={30} color={'white'}/>,
     //   onPress:()=> handlenavigate('FoodReels')
     // },
-    // {
-    //   title:'Orders',
-    //   icon: <Feather name="truck" size={30} color={'white'} />,
-    //   onPress:()=> handlenavigate('Orders')
-    // },
+    {
+      title:'Orders',
+      icon: <Feather name="truck" size={30} color={'white'} />,
+      onPress:()=> handlenavigate('Orders')
+    },
   ];
 
   const renderRow = ({ item }) => {
