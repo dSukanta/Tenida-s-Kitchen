@@ -64,9 +64,9 @@ const OrderDetails = ({orderId, visible, setVisible}) => {
             <Text style={[globalStyles.text, {color: 'black'}]}>
               Amount Paid: {order[0]?.totalAmount}
             </Text>
-            <Text style={[globalStyles.text, {color: 'black'}]}>
+            {/* <Text style={[globalStyles.text, {color: 'black'}]}>
               Paid By: {order[0]?.order_data?.method?order[0]?.order_data?.method:'Cash' }
-            </Text>
+            </Text> */}
             <Text style={[globalStyles.text, {color: 'black'}]}>
               Ordered at:
               {moment(order[0]?.orderedAt).format('MMMM Do YYYY, h:mm:ss')}
@@ -91,7 +91,7 @@ const OrderDetails = ({orderId, visible, setVisible}) => {
               </ListItem.Content>
             </ListItem>
             {order[0]?.products?.map((el, i) => (
-              <ListItem bottomDivider>
+              <ListItem bottomDivider key={i}>
                 <ListItem.Content>
                   <ListItem.Title>{el?.name}</ListItem.Title>
                 </ListItem.Content>

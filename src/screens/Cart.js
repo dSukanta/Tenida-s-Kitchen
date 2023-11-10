@@ -50,12 +50,12 @@ const Cart = ({navigation, route}) => {
       theme: {color: colors.red}
     };
    
-    
+
 
     RazorpayCheckout.open(options).then((data) => {
       const order= {
           order_data:data,
-          orderId: data.data.razorpay_payment_id,
+          orderId: data.razorpay_payment_id,
           totalAmount: cartTotal,
           products:[]
       };
@@ -66,7 +66,7 @@ const Cart = ({navigation, route}) => {
       setUserCart([]);
       navigation.navigate('Success',{data: data});
     }).catch((error) => {
-      console.log(`Error: ${error.code} | ${error.description}`);
+      console.log(`Error: ${error.code} | ${error.description}`); 
      navigation.navigate('Error',{data:error});
     });
     // const order = {
