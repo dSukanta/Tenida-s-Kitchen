@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, Image, TextInput} from 'react-native';
+import {StyleSheet, Text, View, Image, TextInput, ScrollView, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import {ListItem} from '@rneui/themed';
 import {Button} from '@rneui/base';
@@ -19,7 +19,7 @@ const Settings = () => {
 
   return (
     <View>
-      <View style={styles.header}>
+     {!edit ? <View style={styles.header}>
         <Ionicons name="chevron-back" size={25} />
         <Text>Profile</Text>
         <Button
@@ -33,7 +33,17 @@ const Settings = () => {
           buttonStyle={{borderRadius: 10}}
           onPress={() => setEdit(true)}
         />
+      </View>:
+      <View style={styles.header}>
+        <TouchableOpacity onPress={()=>setEdit(false)}>
+        <Ionicons name='close' size={20}/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleSave}>
+        <Ionicons name='checkmark-sharp' size={20}/>
+        </TouchableOpacity>
       </View>
+      }
+      <ScrollView showsVerticalScrollIndicator={false}>
       <View>
         <View
           style={{
@@ -61,7 +71,7 @@ const Settings = () => {
             paddingBottom: 10,
             marginHorizontal: '5%',
           }}>
-          <Text
+          {!edit?<Text
             style={{
               fontWeight: '900',
               color: 'red',
@@ -70,7 +80,9 @@ const Settings = () => {
               marginHorizontal: 10,
             }}>
             {'User Name'}
-          </Text>
+          </Text>:
+          <Button title={'Change Profile Picture'} buttonStyle={{borderRadius:10}}/>
+          }
           {/* <Text>{'user@email'}</Text> */}
         </View>
       </View>
@@ -115,21 +127,8 @@ const Settings = () => {
             )}
           </ListItem.Content>
         </ListItem>
-        {edit && (
-          <View>
-            <Button
-              title={'Cancel'}
-              icon={{name: 'cancel', type: 'material-icons', size: 20}}
-              onPress={() => setEdit(false)}
-            />
-            <Button
-              title={'Save'}
-              icon={{name: 'save', type: 'font-awesome', size: 20}}
-              onPress={handleSave}
-            />
-          </View>
-        )}
       </View>
+      </ScrollView>
     </View>
   );
 };
@@ -178,4 +177,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 5,
   },
+  buttonContainer:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    marginVertical:10
+  }
 });
