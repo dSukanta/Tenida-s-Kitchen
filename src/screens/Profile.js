@@ -6,6 +6,7 @@ import {
   Image,
   Dimensions,
   FlatList,
+  TouchableOpacity
 } from 'react-native';
 import React, {useState} from 'react';
 import {Button, ListItem} from '@rneui/base';
@@ -191,7 +192,9 @@ const Landing = ({navigation}) => {
             <MaterialIcons name="person" size={25} />
             <Text style={[globalStyles.text, {fontSize: 18}]}>Sukanta</Text>
           </View>
-          <MaterialIcons name="emoji-events" size={25} />
+          <TouchableOpacity>
+        <MaterialIcons name="emoji-events" size={25} />
+      </TouchableOpacity>
         </View>
       )}
       <View style={{margin: 20, marginTop: 30}}>
