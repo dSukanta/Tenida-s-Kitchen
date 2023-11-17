@@ -4,7 +4,7 @@ import {ListItem} from '@rneui/themed';
 import {Button} from '@rneui/base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const Settings = () => {
+const Settings = ({route,navigation}) => {
   const [edit, setEdit] = useState(false);
   const [userInput, setUserInput] = useState({
     name: 'User Name',
@@ -20,7 +20,9 @@ const Settings = () => {
   return (
     <View>
      {!edit ? <View style={styles.header}>
+         <TouchableOpacity onPress={()=>navigation.goBack()}>
         <Ionicons name="chevron-back" size={25} />
+        </TouchableOpacity>
         <Text>Profile</Text>
         <Button
           title={'Edit Profile'}
