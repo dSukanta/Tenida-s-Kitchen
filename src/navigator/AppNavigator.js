@@ -14,6 +14,7 @@ import Addresses from '../screens/Addresses';
 import Success from '../screens/Success';
 import Error from '../screens/Error';
 import Rewards from '../screens/Rewards';
+import CustomHeader from '../components/CustomHeader';
 
 const Stack = createStackNavigator();
 
@@ -22,7 +23,7 @@ function AppNavigator() {
     <Stack.Navigator>
       <Stack.Screen name="Main" component={TabNavigator} options={{headerShown:false}}/>
       <Stack.Screen name="Auth" component={Auth} options={{headerShown:false}}/>
-      <Stack.Screen name="Menu" component={Menu} options={{headerShown:false}}/>
+      <Stack.Screen name="Menu" component={Menu} options={({route,navigation})=>({headerShown:true, header:()=><CustomHeader route={route} navigation={navigation}/>})}/>
       <Stack.Screen name="ProductDetails" component={ProductDetails} options={{headerShown:false}}/>
       <Stack.Screen name="Settings" component={Settings} options={{headerShown:false}}/>
       <Stack.Screen name="Rewards" component={Rewards} options={{headerShown:false}}/>

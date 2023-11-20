@@ -21,11 +21,14 @@ const {height, width} = Dimensions.get('window');
 
 const Home = ({navigation}) => {
   const data = [1, 1, 1];
-  const categories= [
-    {category:'Family Pack',image:require('../images/slider_image.jpg')},
-    {category:'All-In-1 Meals',image:require('../images/slider_image.jpg')},
-    {category:'Mini Meals',image:require('../images/slider_image.jpg')},
-    {category:'Chicken Starters',image:require('../images/slider_image.jpg')}
+  const categories = [
+    {category: 'Family Pack', image: require('../images/slider_image.jpg')},
+    {category: 'All-In-1 Meals', image: require('../images/slider_image.jpg')},
+    {category: 'Mini Meals', image: require('../images/slider_image.jpg')},
+    {
+      category: 'Chicken Starters',
+      image: require('../images/slider_image.jpg'),
+    },
   ];
 
   const renderCard = item => (
@@ -38,8 +41,7 @@ const Home = ({navigation}) => {
         backgroundColor: 'white',
         overflow: 'hidden', // Add this line
       }}
-      onPress={()=>navigation.navigate('ProductDetails',{id:1})}
-      >
+      onPress={() => navigation.navigate('ProductDetails', {id: 1})}>
       <View style={{position: 'relative'}}>
         <Card.Image
           source={require('../images/slider_image.jpg')}
@@ -71,95 +73,103 @@ const Home = ({navigation}) => {
             alignItems: 'center',
             backgroundColor: '#74c93f',
             padding: 5,
-            paddingVertical:2,
+            paddingVertical: 2,
             borderRadius: 5,
             gap: 5,
             alignSelf: 'flex-end',
-            marginTop:10,
+            marginTop: 10,
           }}>
           <Text style={[globalStyles.text, {color: 'white'}]}>{'4.5'}</Text>
           <AntDesign name="star" color={'white'} size={12} />
         </View>
         <View style={{paddingHorizontal: 7}}>
-        <Text style={[globalStyles.text, {color: 'black'}]} numberOfLines={1}>
-          Name
-        </Text>
-        <Text
-          style={{color: 'black', fontWeight: '400', fontSize: 12}}
-          numberOfLines={2}>
-          Subtitle
-        </Text>
-      </View>
+          <Text style={[globalStyles.text, {color: 'black'}]} numberOfLines={1}>
+            Name
+          </Text>
+          <Text
+            style={{color: 'black', fontWeight: '400', fontSize: 12}}
+            numberOfLines={2}>
+            Subtitle
+          </Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View>
-        <RedLine text={'offers for you'}/>
-      </View>
-      <View>
-        <FlatList
-          horizontal
-          data={data}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({item, index}) => (
-            <Card
-              containerStyle={{
-                width: 250,
-                height: 150,
-                padding: 0,
-                margin: 0,
-                marginLeft: 7,
-                position: 'relative',
-                borderRadius: 10,
-                marginRight: index === data?.length - 1 ? 7 : 0,
-              }}>
-              <Card.Image
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
+    <View style={styles.container}>
+      <ScrollView>
+        <View>
+          <RedLine text={'offers for you'} />
+        </View>
+        <View>
+          <FlatList
+            horizontal
+            data={data}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({item, index}) => (
+              <Card
+                containerStyle={{
+                  width: 250,
+                  height: 150,
+                  padding: 0,
+                  margin: 0,
+                  marginLeft: 7,
+                  position: 'relative',
                   borderRadius: 10,
-                }}
+                  marginRight: index === data?.length - 1 ? 7 : 0,
+                }}>
+                <Card.Image
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: 10,
+                  }}
+                  source={require('../images/slider_image.jpg')}
+                />
+              </Card>
+            )}
+          />
+        </View>
+        <View style={{marginTop: 20}}>
+          <FlatList
+            horizontal
+            data={data}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({item, index}) => (
+              <ImageBackground
                 source={require('../images/slider_image.jpg')}
+                resizeMode="cover"
+                style={[styles.secondSlider, {marginLeft: index === 0 ? 7 : 0}]}
+                imageStyle={{borderRadius: 10}}>
+                <View>
+                  <AntDesign name="play" color={'white'} size={30} />
+                </View>
+              </ImageBackground>
+            )}
+          />
+        </View>
+
+        <View>
+          <RedLine text={'Shop by Categories'} />
+        </View>
+
+        <View style={{alignSelf: 'center', marginBottom: '18%'}}>
+          <FlatList
+            numColumns={2}
+            data={categories}
+            renderItem={({item, index}) => (
+              <CategoriesCard
+                data={item}
+                navigation={navigation}
+                index={index}
               />
-            </Card>
-          )}
-        />
-      </View>
-      <View style={{marginTop: 20}}>
-        <FlatList
-          horizontal
-          data={data}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({item, index}) => (
-            <ImageBackground
-              source={require('../images/slider_image.jpg')}
-              resizeMode="cover"
-              style={[styles.secondSlider, {marginLeft: index === 0 ? 7 : 0}]}
-              imageStyle={{borderRadius: 10}}>
-              <View>
-                <AntDesign name="play" color={'white'} size={30} />
-              </View>
-            </ImageBackground>
-          )}
-        />
-      </View>
-
-      <View>
-        <RedLine text={'Shop by Categories'}/>
-      </View>
-
-      <View style={{alignSelf: 'center', marginBottom: '18%'}}>
-        <FlatList
-          numColumns={2}
-          data={categories}
-          renderItem={({item,index}) => <CategoriesCard data={item} navigation={navigation} index={index}/>}
-        />
-      </View>
-    </ScrollView>
+            )}
+          />
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -168,6 +178,7 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'black',
+    flex:1,
   },
   secondSlider: {
     width: 250,
