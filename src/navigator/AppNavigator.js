@@ -13,6 +13,7 @@ import Orders from '../screens/Orders';
 import Addresses from '../screens/Addresses';
 import Success from '../screens/Success';
 import Error from '../screens/Error';
+import Rewards from '../screens/Rewards';
 
 const Stack = createStackNavigator();
 
@@ -24,6 +25,7 @@ function AppNavigator() {
       <Stack.Screen name="Menu" component={Menu} options={{headerShown:false}}/>
       <Stack.Screen name="ProductDetails" component={ProductDetails} options={{headerShown:false}}/>
       <Stack.Screen name="Settings" component={Settings} options={{headerShown:false}}/>
+      <Stack.Screen name="Rewards" component={Rewards} options={{headerShown:false}}/>
       <Stack.Screen name="Addresses" component={Addresses} options={{headerShown:false}}/>
       <Stack.Screen name="Help" component={Help} options={{headerShown:false}}/>
       <Stack.Screen name="Passwords" component={Passwords} options={{headerShown:false}}/>
