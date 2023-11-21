@@ -27,10 +27,10 @@ function AppNavigator() {
       <Stack.Screen name="ProductDetails" component={ProductDetails} options={{headerShown:false}}/>
       <Stack.Screen name="Settings" component={Settings} options={{headerShown:false}}/>
       <Stack.Screen name="Rewards" component={Rewards} options={{headerShown:false}}/>
-      <Stack.Screen name="Addresses" component={Addresses} options={{headerShown:false}}/>
-      <Stack.Screen name="Help" component={Help} options={{headerShown:false}}/>
+      <Stack.Screen name="Addresses" component={Addresses} options={({route,navigation})=>({headerShown:true, header:()=><CustomHeader route={route} navigation={navigation}/>})}/>
+      <Stack.Screen name="Help" component={Help} options={({route,navigation})=>({headerShown:true, header:()=><CustomHeader route={route} navigation={navigation}/>})}/>
       <Stack.Screen name="Passwords" component={Passwords} options={{headerShown:false}}/>
-      <Stack.Screen name="Orders" component={Orders} options={{headerShown:false}}/>
+      <Stack.Screen name="Orders" component={Orders} options={({route,navigation})=>({headerShown:true, header:()=><CustomHeader route={route} navigation={navigation}/>})}/>
       <Stack.Screen name="Success" component={Success} options={{headerShown:false}}/>
       <Stack.Screen name="Error" component={Error} options={{headerShown:false}}/>
     </Stack.Navigator>

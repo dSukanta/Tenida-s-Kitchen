@@ -101,7 +101,7 @@ const Addresses = () => {
         }}
         onPress={() => setIsVisible(true)}
       />
-      <BottomSheet isVisible={isVisible}>
+      <BottomSheet isVisible={isVisible} onBackdropPress={()=>setIsVisible(false)}>
         {list.map((l, i) => (
           <ListItem
             key={i}
