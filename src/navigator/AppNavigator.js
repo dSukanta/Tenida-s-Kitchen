@@ -15,6 +15,7 @@ import Success from '../screens/Success';
 import Error from '../screens/Error';
 import Rewards from '../screens/Rewards';
 import CustomHeader from '../components/CustomHeader';
+import Offline from '../screens/Offline';
 
 const Stack = createStackNavigator();
 
@@ -33,6 +34,7 @@ function AppNavigator() {
       <Stack.Screen name="Orders" component={Orders} options={({route,navigation})=>({headerShown:true, header:()=><CustomHeader route={route} navigation={navigation}/>})}/>
       <Stack.Screen name="Success" component={Success} options={{headerShown:false}}/>
       <Stack.Screen name="Error" component={Error} options={{headerShown:false}}/>
+      <Stack.Screen name="Offline" component={Offline} options={{headerShown:false}}/>
     </Stack.Navigator>
   );
 }
