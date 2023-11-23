@@ -7,55 +7,67 @@ import {
   Dimensions,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState,useContext,useEffect} from 'react';
 import {Button, ListItem} from '@rneui/base';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {globalStyles} from '../constants/globalStyles';
+import colors from '../constants/colors';
+import { Appcontext } from '../context/AppContext';
 
 const {height, width} = Dimensions.get('window');
 
 const Landing = ({navigation}) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const {userData,Logout,setUserData}= useContext(Appcontext);
 
-  const handlenavigate=(path)=>{
-    navigation.navigate(path);
-  }
+  console.log(userData,'userData')
+
+
+  const handlenavigate = path => {
+    if(userData?.length || path === 'Help'){
+      navigation.navigate(path);
+    }else{
+      navigation.navigate('Auth');
+    }
+  };
+
   const listItems = [
-    {
+    { id:1,
       title: 'Settings & Personalization',
       icon: <MaterialIcons name="settings" size={30} color={'white'} />,
       onPress: () => handlenavigate('Settings'),
     },
-    {
+    { id:2,
       title: 'Addresses',
       icon: <MaterialIcons name="add-home-work" size={30} color={'white'} />,
       onPress: () => handlenavigate('Addresses'),
     },
-    {
+    { id:3,
       title: 'Help & Support',
       icon: <MaterialIcons name="support-agent" size={30} color={'white'} />,
       onPress: () => handlenavigate('Help'),
-    },
-    {
-      title: 'Passwords',
-      icon: <MaterialIcons name="fingerprint" size={30} color={'white'} />,
-      onPress: () => handlenavigate('Passwords'),
     },
     // {
     //   title:'Video Engagement and Rewards',
     //   icon: <MaterialIcons name='videocam' size={30} color={'white'}/>,
     //   onPress:()=> handlenavigate('FoodReels')
     // },
-    {
+    { id:4,
       title: 'Orders',
       icon: <Feather name="truck" size={30} color={'white'} />,
       onPress: () => handlenavigate('Orders'),
     },
+    // {
+    //   title: 'Logout',
+    //   icon: <MaterialIcons name="logout" size={30} color={'white'} />,
+    //   onPress: () => handleLogout(),
+    // },
   ];
-  
+
   const renderRow = ({item}) => {
     return (
       <ListItem
@@ -78,9 +90,29 @@ const Landing = ({navigation}) => {
     );
   };
 
+  async function handleLogout() {
+    Alert.alert('Are you sure', 'You want to logout?', [
+      {
+        text: 'Yes',
+
+        onPress: async() => {
+          await Logout();
+          Alert.alert('Success!', 'Logged out successfully');
+          navigation.navigate('Auth');
+        },
+      },
+      {
+        text: 'No',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+    ]);
+  };
+
+
   return (
     <ScrollView style={styles.container}>
-      {!isLoggedIn ? (
+      {!userData.length? (
         <View
           style={{
             flexDirection: 'row',
@@ -119,7 +151,7 @@ const Landing = ({navigation}) => {
             <MaterialIcons name="person" size={25} color={'white'} />
             <Text style={[globalStyles.text, {fontSize: 18}]}>Sukanta</Text>
           </View>
-          <TouchableOpacity onPress={()=>navigation.navigate('Rewards')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Rewards')}>
             <MaterialIcons name="emoji-events" size={25} color={'white'} />
           </TouchableOpacity>
         </View>
@@ -127,9 +159,16 @@ const Landing = ({navigation}) => {
       <View style={{margin: 20, marginTop: 30}}>
         <FlatList
           data={listItems}
-          keyExtractor={index => index.toString()}
+          keyExtractor={(item,index) => item?.id?.toString()}
           renderItem={renderRow}
         />
+        {
+          userData.length ?
+          <TouchableOpacity style={{flexDirection:'row',gap:10,alignItems:'center',paddingVertical:10}} onPress={()=>handleLogout()}>
+            <MaterialIcons name="logout" size={30} color={'white'} />
+            <Text style={[globalStyles.text]}>Logout</Text>
+          </TouchableOpacity>:null
+        }
       </View>
     </ScrollView>
   );

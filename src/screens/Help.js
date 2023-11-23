@@ -125,6 +125,7 @@ const Help = ({navigation}) => {
         <View style={styles.accordianContainer}>
           {questions?.map((question, i) => (
             <ListItem.Accordion
+              key={i}
               containerStyle={{
                 backgroundColor:
                   expanded.status && expanded.id === i ? 'white' : 'black',

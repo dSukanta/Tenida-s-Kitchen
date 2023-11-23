@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useContext} from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,24 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
+  Alert,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {globalStyles} from '../constants/globalStyles';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import {makeRequest} from '../utils/Functions';
+import axios from 'axios';
+import auth from '@react-native-firebase/auth';
+import { Appcontext } from '../context/AppContext';
+
+
 
 const Auth = ({navigation}) => {
   const [showBottomSheet, setShowBottomSheet] = useState(false);
+  const {setUserData}= useContext(Appcontext);
 
   const toggleBottomSheet = () => {
     setShowBottomSheet(!showBottomSheet);
@@ -23,9 +35,31 @@ const Auth = ({navigation}) => {
     setShowBottomSheet(false);
   };
 
-  const handleLogin=async()=>{
-    navigation.navigate('Main', { screen: 'Home' });
-  }
+  const signInWithGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const { idToken,user} = await GoogleSignin.signIn();
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      // console.log(googleCredential,'clg')
+      auth().signInWithCredential(googleCredential);
+      setUserData([user]);
+      navigation.navigate('Home');
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        Alert.alert('Cancelled','Sign in cancelled')
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        Alert.alert('Wait','Sign in already in progress')
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        Alert.alert('Unavilable','Google Play Services is not available')
+      } else {
+        Alert.alert('Error: ',error)
+      }
+    }
+  };
+
+  const handleLogin = async () => {
+    navigation.navigate('Main', {screen: 'Home'});
+  };
 
   return (
     <TouchableOpacity
@@ -38,7 +72,7 @@ const Auth = ({navigation}) => {
       />
 
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={[styles.loginTextContainer,{marginBottom:10}]}>
+        <View style={[styles.loginTextContainer, {marginBottom: 10}]}>
           <View style={styles.redLine} />
           <Text style={globalStyles.text}>Login or Sign Up</Text>
           <View style={styles.redLine} />
@@ -54,14 +88,14 @@ const Auth = ({navigation}) => {
           <Text style={styles.continueButtonText}>Continue</Text>
         </TouchableOpacity>
 
-        <View style={[styles.loginTextContainer,{marginTop:10}]}>
+        <View style={[styles.loginTextContainer, {marginTop: 10}]}>
           <View style={styles.redLine} />
           <Text style={globalStyles.text}>Or</Text>
           <View style={styles.redLine} />
         </View>
 
         <View style={styles.iconsContainer}>
-          <TouchableOpacity style={styles.icon} onPress={toggleBottomSheet}>
+          <TouchableOpacity style={styles.icon} onPress={signInWithGoogle}>
             <Image
               source={require('../images/google-icon.webp')}
               style={{
@@ -77,7 +111,7 @@ const Auth = ({navigation}) => {
               name="dots-three-horizontal"
               size={35}
               color={'grey'}
-              style={{backgroundColor: 'white', borderRadius: 35,padding:5}}
+              style={{backgroundColor: 'white', borderRadius: 35, padding: 5}}
             />
           </TouchableOpacity>
         </View>
@@ -87,7 +121,9 @@ const Auth = ({navigation}) => {
               <Entypo name="facebook-with-circle" size={20} color={'blue'} />
               <Text>Continue with facebook</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomSheetItem}>
+            <TouchableOpacity
+              style={styles.bottomSheetItem}
+              onPress={handleLogin}>
               <Entypo name="mail" size={20} color={'grey'} />
               <Text>Continue with Email</Text>
             </TouchableOpacity>
@@ -168,7 +204,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 1,
     backgroundColor: 'red',
-    margin:10,
+    margin: 10,
   },
 });
 

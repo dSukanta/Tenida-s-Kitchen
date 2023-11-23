@@ -55,7 +55,7 @@ const Orders = ({route, navigation}) => {
         />
       </View>
     );
-  }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
