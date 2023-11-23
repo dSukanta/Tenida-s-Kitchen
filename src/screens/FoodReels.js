@@ -9,13 +9,12 @@ import {
 } from 'react-native';
 import React, {useRef, useState, useEffect} from 'react';
 import RedLine from '../components/RedLine';
-import Video from 'react-native-video';
 import {globalStyles} from '../constants/globalStyles';
 import {BottomSheet} from '@rneui/themed';
-import VideoDetails from '../components/VideoDetails';
+import VideoDetails from './VideoDetails';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const FoodReels = () => {
+const FoodReels = ({route,navigation}) => {
   const videoRef = useRef();
   const [videos, setVideos] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
@@ -50,7 +49,9 @@ const FoodReels = () => {
         {videos?.map((video, i) => (
           <TouchableOpacity
             style={styles.videoCard}
-            onPress={() => setIsVisible(true)} key={i}>
+            key={i}
+            onPress={()=>navigation.navigate('VideoDetails',{vid:i})}
+            >
             <View>
               <Image
                 source={{uri: video.thumImage}}
@@ -71,7 +72,7 @@ const FoodReels = () => {
           </TouchableOpacity>
         ))}
       </ScrollView>
-      <Modal
+      {/* <Modal
         visible={isVisible}
         presentationStyle="slide">
         <View style={[globalStyles.container]}>
@@ -82,7 +83,7 @@ const FoodReels = () => {
           </TouchableOpacity>
           <VideoDetails video={videos[0]} />
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 };

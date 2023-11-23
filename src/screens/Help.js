@@ -18,8 +18,9 @@ import RedLine from '../components/RedLine';
 import colors from '../constants/colors';
 import {Rating} from 'react-native-ratings';
 import { Alert } from 'react-native';
+import CustomHeader from '../components/CustomHeader';
 
-const Help = ({navigation}) => {
+const Help = ({route,navigation}) => {
   const [expanded, setExpanded] = useState({status: false, id: null});
   const [feedBackVisible, setFeedBackVisible] = useState(false);
   const [userFeedBack, setUserFeedBack] = useState({
@@ -118,6 +119,7 @@ const Help = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+      <CustomHeader route={route} navigation={navigation}/>
       <ScrollView>
         <View>
           <RedLine text="Frequently asked questions" fontSize={12} />

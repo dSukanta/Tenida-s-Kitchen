@@ -8,8 +8,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  BackHandler
 } from 'react-native';
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useMemo, useRef, useState,useEffect} from 'react';
 import Video from 'react-native-video';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -18,10 +19,12 @@ import {Avatar, BottomSheet, Button, ListItem, Slider} from '@rneui/base';
 import {globalStyles} from '../constants/globalStyles';
 import {Image} from '@rneui/themed';
 import colors from '../constants/colors';
+import CustomHeader from '../components/CustomHeader';
+import Orientation from 'react-native-orientation-locker';
 
 const {height, width} = Dimensions.get('window');
 
-const VideoDetails = () => {
+const VideoDetails = ({route, navigation}) => {
   const comments = [
     {
       id: 1,
@@ -40,7 +43,7 @@ const VideoDetails = () => {
       dislike: 0,
     },
   ];
-
+  const [fullScreen, setFullScreen] = useState(false);
   const [viewControl, setViewControl] = useState(false);
   const videoRef = useRef(null);
   const [paused, setPaused] = useState(false);
@@ -49,7 +52,9 @@ const VideoDetails = () => {
   const [mute, setMute] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isLoading, setLoading] = useState(true);
-  const [fullScreen,setFullScreen]=useState(false);
+  const [height, setHeight] = useState(Dimensions.get('window').height);
+  const [width, setWidth] = useState(Dimensions.get('window').width);
+  
   // console.log(isLoading, 'prg');
 
   const format = seconds => {
@@ -80,23 +85,57 @@ const VideoDetails = () => {
     setLoading(false);
   };
 
+  const handleOrientation = () => {
+    if (fullScreen) {
+      setFullScreen(!fullScreen);
+      Orientation.lockToPortrait();
+    } else {
+      setFullScreen(!fullScreen);
+      Orientation.lockToLandscape();
+    }
+  };
 
+  const handleLayoutChange = () => {
+    const { height: newHeight, width: newWidth } = Dimensions.get('window');
+    setHeight(newHeight);
+    setWidth(newWidth);
+  };
+
+  useEffect(() => {
+    const handleBackPress = () => {
+      Orientation.lockToPortrait();
+      navigation.goBack();
+      return true;
+    };
+    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    };
+  }, [navigation]);
+  
 
   return (
-    <View>
+    <View style={globalStyles.container} onLayout={handleLayoutChange}>
+      {!fullScreen && <CustomHeader route={route} navigation={navigation} />} 
       <Pressable
         onPress={() => setViewControl(!viewControl)}
-        style={styles.mainVideoContainer}>
+        style={[
+          styles.mainVideoContainer,
+          {
+            width: width,
+            height: fullScreen ? height / 1.2 : 200,
+          },
+        ]}>
         <Video
           ref={videoRef}
           style={{
             width: width,
-            height: 200,
+            height: fullScreen ? height / 1.2 : 200,
           }}
           source={{
             uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
           }}
-          resizeMode="cover"
+          resizeMode="contain"
           paused={paused}
           onProgress={x => {
             setProgress(x);
@@ -106,10 +145,19 @@ const VideoDetails = () => {
           onLoad={handleLoad}
         />
         {isLoading && (
-        <View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color={colors.red} />
-        </View>
-      )}
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <ActivityIndicator size="large" color={colors.red} />
+          </View>
+        )}
         {/* control buttons */}
         {viewControl && !isLoading && (
           <View style={styles.controlContainer}>
@@ -134,47 +182,58 @@ const VideoDetails = () => {
 
         {/* slider */}
 
-        {!isLoading && <View style={styles.sliderContainer}>
-          <Text style={{color: 'white'}}>{format(progress?.currentTime)}</Text>
-          <Slider
-            style={{width: '60%', height: 40, marginHorizontal: 5}}
-            minimumValue={0}
-            maximumValue={progress?.seekableDuration}
-            minimumTrackTintColor="red"
-            maximumTrackTintColor="#fff"
-            onValueChange={x => {
-              console.log(x, 'x');
-              videoRef?.current?.seek(x);
-            }}
-            thumbStyle={{width: 10, height: 10}}
-            value={progress?.currentTime}
-          />
-          <Text style={{color: 'white'}}>
-            {format(progress?.seekableDuration)}
-          </Text>
-          <TouchableOpacity onPress={() => setMute(!mute)}>
-            {mute ? (
-              <MaterialCommunityIcons
-                name="volume-mute"
-                color={'white'}
-                size={20}
-              />
-            ) : (
-              <MaterialCommunityIcons
-                name="volume-medium"
-                color={'white'}
-                size={20}
-              />
-            )}
-          </TouchableOpacity>
-          {/* <TouchableOpacity onPress={()=>setFullscreenOrientation(!fullscreenOrientation)}>
-              {fullscreenOrientation==='portrait' ? (
-                <MaterialCommunityIcons name="phone-rotate-landscape" color={'white'} size={20}/>
+        {!isLoading && (
+          <View style={[styles.sliderContainer,{width:width}]}>
+            <Text style={{color: 'white'}}>
+              {format(progress?.currentTime)}
+            </Text>
+            <Slider
+              style={{width: '60%', height: 40, marginHorizontal: 5}}
+              minimumValue={0}
+              maximumValue={progress?.seekableDuration}
+              minimumTrackTintColor="red"
+              maximumTrackTintColor="#fff"
+              onValueChange={x => {
+                videoRef?.current?.seek(x);
+              }}
+              thumbStyle={{width: 10, height: 10}}
+              value={progress?.currentTime}
+            />
+            <Text style={{color: 'white'}}>
+              {format(progress?.seekableDuration)}
+            </Text>
+            <TouchableOpacity onPress={() => setMute(!mute)}>
+              {mute ? (
+                <MaterialCommunityIcons
+                  name="volume-mute"
+                  color={'white'}
+                  size={20}
+                />
               ) : (
-                <MaterialCommunityIcons name="phone-rotate-portrait" color={'white'} size={20}/>
+                <MaterialCommunityIcons
+                  name="volume-medium"
+                  color={'white'}
+                  size={20}
+                />
               )}
-              </TouchableOpacity> */}
-        </View>}
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleOrientation}>
+              {!fullScreen ? (
+                <MaterialCommunityIcons
+                  name="phone-rotate-landscape"
+                  color={'white'}
+                  size={20}
+                />
+              ) : (
+                <MaterialCommunityIcons
+                  name="phone-rotate-portrait"
+                  color={'white'}
+                  size={20}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
       </Pressable>
       <View>
         <Text style={[globalStyles.text, {fontSize: 18, margin: 10}]}>
@@ -306,7 +365,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   sliderContainer: {
-    width: width,
     flexDirection: 'row',
     justifyContent: 'space-between',
     position: 'absolute',

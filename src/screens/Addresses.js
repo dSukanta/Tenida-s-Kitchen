@@ -7,8 +7,9 @@ import colors from '../constants/colors';
 import {BottomSheet, Button, ListItem} from '@rneui/base';
 import ManualAdd from '../components/ManualAdd';
 import MapModal from '../components/MapModal';
+import CustomHeader from '../components/CustomHeader';
 
-const Addresses = () => {
+const Addresses = ({route,navigation}) => {
   const {userAddress, setUserAddress} = useContext(Appcontext);
   const [isVisible, setIsVisible] = useState(false);
   const [visibleManual, setVisibleManual] = useState(false);
@@ -45,6 +46,7 @@ const Addresses = () => {
 
   return (
     <View style={styles.container}>
+      <CustomHeader route={route} navigation={navigation}/>
       <View>
         <RedLine text="Addresses" />
       </View>

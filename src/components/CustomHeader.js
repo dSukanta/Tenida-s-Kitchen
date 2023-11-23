@@ -4,11 +4,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { globalStyles } from '../constants/globalStyles';
 
 
-const CustomHeader = ({route,navigation}) => {
+const CustomHeader = ({route,navigation,onPress}) => {
     
   return (
     <View style={styles.headerContainer}>
-       <TouchableOpacity style={styles.iconTextContainer} onPress={()=>navigation.goBack()}>
+       <TouchableOpacity style={styles.iconTextContainer} onPress={onPress? onPress:()=>navigation.goBack()}>
             <Ionicons name='return-up-back' color={'white'} size={25}/>
             <Text style={[globalStyles.text]}>Go Back</Text>
        </TouchableOpacity>

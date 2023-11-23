@@ -15,6 +15,7 @@ import colors from '../constants/colors';
 import {Appcontext} from '../context/AppContext';
 import {Button} from '@rneui/base';
 import AntDesign from 'react-native-vector-icons/AntDesign'; 
+import CustomHeader from '../components/CustomHeader';
 
 const Menu = ({route, navigation}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -87,6 +88,7 @@ const Menu = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
+      <CustomHeader route={route} navigation={navigation}/>
       <ScrollView style={styles.content}>
         <View style={styles.listcontainer}>
           <FlatList

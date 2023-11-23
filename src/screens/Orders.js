@@ -13,6 +13,7 @@ import {Avatar, BottomSheet, Button, ListItem} from '@rneui/base';
 import {globalStyles} from '../constants/globalStyles';
 import OrderDetails from '../components/OrderDetails';
 import colors from '../constants/colors';
+import CustomHeader from '../components/CustomHeader';
 
 const Orders = ({route, navigation}) => {
   const {userOrders, setUserOrders} = useContext(Appcontext);
@@ -59,6 +60,7 @@ const Orders = ({route, navigation}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <CustomHeader route={route} navigation={navigation}/>
       <View>
         <RedLine text={'yours previous orders'} fontSize={12} />
       </View>
