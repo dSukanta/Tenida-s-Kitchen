@@ -8,9 +8,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  BackHandler
+  BackHandler,
 } from 'react-native';
-import React, {useMemo, useRef, useState,useEffect} from 'react';
+import React, {useMemo, useRef, useState, useEffect} from 'react';
 import Video from 'react-native-video';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -54,8 +54,12 @@ const VideoDetails = ({route, navigation}) => {
   const [isLoading, setLoading] = useState(true);
   const [height, setHeight] = useState(Dimensions.get('window').height);
   const [width, setWidth] = useState(Dimensions.get('window').width);
-  
+  const [videoEnded, setVideoEnded] = useState(false);
+  const [seeking, setSeeking] = useState(false);
   // console.log(isLoading, 'prg');
+
+  // console.log(progress, 'progress');
+  // http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4
 
   const format = seconds => {
     let mins = parseInt(seconds / 60)
@@ -78,7 +82,7 @@ const VideoDetails = ({route, navigation}) => {
   };
 
   const handleComplete = () => {
-    setPaused(true);
+    setVideoEnded(true);
   };
 
   const handleLoad = () => {
@@ -96,7 +100,7 @@ const VideoDetails = ({route, navigation}) => {
   };
 
   const handleLayoutChange = () => {
-    const { height: newHeight, width: newWidth } = Dimensions.get('window');
+    const {height: newHeight, width: newWidth} = Dimensions.get('window');
     setHeight(newHeight);
     setWidth(newWidth);
   };
@@ -112,11 +116,10 @@ const VideoDetails = ({route, navigation}) => {
       BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
     };
   }, [navigation]);
-  
 
   return (
     <View style={globalStyles.container} onLayout={handleLayoutChange}>
-      {!fullScreen && <CustomHeader route={route} navigation={navigation} />} 
+      {!fullScreen && <CustomHeader route={route} navigation={navigation} />}
       <Pressable
         onPress={() => setViewControl(!viewControl)}
         style={[
@@ -133,12 +136,14 @@ const VideoDetails = ({route, navigation}) => {
             height: fullScreen ? height / 1.2 : 200,
           }}
           source={{
-            uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
           }}
           resizeMode="contain"
-          paused={paused}
+          paused={paused || seeking}
           onProgress={x => {
-            setProgress(x);
+            if (!seeking) {
+              setProgress(x);
+            }
           }}
           onEnd={handleComplete}
           muted={mute}
@@ -161,29 +166,43 @@ const VideoDetails = ({route, navigation}) => {
         {/* control buttons */}
         {viewControl && !isLoading && (
           <View style={styles.controlContainer}>
-            <TouchableOpacity onPress={handleBackward}>
-              <MaterialIcons name="replay-10" color={'white'} size={30} />
-            </TouchableOpacity>
+            {!videoEnded && (
+              <TouchableOpacity onPress={handleBackward}>
+                <MaterialIcons name="replay-10" color={'white'} size={30} />
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               onPress={() => {
                 setPaused(!paused);
               }}>
-              {paused ? (
+              {paused && !videoEnded ? (
                 <MaterialIcons name="play-arrow" color={'white'} size={30} />
+              ) : videoEnded ? (
+                <TouchableOpacity
+                  style={styles.replayButton}
+                  onPress={() => {
+                    setVideoEnded(false);
+                    setPaused(false);
+                    videoRef?.current?.seek(0);
+                  }}>
+                  <MaterialIcons name="replay" color={'white'} size={40} />
+                </TouchableOpacity>
               ) : (
                 <MaterialIcons name="pause" color={'white'} size={30} />
               )}
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleForward}>
-              <MaterialIcons name="forward-10" color={'white'} size={30} />
-            </TouchableOpacity>
+            {!videoEnded && (
+              <TouchableOpacity onPress={handleForward}>
+                <MaterialIcons name="forward-10" color={'white'} size={30} />
+              </TouchableOpacity>
+            )}
           </View>
         )}
 
         {/* slider */}
 
         {!isLoading && (
-          <View style={[styles.sliderContainer,{width:width}]}>
+          <View style={[styles.sliderContainer, {width: width}]}>
             <Text style={{color: 'white'}}>
               {format(progress?.currentTime)}
             </Text>
@@ -194,10 +213,13 @@ const VideoDetails = ({route, navigation}) => {
               minimumTrackTintColor="red"
               maximumTrackTintColor="#fff"
               onValueChange={x => {
+                console.log(x,'ct')
+                setSeeking(true);
                 videoRef?.current?.seek(x);
               }}
               thumbStyle={{width: 10, height: 10}}
               value={progress?.currentTime}
+              onSlidingComplete={() => setSeeking(false)}
             />
             <Text style={{color: 'white'}}>
               {format(progress?.seekableDuration)}
