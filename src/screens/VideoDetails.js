@@ -117,6 +117,16 @@ const VideoDetails = ({route, navigation}) => {
     };
   }, [navigation]);
 
+  const handleSliderValueChange = value => {
+    setProgress(prevProgress => ({...prevProgress, currentTime: value}));
+  };
+
+  const handleSliderSlidingComplete = value => {
+    setSeeking(true);
+    videoRef?.current?.seek(value);
+    setSeeking(false);
+  };
+
   return (
     <View style={globalStyles.container} onLayout={handleLayoutChange}>
       {!fullScreen && <CustomHeader route={route} navigation={navigation} />}
@@ -136,14 +146,12 @@ const VideoDetails = ({route, navigation}) => {
             height: fullScreen ? height / 1.2 : 200,
           }}
           source={{
-            uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+            uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
           }}
           resizeMode="contain"
-          paused={paused || seeking}
+          paused={paused}
           onProgress={x => {
-            if (!seeking) {
-              setProgress(x);
-            }
+            setProgress(x);
           }}
           onEnd={handleComplete}
           muted={mute}
@@ -212,14 +220,10 @@ const VideoDetails = ({route, navigation}) => {
               maximumValue={progress?.seekableDuration}
               minimumTrackTintColor="red"
               maximumTrackTintColor="#fff"
-              onValueChange={x => {
-                console.log(x,'ct')
-                setSeeking(true);
-                videoRef?.current?.seek(x);
-              }}
+              onValueChange={handleSliderValueChange}
+              onSlidingComplete={handleSliderSlidingComplete}
               thumbStyle={{width: 10, height: 10}}
               value={progress?.currentTime}
-              onSlidingComplete={() => setSeeking(false)}
             />
             <Text style={{color: 'white'}}>
               {format(progress?.seekableDuration)}
