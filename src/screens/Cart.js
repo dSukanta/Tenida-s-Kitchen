@@ -16,6 +16,8 @@ import {Button} from '@rneui/base';
 import colors from '../constants/colors';
 import RazorpayCheckout from 'react-native-razorpay';
 import {RAZORPAY_KEY} from '@env';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 const {height, width} = Dimensions.get('window');
 
@@ -83,11 +85,42 @@ const Cart = ({navigation, route}) => {
     // navigation.navigate('Orders');
   };
 
+   // if (!userCart?.length) {
+  //   return (
+  //     <View style={[globalStyles.container,{justifyContent: 'center', alignItems: 'center'}]}>
+  //       <Image
+  //         source={require('../images/empty-cart.jpg')}
+  //         style={{
+  //           width: 300,
+  //           height: 300,
+  //           resizeMode: 'contain',
+  //           borderRadius: 10,
+  //         }}
+  //       />
+  //       <Button
+  //         title={'Explore Menu'}
+  //         onPress={() => navigation.navigate('Menu')}
+  //         buttonStyle={{
+  //           paddingVertical: 10,
+  //           borderRadius: 10,
+  //           backgroundColor: colors.red,
+  //         }}
+  //         containerStyle={{
+  //           width: '90%',
+  //           alignSelf: 'center',
+  //           marginVertical: 15,
+  //         }}
+  //       />
+  //     </View>
+  //   );
+  // }
+
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={globalStyles.container}>
       <View>
         <RedLine text={'your cart'} />
       </View>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{justifyContent: 'center', flex:1}}>
       {userCart.length ? (
         <View>
           <Text style={[globalStyles.text, {alignSelf: 'center', margin: 10}]}>
@@ -179,16 +212,9 @@ const Cart = ({navigation, route}) => {
           />
         </View>
       ) : (
-        <View style={{justifyContent: 'center', alignItems: 'center'}}>
-          <Image
-            source={require('../images/empty-cart.jpg')}
-            style={{
-              width: 300,
-              height: 300,
-              resizeMode: 'contain',
-              borderRadius: 10,
-            }}
-          />
+        <View style={{alignItems:'center'}}>
+          <Text style={[globalStyles.text,{marginVertical:10}]}>No item available in your cart</Text>
+          <MaterialCommunityIcons name='cart-remove' size={50} color={'white'}/>
           <Button
             title={'Explore Menu'}
             onPress={() => navigation.navigate('Menu')}
@@ -198,7 +224,7 @@ const Cart = ({navigation, route}) => {
               backgroundColor: colors.red,
             }}
             containerStyle={{
-              width: '90%',
+              width: '70%',
               alignSelf: 'center',
               marginVertical: 15,
             }}
@@ -206,15 +232,13 @@ const Cart = ({navigation, route}) => {
         </View>
       )}
     </ScrollView>
+    </View>
   );
 };
 
 export default Cart;
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'black',
-  },
   redLine: {
     flex: 1,
     height: 2,

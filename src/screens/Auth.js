@@ -39,9 +39,11 @@ const Auth = ({navigation}) => {
     try {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       const { idToken,user} = await GoogleSignin.signIn();
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      // console.log(googleCredential,'clg')
-      auth().signInWithCredential(googleCredential);
+      // console.log(user,'guser');
+      // if(user){
+      //   const manageUser= await makeRequest('user/adduser','POST',{email: user?.email, name: user?.name, photo: user?.photo, id: user?.id});
+      // }
+
       setUserData([user]);
       navigation.navigate('Home');
     } catch (error) {
