@@ -1,32 +1,44 @@
-import React, { useContext, useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { globalStyles } from '../constants/globalStyles';
-import { Button } from '@rneui/base';
-import { Rating, AirbnbRating } from 'react-native-ratings';
-import { Appcontext } from '../context/AppContext';
+import React, {useContext, useState} from 'react';
+import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {globalStyles} from '../constants/globalStyles';
+import {BottomSheet, Button} from '@rneui/base';
+import {Rating, AirbnbRating} from 'react-native-ratings';
+import {Appcontext} from '../context/AppContext';
 import colors from '../constants/colors';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import ProductDetails from '../screens/ProductDetails';
 
-const ProductCard = ({ data }) => {
-  const { userData, userCart, setUserCart } = useContext(Appcontext);
+
+const ProductCard = ({data}) => {
+  const {userData, userCart, setUserCart} = useContext(Appcontext);
   const [readMore, setReadMore] = useState(false);
-  const cartData = userCart.find((item) => item.id === data.id);
+  const cartData = userCart.find(item => item.id === data.id);
   const quantity = cartData ? cartData.quantity : 0;
 
-  const handleAddToCart = async (product) => {
+  const handleAddToCart = async product => {
     if (cartData) {
-      const updatedCart = userCart.map((item) =>
-        item.id === data.id ? { ...item, quantity: item.quantity + 1 } : item
+      const updatedCart = userCart.map(item =>
+        item.id === data.id ? {...item, quantity: item.quantity + 1} : item,
       );
       setUserCart(updatedCart);
     } else {
-      setUserCart([...userCart, { id: data.id, image: data.image, name: data.name, price: 299, quantity: 1 }]);
+      setUserCart([
+        ...userCart,
+        {
+          id: data.id,
+          image: data.image,
+          name: data.name,
+          price: 299,
+          quantity: 1,
+        },
+      ]);
     }
   };
 
   const handleIncreaseQuantity = () => {
     if (cartData) {
-      const updatedCart = userCart.map((item) =>
-        item.id === data.id ? { ...item, quantity: item.quantity + 1 } : item
+      const updatedCart = userCart.map(item =>
+        item.id === data.id ? {...item, quantity: item.quantity + 1} : item,
       );
       setUserCart(updatedCart);
     }
@@ -34,8 +46,8 @@ const ProductCard = ({ data }) => {
 
   const handleDecreaseQuantity = () => {
     if (cartData && quantity > 1) {
-      const updatedCart = userCart.map((item) =>
-        item.id === data.id ? { ...item, quantity: item.quantity - 1 } : item
+      const updatedCart = userCart.map(item =>
+        item.id === data.id ? {...item, quantity: item.quantity - 1} : item,
       );
       setUserCart(updatedCart);
     }
@@ -43,9 +55,8 @@ const ProductCard = ({ data }) => {
 
   // console.log(userCart,'cartitem')
 
-
   return (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={()=>setReadMore(true)}>
       <View style={styles.leftSide}>
         <Text style={styles.title}>{data?.name}</Text>
         <View style={styles.ratingContainer}>
@@ -56,31 +67,25 @@ const ProductCard = ({ data }) => {
               borderColor: '#f1c40e',
               borderRadius: 5,
             }}>
-            <Rating type="star" ratingCount={5} imageSize={10} readonly startingValue={4.5} />
+            <Rating
+              type="star"
+              ratingCount={5}
+              imageSize={10}
+              readonly
+              startingValue={4.5}
+            />
           </View>
           <Text style={styles.ratingCount}>{96} ratings</Text>
         </View>
-        <Text style={[globalStyles.text, { color: 'black' }]}>₹{299}</Text>
-        {!readMore && (
-          <Text style={styles.detailsText}>
-            {`Lorem Ipsum is simply dummy text of the printing and typesetting industry.`.substring(0, 60)}
-            <Text
-              style={[styles.detailsText, { color: 'black', fontWeight: '600' }]
-              } onPress={() => setReadMore(true)}>
-              ...read more
-            </Text>
-          </Text>
-        )}
-        {readMore && (
-          <Text style={styles.detailsText}>
-            {`Lorem Ipsum is simply dummy text of the printing and typesetting industry. `}
-            <Text
-              style={[styles.detailsText, { color: 'black', fontWeight: '600' }]
-              } onPress={() => setReadMore(false)}>
-              read less
-            </Text>
-          </Text>
-        )}
+        <Text style={[globalStyles.text, {color: 'black'}]}>₹{299}</Text>
+
+        <Text style={styles.detailsText}>
+          {`Lorem Ipsum is simply dummy text of the printing and typesetting industry.`.substring(
+            0,
+            100,
+          )}
+          ...
+        </Text>
       </View>
       <View style={styles.rightSide}>
         <Image source={data?.image} style={styles.image} />
@@ -107,7 +112,10 @@ const ProductCard = ({ data }) => {
           )}
         </View>
       </View>
-    </View>
+      <BottomSheet isVisible={readMore} onBackdropPress={()=>setReadMore(false)}>
+        <ProductDetails setReadMore={setReadMore}/>
+      </BottomSheet>
+    </TouchableOpacity>
   );
 };
 
@@ -149,7 +157,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'relative',
-    top:'-13%',
+    top: '-13%',
     left: '25%',
     width: '50%',
   },
@@ -160,11 +168,11 @@ const styles = StyleSheet.create({
   },
   quantityContainer: {
     flexDirection: 'row',
-    gap:5,
+    gap: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:colors.red,
-    borderRadius:10,
+    backgroundColor: colors.red,
+    borderRadius: 10,
   },
   quantityButton: {
     borderRadius: 5,
@@ -172,7 +180,7 @@ const styles = StyleSheet.create({
     margin: 5,
     color: 'white',
     fontWeight: 'bold',
-    fontSize:20,
+    fontSize: 20,
     marginBottom: 10,
   },
 });

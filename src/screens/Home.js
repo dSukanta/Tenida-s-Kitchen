@@ -16,6 +16,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {globalStyles} from '../constants/globalStyles';
 import RedLine from '../components/RedLine';
 import CategoriesCard from '../components/CategoriesCard';
+import CarouselComp from '../components/CarouselComp';
 
 const {height, width} = Dimensions.get('window');
 
@@ -96,6 +97,17 @@ const Home = ({navigation}) => {
     </TouchableOpacity>
   );
 
+  const sliderData=[
+    {
+      id:1,
+      image:'https://img.freepik.com/premium-vector/special-offer-sale-discount-banner_180786-46.jpg'
+    },
+    {
+      id:2,
+      image:'https://t3.ftcdn.net/jpg/03/46/18/98/360_F_346189806_SzptQ1X7BbpcAY4RRrp9iwaJw5UI1vVJ.jpg'
+    },
+  ]
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -133,22 +145,7 @@ const Home = ({navigation}) => {
           />
         </View>
         <View style={{marginTop: 20}}>
-          <FlatList
-            horizontal
-            data={data}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => (
-              <ImageBackground
-                source={require('../images/slider_image.jpg')}
-                resizeMode="cover"
-                style={[styles.secondSlider, {marginLeft: index === 0 ? 7 : 0}]}
-                imageStyle={{borderRadius: 10}}>
-                <View>
-                  <AntDesign name="play" color={'white'} size={30} />
-                </View>
-              </ImageBackground>
-            )}
-          />
+          <CarouselComp data={sliderData}/>
         </View>
 
         <View>
