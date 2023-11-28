@@ -13,6 +13,8 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import { getUniqueId} from 'react-native-device-info';
+import { getFromStorage, saveToStorage } from './src/utils/Helper';
 
 
 
@@ -23,7 +25,18 @@ useEffect(() => {
   GoogleSignin.configure({
     webClientId: '369626514007-or3ins64v3pn6pm49g5lb7cgmfn30rbc.apps.googleusercontent.com', 
   });
-}, [])
+  getDevice();
+}, []);
+
+const getDevice=async()=>{
+  let deviceId= await getFromStorage("deviceId");
+  if(!deviceId){
+     deviceId = await getUniqueId();
+    saveToStorage("deviceId", deviceId);
+  }
+ return deviceId;
+}
+
 
   return (
     <AppContextProvider>

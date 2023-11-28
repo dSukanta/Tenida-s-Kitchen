@@ -17,103 +17,42 @@ import {globalStyles} from '../constants/globalStyles';
 import RedLine from '../components/RedLine';
 import CategoriesCard from '../components/CategoriesCard';
 import CarouselComp from '../components/CarouselComp';
+import RecomendedCard from '../components/RecomendedCard';
+import HomeHeader from '../components/HomeHeader';
 
 const {height, width} = Dimensions.get('window');
 
 const Home = ({navigation}) => {
   const data = [1, 1, 1];
   const categories = [
-    {category: 'Family Pack', image: require('../images/slider_image.jpg')},
-    {category: 'All-In-1 Meals', image: require('../images/slider_image.jpg')},
-    {category: 'Mini Meals', image: require('../images/slider_image.jpg')},
+    {category: 'Soft Drinks', image: require('../images/soft_drink.webp')},
+    {category: 'All-In-1 Meals', image: require('../images/allinonemeal.jpeg')},
+    {category: 'Mini Meals', image: require('../images/minimeal.jpg')},
     {
       category: 'Chicken Starters',
-      image: require('../images/slider_image.jpg'),
+      image: require('../images/chickenmeal.png'),
     },
   ];
 
-  const renderCard = item => (
-    <TouchableOpacity
-      style={{
-        padding: 10,
-        margin: 5,
-        borderRadius: 10,
-        width: width / 2.2,
-        backgroundColor: 'white',
-        overflow: 'hidden', // Add this line
-      }}
-      onPress={() => navigation.navigate('ProductDetails', {id: 1})}>
-      <View style={{position: 'relative'}}>
-        <Card.Image
-          source={require('../images/slider_image.jpg')}
-          style={{borderRadius: 10, resizeMode: 'cover'}}
-        />
-        <TouchableOpacity
-          style={{
-            position: 'absolute',
-            top: '90%',
-            left: '30%',
-            backgroundColor: 'transparent',
-          }}>
-          <Text
-            style={{
-              backgroundColor: '#f12a2a',
-              color: 'white',
-              padding: 5,
-              paddingHorizontal: 15,
-              borderRadius: 5,
-            }}>
-            Add
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: '#74c93f',
-            padding: 5,
-            paddingVertical: 2,
-            borderRadius: 5,
-            gap: 5,
-            alignSelf: 'flex-end',
-            marginTop: 10,
-          }}>
-          <Text style={[globalStyles.text, {color: 'white'}]}>{'4.5'}</Text>
-          <AntDesign name="star" color={'white'} size={12} />
-        </View>
-        <View style={{paddingHorizontal: 7}}>
-          <Text style={[globalStyles.text, {color: 'black'}]} numberOfLines={1}>
-            Name
-          </Text>
-          <Text
-            style={{color: 'black', fontWeight: '400', fontSize: 12}}
-            numberOfLines={2}>
-            Subtitle
-          </Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-
-  const sliderData=[
+  const sliderData = [
     {
-      id:1,
-      image:'https://img.freepik.com/premium-vector/special-offer-sale-discount-banner_180786-46.jpg'
+      id: 1,
+      image:
+        'https://img.freepik.com/premium-vector/special-offer-sale-discount-banner_180786-46.jpg',
     },
     {
-      id:2,
-      image:'https://t3.ftcdn.net/jpg/03/46/18/98/360_F_346189806_SzptQ1X7BbpcAY4RRrp9iwaJw5UI1vVJ.jpg'
+      id: 2,
+      image:
+        'https://t3.ftcdn.net/jpg/03/46/18/98/360_F_346189806_SzptQ1X7BbpcAY4RRrp9iwaJw5UI1vVJ.jpg',
     },
-  ]
+  ];
 
   return (
     <View style={styles.container}>
+      <View>
+        <HomeHeader/>
+      </View>
       <ScrollView>
-        <View>
-          <RedLine text={'offers for you'} />
-        </View>
         <View>
           <FlatList
             horizontal
@@ -144,20 +83,50 @@ const Home = ({navigation}) => {
             )}
           />
         </View>
-        <View style={{marginTop: 20}}>
-          <CarouselComp data={sliderData}/>
+        <View>
+          <RedLine text={'offers for you'} />
+        </View>
+        <View style={{marginVertical: 10}}>
+          <CarouselComp data={sliderData} />
         </View>
 
         <View>
-          <RedLine text={'Shop by Categories'} />
+          <RedLine text={'Our popular Categories'} />
         </View>
 
+        <View style={{paddingVertical:10}}>
+          <FlatList
+            horizontal
+            data={categories}
+            renderItem={({item,index})=>(
+              <CategoriesCard data={item} navigation={navigation} index={index}/>
+            )}
+          />
+        </View>
+
+        {/* <View>
+          <FlatList
+            horizontal
+            data={categories}
+            renderItem={({item, index}) => (
+              <CategoriesCard
+                data={item}
+                navigation={navigation}
+                index={index}
+              />
+            )}
+          />
+        </View> */}
+
+        <View>
+          <RedLine text={'Recomended for you'} />
+        </View>
         <View style={{alignSelf: 'center', marginBottom: '18%'}}>
           <FlatList
             numColumns={2}
             data={categories}
             renderItem={({item, index}) => (
-              <CategoriesCard
+              <RecomendedCard
                 data={item}
                 navigation={navigation}
                 index={index}
@@ -175,7 +144,7 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'black',
-    flex:1,
+    flex: 1,
   },
   secondSlider: {
     width: 250,

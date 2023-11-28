@@ -31,6 +31,8 @@ export async function makeRequest(endpoint, method = 'GET', body = null, headers
         headers,
         data: body,
       };
+
+      // console.log(config,'cfg');
   
       const response = await axios(config);
       return response.data;

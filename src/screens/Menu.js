@@ -20,45 +20,45 @@ import CustomHeader from '../components/CustomHeader';
 const Menu = ({route, navigation}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const categories = [
-    {category: 'Family Pack', image: require('../images/slider_image.jpg')},
-    {category: 'All-In-1 Meals', image: require('../images/slider_image.jpg')},
-    {category: 'Mini Meals', image: require('../images/slider_image.jpg')},
+    {category: 'Soft Drinks', image: require('../images/soft_drink.webp')},
+    {category: 'All-In-1 Meals', image: require('../images/allinonemeal.jpeg')},
+    {category: 'Mini Meals', image: require('../images/minimeal.jpg')},
     {
       category: 'Chicken Starters',
-      image: require('../images/slider_image.jpg'),
+      image: require('../images/chickenmeal.png'),
     },
   ];
-  const [currentCategory, setCurrentCategory] = useState('Family Pack');
+  const [currentCategory, setCurrentCategory] = useState('Soft Drinks');
   const [productData, setProductData] = useState([
     {
       id: 0,
-      name: 'Family',
-      category: 'Family Pack',
-      image: require('../images/slider_image.jpg'),
+      name: 'Soft Drinks',
+      category: 'Soft Drinks',
+      image: require('../images/soft_drink.webp'),
     },
     {
       id: 1,
       name: 'All-In-1 Meals',
       category: 'All-In-1 Meals',
-      image: require('../images/slider_image.jpg'),
+      image: require('../images/allinonemeal.jpeg'),
     },
     {
       id: 2,
       name: 'Mini Meals',
       category: 'Mini Meals',
-      image: require('../images/slider_image.jpg'),
+      image: require('../images/minimeal.jpg'),
     },
     {
       id: 3,
       name: 'Chicken Starters',
       category: 'Chicken Starters',
-      image: require('../images/slider_image.jpg'),
+      image: require('../images/chickenmeal.png'),
     },
     {
       id: 4,
-      name: 'Family',
-      category: 'Family Pack',
-      image: require('../images/slider_image.jpg'),
+      name: 'Soft Drinks',
+      category: 'Soft Drinks',
+      image: require('../images/soft_drink.webp'),
     },
   ]);
 
@@ -76,7 +76,7 @@ const Menu = ({route, navigation}) => {
         setCurrentCategory(categories[route?.params?.index]?.category);
       } else {
         setCurrentIndex(0);
-        setCurrentCategory('Family Pack');
+        setCurrentCategory('Soft Drinks');
       }
     }, [route?.params?.index]),
   );

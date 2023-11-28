@@ -20,12 +20,13 @@ import {makeRequest} from '../utils/Functions';
 import axios from 'axios';
 import auth from '@react-native-firebase/auth';
 import { Appcontext } from '../context/AppContext';
+import { getFromStorage } from '../utils/Helper';
 
 
 
 const Auth = ({navigation}) => {
   const [showBottomSheet, setShowBottomSheet] = useState(false);
-  const {setUserData}= useContext(Appcontext);
+  const {setUserData,Logout}= useContext(Appcontext);
 
   const toggleBottomSheet = () => {
     setShowBottomSheet(!showBottomSheet);
@@ -38,14 +39,25 @@ const Auth = ({navigation}) => {
   const signInWithGoogle = async () => {
     try {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-      const { idToken,user} = await GoogleSignin.signIn();
-      // console.log(user,'guser');
-      // if(user){
-      //   const manageUser= await makeRequest('user/adduser','POST',{email: user?.email, name: user?.name, photo: user?.photo, id: user?.id});
-      // }
+      const { user} = await GoogleSignin.signIn();
+      const deviceid = await getFromStorage('deviceId');
 
-      setUserData([user]);
-      navigation.navigate('Home');
+      // console.log(user,deviceid,'g-user');
+      if(user && deviceid){
+        const manageUser= await makeRequest('api/v1/userauth/register','POST',{email: user?.email, fullname: user?.name, profile_picture: user?.photo, deviceId:deviceid},{
+          loginmethod:"email",
+          uid:user?.id,
+          deviceid: deviceid,
+          devicename:"Android"
+        });
+        console.log(manageUser,'user')
+        setUserData([user]);
+        navigation.navigate('Home');
+      }else{
+        Alert.alert('INVALID','Invalid user or device');
+        await Logout();
+      }
+      
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         Alert.alert('Cancelled','Sign in cancelled')
