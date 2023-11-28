@@ -1,22 +1,43 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import {globalStyles} from '../constants/globalStyles';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Button } from '@rneui/base';
 import colors from '../constants/colors';
+import Geolocation from '@react-native-community/geolocation';
+import { Appcontext } from '../context/AppContext';
+
 
 const HomeHeader = () => {
+const [curLocation,setCurlocation] = useState(null);
+const {userData,Logout}= useContext(Appcontext);
+
+
+
+const getLoc= async(lat,long)=>{
+   const res= await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${long}`);
+  //  console.log(await res.json(),'response')
+  const data = await res.json();
+  setCurlocation(data);
+}
+
+useEffect(()=>{
+  Geolocation.getCurrentPosition(info => getLoc(info?.coords?.latitude,info?.coords?.longitude));
+},[])
+
   return (
     <View style={styles.container}>
       <View style={styles.childContainer}>
         <Image source={require('../images/logo.jpg')} style={styles.imgStyle} />
       <View>
-        <Text style={globalStyles.text}>Deliver to </Text>
-        <Text style={[globalStyles.text, {fontSize: 12}]}>{'Durgapur'.substring(0,20)}...</Text>
+        <Text style={globalStyles.text}>You are now in</Text>
+        {/* <Text style={[globalStyles.text, {fontSize: 12}]}>{curLocation?.address?.road?.substring(0,20)}...</Text> */}
+        <Text style={[globalStyles.text, {fontSize: 12}]}>{curLocation?.address?.city?.length>20?substring(0,20)+"...":curLocation?.address?.city}</Text>
+        <Text style={[globalStyles.text, {fontSize: 12}]}>{curLocation?.address?.postcode}</Text>
       </View>
       </View>
-      <View>
+      {userData.length ? <View>
         <Button
           title={'Logout'}
           icon={{
@@ -27,8 +48,9 @@ const HomeHeader = () => {
           }}
           buttonStyle={{backgroundColor:colors.red,borderRadius:10}}
           titleStyle={globalStyles.text}
+          onPress={()=>userData.length?Logout():null}
         />
-      </View>
+      </View>:null}
     </View>
   );
 };
@@ -47,7 +69,6 @@ const styles = StyleSheet.create({
   childContainer:{
     flex: 1,
     flexDirection: 'row',
-    // justifyContent: 'space-between',
     alignItems: 'center',
     gap:10,
   },
