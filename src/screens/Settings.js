@@ -1,193 +1,145 @@
 import {
+  ImageBackground,
+  Modal,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  Image,
-  TextInput,
-  ScrollView,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import {ListItem} from '@rneui/themed';
-import {Button} from '@rneui/base';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {globalStyles} from '../constants/globalStyles';
+import {Button, Card, ListItem} from '@rneui/base';
+import {Dimensions} from 'react-native';
 import colors from '../constants/colors';
-import { Appcontext } from '../context/AppContext';
-import { getProfileName } from '../utils/Helper';
+import {Image} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Appcontext} from '../context/AppContext';
+import EditComp from '../components/EditComp';
+import CustomHeader from '../components/CustomHeader';
+import RedLine from '../components/RedLine';
 
-const Settings = ({route, navigation}) => {
+const {height, width} = Dimensions.get('window');
+
+const Settings = ({route,navigation}) => {
   const [edit, setEdit] = useState(false);
   const [inputData, setInputData] = useState({});
-  const {userData,setUserData} = useContext(Appcontext);
+  const {userData, setUserData} = useContext(Appcontext);
+  const [date, setDate] = useState(new Date('2000-12-31'));
+  const [open, setOpen] = useState(false);
 
   const handleSave = () => {
     setEdit(false);
+    // console.log(inputData,'input data');
+    // setUserData([inputData]);
   };
 
-  useEffect(()=>{
-    setInputData(userData[0])
-  },[userData])
+  useEffect(() => {
+    setInputData(userData[0]);
+  }, [userData]);
+
+  const handleLeftClick = () => {
+    navigation.goBack();
+  };
+
+  const handleRightClick = () => {
+    setEdit(!edit);
+  };
+
+  const handleSubmit= async()=>{
+    console.log(userData,'data');
+    setEdit(false);
+  }
 
   return (
-    <View style={styles.container}>
-      {!edit ? (
+    <View style={globalStyles.container}>
+      <ImageBackground
+        source={{uri: 'https://shorturl.at/LXZ16'}}
+        style={styles.upperContainer}
+        imageStyle={{opacity: 0.5}}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={25} color={'white'} />
+          <TouchableOpacity onPress={handleLeftClick}>
+            <MaterialCommunityIcons
+              name={'keyboard-backspace'}
+              size={25}
+              color={'white'}
+            />
           </TouchableOpacity>
-          <Text style={[globalStyles.text]}>Profile</Text>
-          <Button
-            title={'Edit Profile'}
-            icon={{
-              name: 'edit',
-              type: 'antdesign',
-              size: 15,
-              color: 'white',
-            }}
-            buttonStyle={{borderRadius: 10, backgroundColor: colors.red}}
-            onPress={() => setEdit(true)}
-          />
-        </View>
-      ) : (
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => setEdit(false)}>
-            <Ionicons name="close" size={20} color={'white'} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleSave}>
-            <Ionicons name="checkmark-sharp" size={20} color={'white'} />
+          <TouchableOpacity onPress={handleRightClick}>
+            <MaterialCommunityIcons
+              name={'account-edit'}
+              size={25}
+              color={'white'}
+            />
           </TouchableOpacity>
         </View>
-      )}
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View>
-          <View
-            style={{
-              flexDirection: 'row',
-              paddingVertical: 10,
-              alignItems: 'center',
-            }}>
-            <View style={styles.redLine} />
-            <View
-              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-              <Image
-                source={{
-                  uri: 'https://cdn-icons-png.flaticon.com/512/3177/3177440.png',
-                }}
-                style={styles.profileimgStyle}
-              />
-            </View>
-            <View style={styles.redLine} />
-          </View>
-          <View
-            style={{
-              alignItems: 'center',
-              borderBottomWidth: 1,
-              borderColor: colors.red,
-              paddingBottom: 10,
-              marginHorizontal: '5%',
-            }}>
-            {!edit ? (
-              <Text
-                style={{
-                  fontWeight: '900',
-                  color: colors.red,
-                  fontSize: 18,
-                  flexWrap: 'wrap',
-                  marginHorizontal: 10,
-                }}>
-                {getProfileName(userData)}
-              </Text>
-            ) : (
-              <Button
-                title={'Change Profile Picture'}
-                buttonStyle={{borderRadius: 10}}
-              />
-            )}
-            {/* <Text>{'user@email'}</Text> */}
-          </View>
-        </View>
-        <View style={styles.contentContainer}>
+      </ImageBackground>
+      <View style={styles.imageContainer}>
+        <Image
+          source={{
+            uri: 'https://shorturl.at/LXZ16',
+          }}
+          style={styles.image}
+        />
+        <Text style={[globalStyles.text, {marginBottom: 10, fontSize: 18}]}>
+          Name
+        </Text>
+      </View>
+      <Card containerStyle={[styles.upperContainer, {height: height,width:'90%',alignSelf:'center'}]}>
+        <ScrollView contentContainerStyle={{marginTop: '25%'}}>
           <ListItem bottomDivider>
             <ListItem.Content>
+              <View style={{flexDirection:'row',gap:10,justifyContent:'center',alignItems:'center'}}>
+              <MaterialCommunityIcons name='account' size={25}/>
               <ListItem.Subtitle>Name</ListItem.Subtitle>
-              {!edit ? (
-                <ListItem.Title>
-                  {inputData?.name || 'No name provided'}
-                </ListItem.Title>
-              ) : (
-                <TextInput
-                  placeholder="name"
-                  style={styles.inputStyle}
-                  onChangeText={text =>
-                    setInputData({...inputData, name: text})
-                  }
-                  value={inputData.name}
-                  placeholderTextColor={'black'}
-                />
-              )}
+              </View>
+              <ListItem.Title>
+                {inputData?.fullname || 'No name provided'}
+              </ListItem.Title>
             </ListItem.Content>
           </ListItem>
           <ListItem bottomDivider>
             <ListItem.Content>
+              <View style={{flexDirection:'row',gap:10,justifyContent:'center',alignItems:'center'}}>
+              <MaterialCommunityIcons name='email' size={25}/>
               <ListItem.Subtitle>Email</ListItem.Subtitle>
-              {!edit ? (
-                <ListItem.Title>
-                  {inputData?.email || 'No email provided'}
-                </ListItem.Title>
-              ) : (
-                <TextInput
-                  placeholder="email"
-                  style={styles.inputStyle}
-                  onChangeText={text =>
-                    setInputData({...inputData, email: text})
-                  }
-                  value={inputData.email}
-                  placeholderTextColor={'black'}
-                />
-              )}
+              </View>
+              <ListItem.Title>
+                {inputData?.fullname || 'No email provided'}
+              </ListItem.Title>
             </ListItem.Content>
           </ListItem>
           <ListItem bottomDivider>
             <ListItem.Content>
-              <ListItem.Subtitle>Date of Birth</ListItem.Subtitle>
-              {!edit ? (
-                <ListItem.Title>
-                  {inputData?.dob || 'No DOB provided'}
-                </ListItem.Title>
-              ) : (
-                <TextInput
-                  placeholder="Date of Birth"
-                  style={styles.inputStyle}
-                  onChangeText={text => setInputData({...inputData, dob: text})}
-                  value={inputData.dob}
-                  placeholderTextColor={'black'}
-                />
-              )}
+              <View style={{flexDirection:'row',gap:10,justifyContent:'center',alignItems:'center'}}>
+              <MaterialCommunityIcons name='calendar-account-outline' size={25}/>
+              <ListItem.Subtitle>BirthDay</ListItem.Subtitle>
+              </View>
+              <ListItem.Title>
+                {inputData?.fullname || 'No date of birth provided'}
+              </ListItem.Title>
             </ListItem.Content>
           </ListItem>
           <ListItem bottomDivider>
             <ListItem.Content>
+              <View style={{flexDirection:'row',gap:10,justifyContent:'center',alignItems:'center'}}>
+              <MaterialCommunityIcons name='cellphone' size={25}/>
               <ListItem.Subtitle>Phone no.</ListItem.Subtitle>
-              {!edit ? (
-                <ListItem.Title>
-                  {inputData?.phone || 'Phone number not added'}
-                </ListItem.Title>
-              ) : (
-                <TextInput
-                  placeholder="Phone no."
-                  style={styles.inputStyle}
-                  onChangeText={text =>
-                    setInputData({...inputData, town: text})
-                  }
-                  value={inputData.town}
-                  placeholderTextColor={'black'}
-                />
-              )}
+              </View>
+              <ListItem.Title>
+                {inputData?.fullname || 'Phone number not provided'}
+              </ListItem.Title>
             </ListItem.Content>
           </ListItem>
-        </View>
-      </ScrollView>
+        </ScrollView>
+        <Modal animationType='slide' visible={edit}>
+          <View style={globalStyles.container}>
+          <RedLine text='Edit Profile'/>
+          <EditComp/>
+          <Button title={'Submit'} onPress={handleSubmit} buttonStyle={{backgroundColor:colors.red}}/>
+          </View>
+        </Modal>
+      </Card>
     </View>
   );
 };
@@ -195,53 +147,38 @@ const Settings = ({route, navigation}) => {
 export default Settings;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'black',
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: 10,
-    padding: 10,
-    alignItems: 'center',
-  },
-  profileimgStyle: {
-    width: 100,
-    height: 100,
-    resizeMode: 'cover',
-    borderRadius: 100,
-  },
-  redLine: {
-    flex: 1,
-    height: 2,
-    backgroundColor: colors.red,
-    margin: 10,
-  },
-  contentContainer: {
-    width: '90%',
-    alignSelf: 'center',
-    marginTop: 15,
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    margin: 10,
-    padding: 10,
-    alignItems: 'center',
-  },
-  inputStyle: {
-    borderWidth: 1,
-    borderRadius: 10,
-    width: '100%',
     paddingHorizontal: 20,
-    marginTop: 5,
-    color:'black',
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  upperContainer: {
+    height: height / 3.5,
+    backgroundColor: 'transparent',
+    width: width,
+    padding: 0,
+    margin: 0,
+    borderWidth: 0,
+    position: 'relative',
+  },
+  imageContainer: {
+    width: width / 4,
+    height: width / 4,
+    borderRadius: width / 4,
+    alignSelf: 'center',
+    position: 'absolute',
+    top: width / 2.5,
+    left: width / 2.6,
+    zIndex: 1000,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+    marginVertical: 5,
+    borderWidth: 5,
+    borderColor: 'white',
   },
 });

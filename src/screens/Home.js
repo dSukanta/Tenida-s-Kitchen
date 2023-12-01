@@ -70,7 +70,7 @@ const Home = ({navigation}) => {
   const detectLogin= async()=>{
     const token = await getFromStorage('token');
     const user = await getFromStorage('user');
-    console.log(token, user,'user');
+    // console.log(token, user,'user');
     if(  token && user){
         setUserData(user)
     }else{
