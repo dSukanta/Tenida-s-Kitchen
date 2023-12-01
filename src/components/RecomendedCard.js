@@ -1,44 +1,192 @@
-import React from 'react';
-import { View, Text, ImageBackground, StyleSheet, Dimensions } from 'react-native';
-import { globalStyles } from '../constants/globalStyles';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import React, {useContext, useState} from 'react';
+import {View, Text, Image, StyleSheet, TouchableOpacity, Dimensions} from 'react-native';
+import {globalStyles} from '../constants/globalStyles';
+import {BottomSheet, Button} from '@rneui/base';
+import {Rating, AirbnbRating} from 'react-native-ratings';
+import {Appcontext} from '../context/AppContext';
+import colors from '../constants/colors';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import ProductDetails from '../screens/ProductDetails';
 
 const {height, width} = Dimensions.get('window');
 
-const RecomendedCard = ({ data,navigation,index }) => {
+
+const ProductCard = ({data}) => {
+  const {userData, userCart, setUserCart} = useContext(Appcontext);
+  const [readMore, setReadMore] = useState(false);
+  const cartData = userCart.find(item => item.id === data.id);
+  const quantity = cartData ? cartData.quantity : 0;
+
+  const handleAddToCart = async product => {
+    if (cartData) {
+      const updatedCart = userCart.map(item =>
+        item.id === data.id ? {...item, quantity: item.quantity + 1} : item,
+      );
+      setUserCart(updatedCart);
+    } else {
+      setUserCart([
+        ...userCart,
+        {
+          id: data.id,
+          image: data.image,
+          name: data.name,
+          price: 299,
+          quantity: 1,
+        },
+      ]);
+    }
+  };
+
+  const handleIncreaseQuantity = () => {
+    if (cartData) {
+      const updatedCart = userCart.map(item =>
+        item.id === data.id ? {...item, quantity: item.quantity + 1} : item,
+      );
+      setUserCart(updatedCart);
+    }
+  };
+
+  const handleDecreaseQuantity = () => {
+    if (cartData && quantity > 1) {
+      const updatedCart = userCart.map(item =>
+        item.id === data.id ? {...item, quantity: item.quantity - 1} : item,
+      );
+      setUserCart(updatedCart);
+    }
+  };
+
+  // console.log(userCart,'cartitem')
+
   return (
-    <TouchableOpacity onPress={()=>navigation.navigate('Menu',{index})}>
-    <ImageBackground source={data?.image} style={styles.card}>
-      <View style={styles.overlay}>
-        <Text style={[globalStyles.text,{fontSize:18}]}>{data?.category}</Text>
+    <TouchableOpacity style={styles.card} onPress={()=>setReadMore(true)}>
+      <View style={styles.leftSide}>
+        <Text style={styles.title}>{data?.name}</Text>
+        <View style={styles.ratingContainer}>
+          <View
+            style={{
+              padding: 5,
+              borderWidth: 1,
+              borderColor: '#f1c40e',
+              borderRadius: 5,
+            }}>
+            <Rating
+              type="star"
+              ratingCount={5}
+              imageSize={10}
+              readonly
+              startingValue={4.5}
+            />
+          </View>
+          <Text style={styles.ratingCount}>{96} ratings</Text>
+        </View>
+        <Text style={[globalStyles.text, {color: 'black'}]}>₹{299}</Text>
+
+        <Text style={styles.detailsText}>
+          {`Lorem Ipsum is simply dummy text of the printing and typesetting industry.`.substring(
+            0,
+            100,
+          )}
+          ...
+        </Text>
       </View>
-    </ImageBackground>
+      <View style={styles.rightSide}>
+        <Image source={data?.image} style={styles.image} />
+        <View style={styles.buttonContainer}>
+          {cartData ? (
+            <View style={styles.quantityContainer}>
+              <TouchableOpacity onPress={handleDecreaseQuantity}>
+                <Text style={styles.quantityButton}>-</Text>
+              </TouchableOpacity>
+              <Text style={globalStyles.text}>{quantity}</Text>
+              <TouchableOpacity onPress={handleIncreaseQuantity}>
+                <Text style={styles.quantityButton}>+</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <Button
+              title="Add"
+              buttonStyle={{
+                backgroundColor: colors.red,
+                borderRadius: 10,
+              }}
+              onPress={() => handleAddToCart(data)}
+            />
+          )}
+        </View>
+      </View>
+      <BottomSheet isVisible={readMore} onBackdropPress={()=>setReadMore(false)}>
+        <ProductDetails setReadMore={setReadMore}/>
+      </BottomSheet>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    width:width/2.5,
-    borderRadius: 10,
-    overflow: 'hidden',
-    height: width/2.5, // adjust the height as needed
+    width:(width*90)/100,
+    flexDirection: 'row',
+    backgroundColor: 'white',
     margin: 10,
-    elevation: 3, // for Android shadow
-    shadowColor: '#000', // for iOS shadow
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    padding: 10,
+    borderRadius: 10,
+    alignSelf:'center'
   },
-  overlay: {
+  leftSide: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // adjust the opacity as needed
+    marginRight: 10,
+    padding: 10,
+  },
+  rightSide: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ratingCount: {
+    fontSize: 12,
+    color: 'black',
+    margin: 10,
+  },
+  image: {
+    width: '100%',
+    height: 120,
+    resizeMode: 'cover',
+    borderRadius: 10,
+  },
+  buttonContainer: {
+    position: 'relative',
+    top: '-13%',
+    left: '25%',
+    width: '50%',
+  },
+  detailsText: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: 'grey',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    gap: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.red,
+    borderRadius: 10,
+  },
+  quantityButton: {
+    borderRadius: 5,
+    paddingHorizontal: 5,
+    margin: 5,
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginBottom: 10,
   },
 });
 
-export default RecomendedCard;
+export default ProductCard;

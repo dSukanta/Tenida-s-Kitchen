@@ -109,6 +109,18 @@ const Landing = ({navigation}) => {
     ]);
   };
 
+  const getProfileName= ()=>{
+    if(userData[0]?.fullname){
+      return userData[0]?.fullname?.split(" ")[0]
+    };
+    if(!userData[0]?.fullname && userData[0]?.email ){
+      return userData[0]?.email?.split("@")[0]
+    };
+    if(!userData[0]?.fullname && !userData[0]?.email && userData[0]?.phone){
+      return userData[0]?.phone
+    };
+  };
+
 
   return (
     <ScrollView style={styles.container}>
@@ -149,7 +161,7 @@ const Landing = ({navigation}) => {
               alignItems: 'center',
             }}>
             <MaterialIcons name="person" size={25} color={'white'} />
-            <Text style={[globalStyles.text, {fontSize: 18}]}>Sukanta</Text>
+            <Text style={[globalStyles.text, {fontSize: 18}]}>{getProfileName() || 'Unknown'}</Text>
           </View>
           <TouchableOpacity onPress={() => navigation.navigate('Rewards')}>
             <MaterialIcons name="emoji-events" size={25} color={'white'} />

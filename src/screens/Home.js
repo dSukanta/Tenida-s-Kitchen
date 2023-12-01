@@ -9,7 +9,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import {Button} from '@rneui/base';
 import {Card} from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -19,10 +19,15 @@ import CategoriesCard from '../components/CategoriesCard';
 import CarouselComp from '../components/CarouselComp';
 import RecomendedCard from '../components/RecomendedCard';
 import HomeHeader from '../components/HomeHeader';
+import { Appcontext } from '../context/AppContext';
+import { getFromStorage } from '../utils/Helper';
 
 const {height, width} = Dimensions.get('window');
 
 const Home = ({navigation}) => {
+
+  const {userData,setUserData} = useContext(Appcontext);
+
   const data = [1, 1, 1];
   const categories = [
     {category: 'Soft Drinks', image: require('../images/soft_drink.webp')},
@@ -47,10 +52,40 @@ const Home = ({navigation}) => {
     },
   ];
 
+  const recomendedProducts=[
+    {
+      id: 0,
+      name: 'Soft Drinks',
+      category: 'Soft Drinks',
+      image: require('../images/soft_drink.webp'),
+    },
+    {
+      id: 1,
+      name: 'All-In-1 Meals',
+      category: 'All-In-1 Meals',
+      image: require('../images/allinonemeal.jpeg'),
+    },
+  ];
+
+  const detectLogin= async()=>{
+    const token = await getFromStorage('token');
+    const user = await getFromStorage('user');
+    console.log(token, user,'user');
+    if(  token && user){
+        setUserData(user)
+    }else{
+      setUserData([]);
+    }
+  };
+
+  useEffect(()=>{
+    detectLogin();
+  },[]);
+
   return (
     <View style={styles.container}>
       <View>
-        <HomeHeader/>
+        <HomeHeader navigation={navigation}/>
       </View>
       <ScrollView>
         <View>
@@ -97,6 +132,7 @@ const Home = ({navigation}) => {
         <View style={{paddingVertical:10}}>
           <FlatList
             horizontal
+            showsHorizontalScrollIndicator={false}
             data={categories}
             renderItem={({item,index})=>(
               <CategoriesCard data={item} navigation={navigation} index={index}/>
@@ -123,8 +159,7 @@ const Home = ({navigation}) => {
         </View>
         <View style={{alignSelf: 'center', marginBottom: '18%'}}>
           <FlatList
-            numColumns={2}
-            data={categories}
+            data={recomendedProducts}
             renderItem={({item, index}) => (
               <RecomendedCard
                 data={item}

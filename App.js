@@ -37,7 +37,6 @@ const getDevice=async()=>{
  return deviceId;
 }
 
-
   return (
     <AppContextProvider>
     <NavigationContainer>

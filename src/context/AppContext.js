@@ -1,5 +1,6 @@
 import React, {createContext, useEffect, useState} from 'react';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import { removeFromStorage } from '../utils/Helper';
 
 
 export const Appcontext = createContext();
@@ -18,8 +19,16 @@ export const AppContextProvider = ({children}) => {
 
   async function Logout() {
     try {
-      await GoogleSignin.signOut();
-      setUserData([]);
+      if(userData[0]?.loginMethod ==='phone'){
+        await removeFromStorage('token');
+        await removeFromStorage('user');
+        setUserData([]);
+      }else{
+        await GoogleSignin.signOut();
+        await removeFromStorage('token');
+        await removeFromStorage('user');
+        setUserData([]);
+      }
     } catch (error) {
       console.error(error);
     }

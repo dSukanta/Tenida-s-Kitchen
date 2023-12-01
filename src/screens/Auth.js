@@ -1,4 +1,4 @@
-import React, {useState,useContext} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   ScrollView,
   Dimensions,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {globalStyles} from '../constants/globalStyles';
@@ -19,14 +20,17 @@ import {
 import {makeRequest} from '../utils/Functions';
 import axios from 'axios';
 import auth from '@react-native-firebase/auth';
-import { Appcontext } from '../context/AppContext';
-import { getFromStorage } from '../utils/Helper';
-
-
+import {Appcontext} from '../context/AppContext';
+import {getFromStorage, saveToStorage} from '../utils/Helper';
+import {serverRequest} from '../utils/ApiRequests';
 
 const Auth = ({navigation}) => {
   const [showBottomSheet, setShowBottomSheet] = useState(false);
-  const {setUserData,Logout}= useContext(Appcontext);
+  const {setUserData, Logout} = useContext(Appcontext);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [confirmationCode, setConfirmationCode] = useState('');
+  const [confirm, setConfirm] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const toggleBottomSheet = () => {
     setShowBottomSheet(!showBottomSheet);
@@ -38,42 +42,132 @@ const Auth = ({navigation}) => {
 
   const signInWithGoogle = async () => {
     try {
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-      const { user} = await GoogleSignin.signIn();
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      const {user} = await GoogleSignin.signIn();
       const deviceid = await getFromStorage('deviceId');
 
       // console.log(user,deviceid,'g-user');
-      if(user && deviceid){
-        const manageUser= await makeRequest('api/v1/userauth/register','POST',{email: user?.email, fullname: user?.name, profile_picture: user?.photo, deviceId:deviceid},{
-          loginmethod:"email",
-          uid:user?.id,
-          deviceid: deviceid,
-          devicename:"Android"
+      if (user && deviceid) {
+        const manageUser = await makeRequest(
+          'api/v1/userauth/register',
+          'POST',
+          {
+            email: user?.email,
+            fullname: user?.name,
+            profile_picture: user?.photo,
+            deviceId: deviceid,
+          },
+          {
+            loginmethod: 'email',
+            uid: user?.id,
+            deviceid: deviceid,
+            devicename: 'Android',
+          },
+        );
+        // console.log(manageUser,'user')
+        await saveToStorage('user', [manageUser?.user]);
+        await saveToStorage('token', manageUser?.user?._id);
+        setUserData([manageUser]);
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Main', screen: 'Home'}],
         });
-        console.log(manageUser,'user')
-        setUserData([user]);
-        navigation.navigate('Home');
-      }else{
-        Alert.alert('INVALID','Invalid user or device');
+      } else {
+        Alert.alert('INVALID', 'Invalid user or device');
         await Logout();
       }
-      
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        Alert.alert('Cancelled','Sign in cancelled')
+        Alert.alert('Cancelled', 'Sign in cancelled');
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        Alert.alert('Wait','Sign in already in progress')
+        Alert.alert('Wait', 'Sign in already in progress');
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        Alert.alert('Unavilable','Google Play Services is not available')
+        Alert.alert('Unavilable', 'Google Play Services is not available');
       } else {
-        Alert.alert('Error: ',error)
+        Alert.alert('Error: ', error);
       }
     }
   };
 
-  const handleLogin = async () => {
-    navigation.navigate('Main', {screen: 'Home'});
+  const phoneAuth = async () => {
+    setLoading(true);
+    try {
+      const confirmation = await auth().signInWithPhoneNumber(
+        `+91${phoneNumber}`,
+      );
+      setConfirm(confirmation);
+      // console.log(confirmation,'cnf');
+      Alert.alert('Success!', 'Confirmation code sent to your phone.');
+    } catch (error) {
+      Alert.alert('Error!', 'Error sending code');
+      console.error('Error sending code:', error);
+    }
+    setLoading(false);
   };
+
+  const confirmCode = async () => {
+    setLoading(true);
+    try {
+      const confirmRes = await confirm.confirm(confirmationCode);
+      // console.log(confirmRes,'phone confirmation response');
+      const deviceid = await getFromStorage('deviceId');
+
+      if (confirmRes?.user?.phoneNumber) {
+        // console.log(confirmRes?.user?.phoneNumber,'phone number');
+
+        try {
+          const manageUser = await makeRequest(
+            'api/v1/userauth/register',
+            'POST',
+            {phone: confirmRes?.user?.phoneNumber?.split("+91")[1]},
+            {
+              loginmethod: 'phone',
+              deviceid: deviceid,
+              devicename: 'Android',
+            },
+          );
+          Alert.alert('Success', 'Phone number confirmed!');
+          await saveToStorage('user', [manageUser?.user]);
+          await saveToStorage('token', manageUser?.user?._id);
+          setUserData([manageUser]);
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'Main', screen: 'Home'}],
+          });
+          // console.log(manageUser,'ph user');
+        } catch (error) {
+          Alert.alert('Error!',error?.response.data.message||'Internal Error');
+          console.log(error?.response.data.message, ':error');
+        }
+      }
+      Alert.alert('Success', 'Phone number confirmed!');
+    } catch (err) {
+      console.log(err, 'err');
+    }
+    setLoading(false);
+  };
+
+  // const phoneAuthR = async () => {
+  //   const deviceid = await getFromStorage('deviceId');
+  //   console.log(deviceid,'deviceId');
+  //   try {
+  //     const manageUser = await makeRequest(
+  //       'api/v1/userauth/register',
+  //       'POST',
+  //       {phone: '7872528238'},
+  //       {
+  //         loginmethod: 'phone',
+  //         deviceid: deviceid,
+  //         devicename: 'Android',
+  //       },
+  //     );
+  //     console.log(manageUser, 'manage');
+  //   } catch (err) {
+  //     console.log(err.response.data.message, 'err');
+  //   }
+  // };
+
+  // console.log(phoneNumber,confirmationCode,'input')
 
   return (
     <TouchableOpacity
@@ -92,14 +186,34 @@ const Auth = ({navigation}) => {
           <View style={styles.redLine} />
         </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Phone Number"
-          keyboardType="numeric"
-        />
+        {!confirm ? (
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Phone Number"
+            keyboardType="numeric"
+            onChangeText={setPhoneNumber}
+          />
+        ) : (
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Code"
+            keyboardType="numeric"
+            onChangeText={setConfirmationCode}
+          />
+        )}
 
-        <TouchableOpacity style={styles.continueButton} onPress={handleLogin}>
-          <Text style={styles.continueButtonText}>Continue</Text>
+        <TouchableOpacity
+          style={styles.continueButton}
+          onPress={!confirm ? phoneAuth : confirmCode}
+          // onPress={phoneAuthR}
+        >
+          {!loading ? (
+            <Text style={styles.continueButtonText}>
+              {confirm ? 'Verify' : 'Continue'}
+            </Text>
+          ) : (
+            <ActivityIndicator size={'small'} color={'white'} />
+          )}
         </TouchableOpacity>
 
         <View style={[styles.loginTextContainer, {marginTop: 10}]}>
@@ -137,7 +251,8 @@ const Auth = ({navigation}) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.bottomSheetItem}
-              onPress={handleLogin}>
+              // onPress={handleLogin}
+              >
               <Entypo name="mail" size={20} color={'grey'} />
               <Text>Continue with Email</Text>
             </TouchableOpacity>
@@ -174,6 +289,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
     backgroundColor: 'white',
+    color: 'black',
   },
   continueButton: {
     width: '80%',

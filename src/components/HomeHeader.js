@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Alert, Image, StyleSheet, Text, View} from 'react-native';
 import React, { useEffect, useState,useContext } from 'react';
 import {globalStyles} from '../constants/globalStyles';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -9,9 +9,21 @@ import Geolocation from '@react-native-community/geolocation';
 import { Appcontext } from '../context/AppContext';
 
 
-const HomeHeader = () => {
+const HomeHeader = ({navigation}) => {
 const [curLocation,setCurlocation] = useState(null);
 const {userData,Logout}= useContext(Appcontext);
+
+const handleLogout= async()=>{
+  Alert.alert('Are you sure','You want to log out?',[
+    {
+      text:'Yes',
+      onPress:()=> {Logout(); Alert.alert('Success','You have been logged out successfully.')}
+    },
+    {
+      text:'No'
+    }
+  ])
+}
 
 
 
@@ -30,11 +42,11 @@ useEffect(()=>{
     <View style={styles.container}>
       <View style={styles.childContainer}>
         <Image source={require('../images/logo.jpg')} style={styles.imgStyle} />
-      <View>
+     <View>
         <Text style={globalStyles.text}>You are now in</Text>
         {/* <Text style={[globalStyles.text, {fontSize: 12}]}>{curLocation?.address?.road?.substring(0,20)}...</Text> */}
-        <Text style={[globalStyles.text, {fontSize: 12}]}>{curLocation?.address?.city?.length>20?substring(0,20)+"...":curLocation?.address?.city}</Text>
-        <Text style={[globalStyles.text, {fontSize: 12}]}>{curLocation?.address?.postcode}</Text>
+        <Text style={[globalStyles.text, {fontSize: 12}]}>{curLocation?(curLocation.address?.city?.length>20?substring(0,20)+"...":curLocation?.address?.city):('Kolkata')}</Text>
+        <Text style={[globalStyles.text, {fontSize: 12}]}>{curLocation?curLocation.address?.postcode:700001}</Text>
       </View>
       </View>
       {userData.length ? <View>
@@ -43,14 +55,29 @@ useEffect(()=>{
           icon={{
             name:'logout',
             type:'antdesign',
-            size:20,
+            size:15,
             color:'white'
           }}
           buttonStyle={{backgroundColor:colors.red,borderRadius:10}}
           titleStyle={globalStyles.text}
-          onPress={()=>userData.length?Logout():null}
+          onPress={handleLogout}
         />
-      </View>:null}
+      </View>:
+      <View>
+      <Button
+        title={'Login'}
+        icon={{
+          name:'login',
+          type:'antdesign',
+          size:15,
+          color:'white'
+        }}
+        buttonStyle={{backgroundColor:colors.red,borderRadius:10,}}
+        titleStyle={globalStyles.text}
+        onPress={()=>navigation.navigate('Auth')}
+      />
+    </View>
+      }
     </View>
   );
 };

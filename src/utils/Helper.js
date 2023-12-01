@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
 export const saveToStorage= async(name,payload)=>{
     try {
         const data= JSON.stringify(payload);
