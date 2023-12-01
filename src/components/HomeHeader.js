@@ -13,19 +13,25 @@ const HomeHeader = ({navigation}) => {
 const [curLocation,setCurlocation] = useState(null);
 const {userData,Logout}= useContext(Appcontext);
 
-const handleLogout= async()=>{
-  Alert.alert('Are you sure','You want to log out?',[
+
+async function handleLogout() {
+  Alert.alert('Are you sure', 'You want to logout?', [
     {
-      text:'Yes',
-      onPress:()=> {Logout(); Alert.alert('Success','You have been logged out successfully.')}
+      text: 'Yes',
+
+      onPress: async() => {
+        await Logout();
+        Alert.alert('Success!', 'Logged out successfully');
+        navigation.navigate('Auth');
+      },
     },
     {
-      text:'No'
-    }
-  ])
-}
-
-
+      text: 'No',
+      onPress: () => console.log('Cancel Pressed'),
+      style: 'cancel',
+    },
+  ]);
+};
 
 const getLoc= async(lat,long)=>{
    const res= await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${long}`);
@@ -36,7 +42,9 @@ const getLoc= async(lat,long)=>{
 
 useEffect(()=>{
   Geolocation.getCurrentPosition(info => getLoc(info?.coords?.latitude,info?.coords?.longitude));
-},[])
+},[]);
+
+
 
   return (
     <View style={styles.container}>

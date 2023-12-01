@@ -126,7 +126,6 @@ const Auth = ({navigation}) => {
               devicename: 'Android',
             },
           );
-          Alert.alert('Success', 'Phone number confirmed!');
           await saveToStorage('user', [manageUser?.user]);
           await saveToStorage('token', manageUser?.user?._id);
           setUserData([manageUser]);
@@ -140,7 +139,7 @@ const Auth = ({navigation}) => {
           console.log(error?.response.data.message, ':error');
         }
       }
-      Alert.alert('Success', 'Phone number confirmed!');
+      Alert.alert('Success', 'Phone number confirmed and logged in successfully!');
     } catch (err) {
       console.log(err, 'err');
     }
@@ -196,7 +195,7 @@ const Auth = ({navigation}) => {
         ) : (
           <TextInput
             style={styles.input}
-            placeholder="Enter Code"
+            placeholder="Enter 6-digit code"
             keyboardType="numeric"
             onChangeText={setConfirmationCode}
           />

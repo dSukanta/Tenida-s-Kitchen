@@ -7,25 +7,27 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {ListItem} from '@rneui/themed';
 import {Button} from '@rneui/base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {globalStyles} from '../constants/globalStyles';
 import colors from '../constants/colors';
+import { Appcontext } from '../context/AppContext';
+import { getProfileName } from '../utils/Helper';
 
 const Settings = ({route, navigation}) => {
   const [edit, setEdit] = useState(false);
-  const [userInput, setUserInput] = useState({
-    name: 'User Name',
-    email: 'user@email',
-    dob: '',
-    town: '',
-  });
+  const [inputData, setInputData] = useState({});
+  const {userData,setUserData} = useContext(Appcontext);
 
   const handleSave = () => {
     setEdit(false);
   };
+
+  useEffect(()=>{
+    setInputData(userData[0])
+  },[userData])
 
   return (
     <View style={styles.container}>
@@ -94,7 +96,7 @@ const Settings = ({route, navigation}) => {
                   flexWrap: 'wrap',
                   marginHorizontal: 10,
                 }}>
-                {'User Name'}
+                {getProfileName(userData)}
               </Text>
             ) : (
               <Button
@@ -111,16 +113,16 @@ const Settings = ({route, navigation}) => {
               <ListItem.Subtitle>Name</ListItem.Subtitle>
               {!edit ? (
                 <ListItem.Title>
-                  {userInput?.name || 'No name provided'}
+                  {inputData?.name || 'No name provided'}
                 </ListItem.Title>
               ) : (
                 <TextInput
                   placeholder="name"
                   style={styles.inputStyle}
                   onChangeText={text =>
-                    setUserInput({...userInput, name: text})
+                    setInputData({...inputData, name: text})
                   }
-                  value={userInput.name}
+                  value={inputData.name}
                   placeholderTextColor={'black'}
                 />
               )}
@@ -131,16 +133,16 @@ const Settings = ({route, navigation}) => {
               <ListItem.Subtitle>Email</ListItem.Subtitle>
               {!edit ? (
                 <ListItem.Title>
-                  {userInput?.email || 'No email provided'}
+                  {inputData?.email || 'No email provided'}
                 </ListItem.Title>
               ) : (
                 <TextInput
                   placeholder="email"
                   style={styles.inputStyle}
                   onChangeText={text =>
-                    setUserInput({...userInput, email: text})
+                    setInputData({...inputData, email: text})
                   }
-                  value={userInput.email}
+                  value={inputData.email}
                   placeholderTextColor={'black'}
                 />
               )}
@@ -151,14 +153,14 @@ const Settings = ({route, navigation}) => {
               <ListItem.Subtitle>Date of Birth</ListItem.Subtitle>
               {!edit ? (
                 <ListItem.Title>
-                  {userInput?.dob || 'No DOB provided'}
+                  {inputData?.dob || 'No DOB provided'}
                 </ListItem.Title>
               ) : (
                 <TextInput
                   placeholder="Date of Birth"
                   style={styles.inputStyle}
-                  onChangeText={text => setUserInput({...userInput, dob: text})}
-                  value={userInput.dob}
+                  onChangeText={text => setInputData({...inputData, dob: text})}
+                  value={inputData.dob}
                   placeholderTextColor={'black'}
                 />
               )}
@@ -166,19 +168,19 @@ const Settings = ({route, navigation}) => {
           </ListItem>
           <ListItem bottomDivider>
             <ListItem.Content>
-              <ListItem.Subtitle>Home Town</ListItem.Subtitle>
+              <ListItem.Subtitle>Phone no.</ListItem.Subtitle>
               {!edit ? (
                 <ListItem.Title>
-                  {userInput?.town || 'No town provided'}
+                  {inputData?.phone || 'Phone number not added'}
                 </ListItem.Title>
               ) : (
                 <TextInput
-                  placeholder="Home Town"
+                  placeholder="Phone no."
                   style={styles.inputStyle}
                   onChangeText={text =>
-                    setUserInput({...userInput, town: text})
+                    setInputData({...inputData, town: text})
                   }
-                  value={userInput.town}
+                  value={inputData.town}
                   placeholderTextColor={'black'}
                 />
               )}

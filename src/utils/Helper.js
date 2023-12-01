@@ -26,3 +26,16 @@ export const removeFromStorage= async(name)=>{
         return `Error removing`
       }
 }
+
+
+export const getProfileName= (userData)=>{
+  if(userData[0]?.fullname){
+    return userData[0]?.fullname?.split(" ")[0]
+  };
+  if(!userData[0]?.fullname && userData[0]?.email ){
+    return userData[0]?.email?.split("@")[0]
+  };
+  if(!userData[0]?.fullname && !userData[0]?.email && userData[0]?.phone){
+    return userData[0]?.phone
+  };
+};

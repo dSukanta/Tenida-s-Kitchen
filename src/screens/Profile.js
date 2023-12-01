@@ -17,6 +17,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {globalStyles} from '../constants/globalStyles';
 import colors from '../constants/colors';
 import { Appcontext } from '../context/AppContext';
+import { getProfileName } from '../utils/Helper';
 
 const {height, width} = Dimensions.get('window');
 
@@ -24,7 +25,7 @@ const Landing = ({navigation}) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const {userData,Logout,setUserData}= useContext(Appcontext);
 
-  console.log(userData,'userData')
+  // console.log(userData,'userData')
 
 
   const handlenavigate = path => {
@@ -109,18 +110,6 @@ const Landing = ({navigation}) => {
     ]);
   };
 
-  const getProfileName= ()=>{
-    if(userData[0]?.fullname){
-      return userData[0]?.fullname?.split(" ")[0]
-    };
-    if(!userData[0]?.fullname && userData[0]?.email ){
-      return userData[0]?.email?.split("@")[0]
-    };
-    if(!userData[0]?.fullname && !userData[0]?.email && userData[0]?.phone){
-      return userData[0]?.phone
-    };
-  };
-
 
   return (
     <ScrollView style={styles.container}>
@@ -161,7 +150,7 @@ const Landing = ({navigation}) => {
               alignItems: 'center',
             }}>
             <MaterialIcons name="person" size={25} color={'white'} />
-            <Text style={[globalStyles.text, {fontSize: 18}]}>{getProfileName() || 'Unknown'}</Text>
+            <Text style={[globalStyles.text, {fontSize: 18}]}>{getProfileName(userData) || 'Unknown'}</Text>
           </View>
           <TouchableOpacity onPress={() => navigation.navigate('Rewards')}>
             <MaterialIcons name="emoji-events" size={25} color={'white'} />
