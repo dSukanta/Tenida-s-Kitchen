@@ -18,6 +18,7 @@ import {Appcontext} from '../context/AppContext';
 import EditComp from '../components/EditComp';
 import CustomHeader from '../components/CustomHeader';
 import RedLine from '../components/RedLine';
+import { getProfileName } from '../utils/Helper';
 
 const {height, width} = Dimensions.get('window');
 
@@ -28,12 +29,6 @@ const Settings = ({route,navigation}) => {
   const [date, setDate] = useState(new Date('2000-12-31'));
   const [open, setOpen] = useState(false);
 
-  const handleSave = () => {
-    setEdit(false);
-    // console.log(inputData,'input data');
-    // setUserData([inputData]);
-  };
-
   useEffect(() => {
     setInputData(userData[0]);
   }, [userData]);
@@ -43,13 +38,16 @@ const Settings = ({route,navigation}) => {
   };
 
   const handleRightClick = () => {
-    setEdit(!edit);
+    setEdit(true);
   };
 
   const handleSubmit= async()=>{
     console.log(userData,'data');
     setEdit(false);
-  }
+  };
+
+  console.log(inputData,'data');
+
 
   return (
     <View style={globalStyles.container}>
@@ -82,7 +80,7 @@ const Settings = ({route,navigation}) => {
           style={styles.image}
         />
         <Text style={[globalStyles.text, {marginBottom: 10, fontSize: 18}]}>
-          Name
+        {getProfileName(userData)}
         </Text>
       </View>
       <Card containerStyle={[styles.upperContainer, {height: height,width:'90%',alignSelf:'center'}]}>
@@ -105,7 +103,7 @@ const Settings = ({route,navigation}) => {
               <ListItem.Subtitle>Email</ListItem.Subtitle>
               </View>
               <ListItem.Title>
-                {inputData?.fullname || 'No email provided'}
+                {inputData?.email || 'No email provided'}
               </ListItem.Title>
             </ListItem.Content>
           </ListItem>
@@ -116,7 +114,7 @@ const Settings = ({route,navigation}) => {
               <ListItem.Subtitle>BirthDay</ListItem.Subtitle>
               </View>
               <ListItem.Title>
-                {inputData?.fullname || 'No date of birth provided'}
+                {inputData?.dob || 'No date of birth provided'}
               </ListItem.Title>
             </ListItem.Content>
           </ListItem>
@@ -127,15 +125,16 @@ const Settings = ({route,navigation}) => {
               <ListItem.Subtitle>Phone no.</ListItem.Subtitle>
               </View>
               <ListItem.Title>
-                {inputData?.fullname || 'Phone number not provided'}
+                {inputData?.phone || 'Phone number not provided'}
               </ListItem.Title>
             </ListItem.Content>
           </ListItem>
         </ScrollView>
         <Modal animationType='slide' visible={edit}>
           <View style={globalStyles.container}>
+            <MaterialCommunityIcons name='close-circle' size={25} color={'white'} style={{alignSelf:'flex-end',margin:5}} onPress={()=>setEdit(false)}/>
           <RedLine text='Edit Profile'/>
-          <EditComp/>
+          <EditComp setEdit={setEdit}/>
           <Button title={'Submit'} onPress={handleSubmit} buttonStyle={{backgroundColor:colors.red}}/>
           </View>
         </Modal>

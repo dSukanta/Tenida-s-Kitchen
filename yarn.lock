@@ -6007,6 +6007,11 @@ react-native-google-places-autocomplete@^2.5.6:
     prop-types "^15.7.2"
     qs "~6.9.1"
 
+react-native-image-picker@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-7.0.3.tgz"
+  integrity sha512-mFbu8AzZ8tysO7xHsQ+TmxYYJYaBCL66s4AujjgCBEAyTufm2nhjhVOw2uq1zvMDVtGoyekzCJfH3JqVmXK/3w==
+
 react-native-maps@^1.8.0:
   version "1.8.0"
   resolved "https://registry.npmjs.org/react-native-maps/-/react-native-maps-1.8.0.tgz"
