@@ -1,6 +1,7 @@
 import {Dimensions, ImageBackground, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import Carousel from 'react-native-reanimated-carousel';
+import {BASE_URI} from '@env'; 
 
 const {height, width} = Dimensions.get('window');
 
@@ -17,7 +18,7 @@ const CarouselComp = ({data}) => {
         renderItem={({item,index}) => (
           <ImageBackground
           source={{
-            uri: item.image,
+            uri: `${BASE_URI}${item.image}`,
           }}
           style={[
             styles.image,

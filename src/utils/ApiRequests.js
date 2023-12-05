@@ -1,19 +1,19 @@
 
 import {BASE_URI} from '@env'; 
-export const clientRequest= async(path='/',method='GET',body={},headers={})=>{
+export const clientRequest= async(path='/',method='GET',headers={})=>{
+
+    const url= `${BASE_URI}/${path}`;
 
     const config= {
-        url: `${BASE_URI}/${path}`,
         method: method,
         headers: headers,
-        body: body,
     }
     try {
         const response= await fetch(url,config);
         const data= await response.json();
-        console.log(data,'data request')
+        return data;
     } catch (error) {
-        
+        console.log(error,'error')
     }
 };
 

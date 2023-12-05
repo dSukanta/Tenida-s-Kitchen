@@ -120,11 +120,11 @@ const Cart = ({navigation, route}) => {
       <View>
         <RedLine text={'your cart'} />
       </View>
-    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{justifyContent: 'center', flex:1}}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{justifyContent:userCart.length?'start': 'center', flex:1}}>
       {userCart.length ? (
         <View>
           <Text style={[globalStyles.text, {alignSelf: 'center', margin: 10}]}>
-            Ites(s) Added
+            Item(s) Added
           </Text>
           {userCart.map((cart, i) => (
             <CartCard data={cart} key={i} />

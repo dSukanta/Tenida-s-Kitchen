@@ -79,7 +79,7 @@ const Settings = ({route,navigation}) => {
           }}
           style={styles.image}
         />
-        <Text style={[globalStyles.text, {marginBottom: 10, fontSize: 18}]}>
+        <Text style={[globalStyles.text, {marginBottom: 10, fontSize: 15,alignSelf:'center',}]}>
         {getProfileName(userData)}
         </Text>
       </View>
@@ -88,7 +88,7 @@ const Settings = ({route,navigation}) => {
           <ListItem bottomDivider>
             <ListItem.Content>
               <View style={{flexDirection:'row',gap:10,justifyContent:'center',alignItems:'center'}}>
-              <MaterialCommunityIcons name='account' size={25}/>
+              <MaterialCommunityIcons name='account' size={25} color={'black'}/>
               <ListItem.Subtitle>Name</ListItem.Subtitle>
               </View>
               <ListItem.Title>
@@ -99,7 +99,7 @@ const Settings = ({route,navigation}) => {
           <ListItem bottomDivider>
             <ListItem.Content>
               <View style={{flexDirection:'row',gap:10,justifyContent:'center',alignItems:'center'}}>
-              <MaterialCommunityIcons name='email' size={25}/>
+              <MaterialCommunityIcons name='email' size={25} color={'black'}/>
               <ListItem.Subtitle>Email</ListItem.Subtitle>
               </View>
               <ListItem.Title>
@@ -110,7 +110,7 @@ const Settings = ({route,navigation}) => {
           <ListItem bottomDivider>
             <ListItem.Content>
               <View style={{flexDirection:'row',gap:10,justifyContent:'center',alignItems:'center'}}>
-              <MaterialCommunityIcons name='calendar-account-outline' size={25}/>
+              <MaterialCommunityIcons name='calendar-account-outline' size={25} color={'black'}/>
               <ListItem.Subtitle>BirthDay</ListItem.Subtitle>
               </View>
               <ListItem.Title>
@@ -121,7 +121,7 @@ const Settings = ({route,navigation}) => {
           <ListItem bottomDivider>
             <ListItem.Content>
               <View style={{flexDirection:'row',gap:10,justifyContent:'center',alignItems:'center'}}>
-              <MaterialCommunityIcons name='cellphone' size={25}/>
+              <MaterialCommunityIcons name='cellphone' size={25} color={'black'}/>
               <ListItem.Subtitle>Phone no.</ListItem.Subtitle>
               </View>
               <ListItem.Title>

@@ -9,7 +9,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {Button} from '@rneui/base';
 import {Card} from '@rneui/themed';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -21,6 +21,7 @@ import RecomendedCard from '../components/RecomendedCard';
 import HomeHeader from '../components/HomeHeader';
 import { Appcontext } from '../context/AppContext';
 import { getFromStorage } from '../utils/Helper';
+import { clientRequest } from '../utils/ApiRequests';
 
 const {height, width} = Dimensions.get('window');
 
@@ -29,15 +30,17 @@ const Home = ({navigation}) => {
   const {userData,setUserData} = useContext(Appcontext);
 
   const data = [1, 1, 1];
-  const categories = [
-    {category: 'Soft Drinks', image: require('../images/soft_drink.webp')},
-    {category: 'All-In-1 Meals', image: require('../images/allinonemeal.jpeg')},
-    {category: 'Mini Meals', image: require('../images/minimeal.jpg')},
-    {
-      category: 'Chicken Starters',
-      image: require('../images/chickenmeal.png'),
-    },
-  ];
+  const [categories,setCategories] = useState([]);
+  const [offers,setOffers] = useState([]);
+  // [
+  //   {category: 'Soft Drinks', image: require('../images/soft_drink.webp')},
+  //   {category: 'All-In-1 Meals', image: require('../images/allinonemeal.jpeg')},
+  //   {category: 'Mini Meals', image: require('../images/minimeal.jpg')},
+  //   {
+  //     category: 'Chicken Starters',
+  //     image: require('../images/chickenmeal.png'),
+  //   },
+  // ];
 
   const sliderData = [
     {
@@ -78,8 +81,28 @@ const Home = ({navigation}) => {
     }
   };
 
+  const getCategories= async()=>{
+    const devideId= await getFromStorage('deviceId');
+    const token = await getFromStorage('token');
+    const categories= await clientRequest('api/v1/public/categories','GET',{deviceid: devideId,devicename: 'Android'});
+    if( categories?.data){
+      setCategories(categories.data)
+    }
+  };
+
+  const getOffers= async()=>{
+    const devideId= await getFromStorage('deviceId');
+    const offers= await clientRequest('api/v1/public/offers','GET',{deviceid: devideId,devicename: 'Android'});
+    console.log(offers,'offers');
+    if( offers?.data){
+      setOffers(offers.data)
+    }
+  };
+
   useEffect(()=>{
     detectLogin();
+    getCategories();
+    getOffers();
   },[]);
 
   return (
@@ -122,7 +145,7 @@ const Home = ({navigation}) => {
           <RedLine text={'offers for you'} />
         </View>
         <View style={{marginVertical: 10}}>
-          <CarouselComp data={sliderData} />
+          <CarouselComp data={offers} />
         </View>
 
         <View>
@@ -135,7 +158,7 @@ const Home = ({navigation}) => {
             showsHorizontalScrollIndicator={false}
             data={categories}
             renderItem={({item,index})=>(
-              <CategoriesCard data={item} navigation={navigation} index={index}/>
+              <CategoriesCard data={item} navigation={navigation}/>
             )}
           />
         </View>

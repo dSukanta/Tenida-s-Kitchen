@@ -7,28 +7,28 @@ import {Appcontext} from '../context/AppContext';
 import colors from '../constants/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ProductDetails from '../screens/ProductDetails';
-
+import {BASE_URI} from '@env'
 
 const ProductCard = ({data}) => {
   const {userData, userCart, setUserCart} = useContext(Appcontext);
   const [readMore, setReadMore] = useState(false);
-  const cartData = userCart.find(item => item.id === data.id);
+  const cartData = userCart.find(item => item._id === data._id);
   const quantity = cartData ? cartData.quantity : 0;
 
   const handleAddToCart = async product => {
     if (cartData) {
       const updatedCart = userCart.map(item =>
-        item.id === data.id ? {...item, quantity: item.quantity + 1} : item,
+        item._id === data._id ? {...item, quantity: item.quantity + 1} : item,
       );
       setUserCart(updatedCart);
     } else {
       setUserCart([
         ...userCart,
         {
-          id: data.id,
-          image: data.image,
-          name: data.name,
-          price: 299,
+          _id: data._id,
+          image: data.images[0],
+          name: data.title,
+          price: data.price,
           quantity: 1,
         },
       ]);
@@ -38,7 +38,7 @@ const ProductCard = ({data}) => {
   const handleIncreaseQuantity = () => {
     if (cartData) {
       const updatedCart = userCart.map(item =>
-        item.id === data.id ? {...item, quantity: item.quantity + 1} : item,
+        item._id === data._id ? {...item, quantity: item.quantity + 1} : item,
       );
       setUserCart(updatedCart);
     }
@@ -47,18 +47,18 @@ const ProductCard = ({data}) => {
   const handleDecreaseQuantity = () => {
     if (cartData && quantity > 1) {
       const updatedCart = userCart.map(item =>
-        item.id === data.id ? {...item, quantity: item.quantity - 1} : item,
+        item._id === data._id ? {...item, quantity: item.quantity - 1} : item,
       );
       setUserCart(updatedCart);
     }
   };
 
-  // console.log(userCart,'cartitem')
+  // console.log(`${BASE_URI}${data?.images[0]}`,'cartitem')
 
   return (
     <TouchableOpacity style={styles.card} onPress={()=>setReadMore(true)}>
       <View style={styles.leftSide}>
-        <Text style={styles.title}>{data?.name}</Text>
+        <Text style={styles.title}>{data?.title}</Text>
         <View style={styles.ratingContainer}>
           <View
             style={{
@@ -77,18 +77,16 @@ const ProductCard = ({data}) => {
           </View>
           <Text style={styles.ratingCount}>{96} ratings</Text>
         </View>
-        <Text style={[globalStyles.text, {color: 'black'}]}>₹{299}</Text>
+        <Text style={[globalStyles.text, {color: 'black'}]}>₹{data?.price}</Text>
 
         <Text style={styles.detailsText}>
-          {`Lorem Ipsum is simply dummy text of the printing and typesetting industry.`.substring(
-            0,
-            100,
-          )}
-          ...
+          {data?.description?.length>100 ? data?.description.substring(
+            0,100)+"...": data?.description}
+
         </Text>
       </View>
       <View style={styles.rightSide}>
-        <Image source={data?.image} style={styles.image} />
+        <Image source={{uri:`${BASE_URI}${data?.images[0]}`}} style={styles.image} />
         <View style={styles.buttonContainer}>
           {cartData ? (
             <View style={styles.quantityContainer}>

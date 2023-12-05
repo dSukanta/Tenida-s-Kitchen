@@ -14,7 +14,7 @@ const CartCard = ({ data }) => {
   const handleIncreaseQuantity = () => {
     setQuantity(quantity + 1);
     const updatedCart = userCart.map((item) =>
-      item.id === data.id ? { ...item, quantity: item.quantity + 1 } : item
+      item._id === data._id ? { ...item, quantity: item.quantity + 1 } : item
     );
     setUserCart(updatedCart);
   };
@@ -23,23 +23,25 @@ const CartCard = ({ data }) => {
     if (quantity > 1) {
       setQuantity(quantity - 1);
       const updatedCart = userCart.map((item) =>
-        item.id === data.id ? { ...item, quantity: item.quantity - 1 } : item
+        item._id === data._id ? { ...item, quantity: item.quantity - 1 } : item
       );
       setUserCart(updatedCart);
     }
   };
 
   const deleteItem=(id)=>{
-     const updatedCart= userCart.filter((item,i)=>item.id!==id);
+     const updatedCart= userCart.filter((item,i)=>item._id!==id);
      setUserCart(updatedCart);
   }
+
+  // console.log(data,'title')
 
   return (
     <View style={styles.card}>
       <View style={styles.leftSide}>
         <Text style={styles.title}>{data?.name}</Text>
-        <Text style={[globalStyles.text, { color: 'black',marginVertical:5}]}>₹{299}</Text>
-        <TouchableOpacity style={{flexDirection:'row',gap:5,alignItems:'center',width:50}} onPress={()=>deleteItem(data?.id)}>
+        <Text style={[globalStyles.text, { color: 'black',marginVertical:5}]}>₹{data?.price}</Text>
+        <TouchableOpacity style={{flexDirection:'row',gap:5,alignItems:'center',width:50}} onPress={()=>deleteItem(data?._id)}>
           <MaterialCommunityIcons name='delete' color={'grey'} size={20}/>
           <Text style={[globalStyles.text,{color:'black',fontSize:12}]}>Delete</Text>
         </TouchableOpacity>

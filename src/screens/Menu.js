@@ -7,7 +7,7 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import React, {useState, useCallback, useContext} from 'react';
+import React, {useState, useCallback, useContext, useEffect} from 'react';
 import {globalStyles} from '../constants/globalStyles';
 import ProductCard from '../components/ProductCard';
 import {useFocusEffect} from '@react-navigation/native';
@@ -16,75 +16,58 @@ import {Appcontext} from '../context/AppContext';
 import {Button} from '@rneui/base';
 import AntDesign from 'react-native-vector-icons/AntDesign'; 
 import CustomHeader from '../components/CustomHeader';
+import { getFromStorage } from '../utils/Helper';
+import { clientRequest } from '../utils/ApiRequests';
+import {BASE_URI} from '@env';
 
 const Menu = ({route, navigation}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const categories = [
-    {category: 'Soft Drinks', image: require('../images/soft_drink.webp')},
-    {category: 'All-In-1 Meals', image: require('../images/allinonemeal.jpeg')},
-    {category: 'Mini Meals', image: require('../images/minimeal.jpg')},
-    {
-      category: 'Chicken Starters',
-      image: require('../images/chickenmeal.png'),
-    },
-  ];
-  const [currentCategory, setCurrentCategory] = useState('Soft Drinks');
-  const [productData, setProductData] = useState([
-    {
-      id: 0,
-      name: 'Soft Drinks',
-      category: 'Soft Drinks',
-      image: require('../images/soft_drink.webp'),
-    },
-    {
-      id: 1,
-      name: 'All-In-1 Meals',
-      category: 'All-In-1 Meals',
-      image: require('../images/allinonemeal.jpeg'),
-    },
-    {
-      id: 2,
-      name: 'Mini Meals',
-      category: 'Mini Meals',
-      image: require('../images/minimeal.jpg'),
-    },
-    {
-      id: 3,
-      name: 'Chicken Starters',
-      category: 'Chicken Starters',
-      image: require('../images/chickenmeal.png'),
-    },
-    {
-      id: 4,
-      name: 'Soft Drinks',
-      category: 'Soft Drinks',
-      image: require('../images/soft_drink.webp'),
-    },
-  ]);
+  const [categories,setCategories] = useState([]);
+  const [currentCategory, setCurrentCategory] = useState(categories[0]?.title);
+  const [productData, setProductData] = useState([]);
 
   const {userCart,cartTotal} = useContext(Appcontext);
 
-  const handleClick = (index, category) => {
-    setCurrentIndex(index);
+  const handleClick = (category) => {
     setCurrentCategory(category);
   };
 
+  
+
   useFocusEffect(
     useCallback(() => {
-      if (route?.params?.index) {
-        setCurrentIndex(route?.params?.index);
-        setCurrentCategory(categories[route?.params?.index]?.category);
+      if (route?.params?.category) {
+        setCurrentCategory(route?.params?.category);
       } else {
-        setCurrentIndex(0);
-        setCurrentCategory('Soft Drinks');
+        setCurrentCategory(categories[0]?.title);
       }
-    }, [route?.params?.index]),
+    }, [route?.params?.category]),
   );
 
   // const getCartTotal= ()=>{
   //   const total= userCart.reduce((init,next)=> init+(Number(next.price)* Number(next.quantity)),0);
   //   return total;
   // }
+
+  const getCategories= async()=>{
+    const devideId= await getFromStorage('deviceId');
+    const categories= await clientRequest('api/v1/public/categories','GET',{deviceid: devideId,devicename: 'Android'});
+    if( categories?.data){
+      setCategories(categories.data)
+    }
+  };
+  const getProducts= async()=>{
+    const devideId= await getFromStorage('deviceId');
+    const products= await clientRequest('api/v1/public/products','GET',{deviceid: devideId,devicename: 'Android'});
+    if( products?.data){
+      setProductData(products?.data)
+    }
+  };
+
+  useEffect(()=>{
+    getCategories();
+    getProducts();
+  },[])
 
   return (
     <View style={styles.container}>
@@ -100,17 +83,17 @@ const Menu = ({route, navigation}) => {
               <TouchableOpacity
                 key={index}
                 style={
-                  currentIndex === index ? styles.activeItem : styles.listItem
+                  currentCategory === item?.title ? styles.activeItem : styles.listItem
                 }
-                onPress={() => handleClick(index, item?.category)}>
-                <Text style={[globalStyles.text]}>{item?.category}</Text>
+                onPress={() => handleClick(item?.title)}>
+                <Text style={[globalStyles.text]}>{item?.title}</Text>
               </TouchableOpacity>
             )}
           />
         </View>
         <View style={{marginHorizontal: 10}}>
           {productData
-            ?.filter((data, i) => data.category === currentCategory)
+            ?.filter((data, i) => data.productcategory?.title === currentCategory)
             ?.map((product, index) => (
               <ProductCard data={product} key={product?.id} />
             ))}
@@ -121,7 +104,7 @@ const Menu = ({route, navigation}) => {
           <View style={styles.cartSection}>
             <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
               <Image
-                source={userCart[userCart?.length - 1]?.image}
+                source={{uri: `${BASE_URI}${userCart[0]?.image}`}}
                 style={{width: 50, height: 50, resizeMode: 'cover',borderRadius:5}}
               />
               <View>
