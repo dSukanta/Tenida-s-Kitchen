@@ -93,7 +93,7 @@ const Home = ({navigation}) => {
   const getOffers= async()=>{
     const devideId= await getFromStorage('deviceId');
     const offers= await clientRequest('api/v1/public/offers','GET',{deviceid: devideId,devicename: 'Android'});
-    console.log(offers,'offers');
+    // console.log(offers,'offers');
     if( offers?.data){
       setOffers(offers.data)
     }
@@ -145,7 +145,7 @@ const Home = ({navigation}) => {
           <RedLine text={'offers for you'} />
         </View>
         <View style={{marginVertical: 10}}>
-          <CarouselComp data={offers} />
+          <CarouselComp data={offers} navigation={navigation}/>
         </View>
 
         <View>

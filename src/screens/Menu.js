@@ -95,7 +95,7 @@ const Menu = ({route, navigation}) => {
           {productData
             ?.filter((data, i) => data.productcategory?.title === currentCategory)
             ?.map((product, index) => (
-              <ProductCard data={product} key={product?.id} />
+              <ProductCard data={product} key={index} />
             ))}
         </View>
       </ScrollView>

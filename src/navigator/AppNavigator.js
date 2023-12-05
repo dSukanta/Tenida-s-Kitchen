@@ -17,6 +17,7 @@ import Rewards from '../screens/Rewards';
 import CustomHeader from '../components/CustomHeader';
 import Offline from '../screens/Offline';
 import VideoDetails from '../screens/VideoDetails';
+import Offers from '../screens/Offers';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,7 @@ function AppNavigator() {
       <Stack.Screen name="Main" component={TabNavigator} options={{headerShown:false}}/>
       <Stack.Screen name="Auth" component={Auth} options={{headerShown:false}}/>
       <Stack.Screen name="Menu" component={Menu} options={{headerShown:false}}/>
+      <Stack.Screen name="Offers" component={Offers} options={{headerShown:false}}/>
       <Stack.Screen name="ProductDetails" component={ProductDetails} options={{headerShown:false}}/>
       <Stack.Screen name="VideoDetails" component={VideoDetails} options={{headerShown:false}}/>
       <Stack.Screen name="Settings" component={Settings} options={{headerShown:false}}/>
