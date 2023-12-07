@@ -27,13 +27,13 @@ export const serverRequest= async(path='/',method='POST',body={},headers={})=>{
             'Content-Type': 'application/json',
             ...headers, 
         },
-        body: body,
+        body: body ? JSON.stringify(body) : null,
     }
-    console.log(config,url,'data request')
+    // console.log(config,url,'data request')
     try {
         const response= await fetch(url,config);
         const data= await response.json();
-        console.log(data,'data request')
+        return data;
     } catch (error) {
         console.log(error,':error')
     }

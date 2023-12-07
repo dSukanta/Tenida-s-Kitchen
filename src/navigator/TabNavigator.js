@@ -10,6 +10,7 @@ import Menu from '../screens/Menu';
 import Orders from '../screens/Orders';
 import FoodReels from '../screens/FoodReels';
 import Cart from '../screens/Cart';
+import withConnection from '../components/WithConnection';
 
 const Tab = createBottomTabNavigator();
 
@@ -56,7 +57,7 @@ function TabNavigator() {
           ),
         }}
         name="Home"
-        component={Home}
+        component={withConnection(Home)}
       />
 
       <Tab.Screen
@@ -67,7 +68,7 @@ function TabNavigator() {
           ),
         }}
         name="FoodReels"
-        component={FoodReels}
+        component={withConnection(FoodReels)}
       />
 
       <Tab.Screen
@@ -78,7 +79,7 @@ function TabNavigator() {
           ),
         }}
         name="Cart"
-        component={Cart}
+        component={withConnection(Cart)}
       />
 
       <Tab.Screen
@@ -89,7 +90,7 @@ function TabNavigator() {
           ),
         }}
         name="Profile"
-        component={Profile}
+        component={withConnection(Profile)}
       />
     </Tab.Navigator>
   );

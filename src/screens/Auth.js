@@ -17,14 +17,12 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {makeRequest} from '../utils/Functions';
-import axios from 'axios';
 import auth from '@react-native-firebase/auth';
 import {Appcontext} from '../context/AppContext';
 import {getFromStorage, saveToStorage} from '../utils/Helper';
 import {serverRequest} from '../utils/ApiRequests';
 
-const Auth = ({navigation}) => {
+const Auth = ({route,navigation}) => {
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const {setUserData, Logout} = useContext(Appcontext);
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -40,6 +38,8 @@ const Auth = ({navigation}) => {
     setShowBottomSheet(false);
   };
 
+  // console.log(route?.params,'params')
+
   const signInWithGoogle = async () => {
     try {
       await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
@@ -48,7 +48,7 @@ const Auth = ({navigation}) => {
 
       // console.log(user,deviceid,'g-user');
       if (user && deviceid) {
-        const manageUser = await makeRequest(
+        const manageUser = await serverRequest(
           'api/v1/userauth/register',
           'POST',
           {
@@ -68,6 +68,21 @@ const Auth = ({navigation}) => {
         await saveToStorage('user', [manageUser?.user]);
         await saveToStorage('token', manageUser?.user?._id);
         setUserData([manageUser]);
+        // const {source}= await route?.params?.source
+        // console.log(source,'source');
+        // if(source){
+        //   console.log('if running....');
+        //   await navigation.reset({
+        //     index: 0,
+        //     routes: [{name: 'Main', screen: source}],
+        //   });
+        // }else{
+        //   console.log('else running....');
+        //   await navigation.reset({
+        //     index: 0,
+        //     routes: [{name: 'Main', screen: 'Home'}],
+        //   });
+        // }
         navigation.reset({
           index: 0,
           routes: [{name: 'Main', screen: 'Home'}],
@@ -89,6 +104,13 @@ const Auth = ({navigation}) => {
     }
   };
 
+  const extractErrorMessage = (error) => {
+    // Use a regular expression to remove the error code from the message
+    const regex = /\[.*\] (.*)/;
+    const match = regex.exec(error.message);
+    return match ? match[1] : error.message;
+  };
+
   const phoneAuth = async () => {
     setLoading(true);
     try {
@@ -99,7 +121,9 @@ const Auth = ({navigation}) => {
       // console.log(confirmation,'cnf');
       Alert.alert('Success!', 'Confirmation code sent to your phone.');
     } catch (error) {
-      Alert.alert('Error!', 'Error sending code');
+      const errorMessage = extractErrorMessage(error);
+      Alert.alert('Error!',errorMessage)
+      // Alert.alert('Error!', 'Error sending code');
       console.error('Error sending code:', error);
     }
     setLoading(false);
@@ -116,7 +140,7 @@ const Auth = ({navigation}) => {
         // console.log(confirmRes?.user?.phoneNumber,'phone number');
 
         try {
-          const manageUser = await makeRequest(
+          const manageUser = await serverRequest(
             'api/v1/userauth/register',
             'POST',
             {phone: confirmRes?.user?.phoneNumber?.split("+91")[1]},
@@ -134,14 +158,15 @@ const Auth = ({navigation}) => {
             routes: [{name: 'Main', screen: 'Home'}],
           });
           // console.log(manageUser,'ph user');
+          Alert.alert('Success', 'Phone number confirmed and logged in successfully!');
         } catch (error) {
-          Alert.alert('Error!',error?.response.data.message||'Internal Error');
-          console.log(error?.response.data.message, ':error');
+          Alert.alert('Error!',error?.message||'Internal Error');
         }
       }
-      Alert.alert('Success', 'Phone number confirmed and logged in successfully!');
     } catch (err) {
       console.log(err, 'err');
+      const errorMessage = extractErrorMessage(err);
+      Alert.alert('Error!',errorMessage)
     }
     setLoading(false);
   };

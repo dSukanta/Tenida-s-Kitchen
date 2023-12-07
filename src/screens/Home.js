@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
+  ActivityIndicator
 } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import {Button} from '@rneui/base';
@@ -22,6 +23,7 @@ import HomeHeader from '../components/HomeHeader';
 import { Appcontext } from '../context/AppContext';
 import { getFromStorage } from '../utils/Helper';
 import { clientRequest } from '../utils/ApiRequests';
+import colors from '../constants/colors';
 
 const {height, width} = Dimensions.get('window');
 
@@ -32,28 +34,7 @@ const Home = ({navigation}) => {
   const data = [1, 1, 1];
   const [categories,setCategories] = useState([]);
   const [offers,setOffers] = useState([]);
-  // [
-  //   {category: 'Soft Drinks', image: require('../images/soft_drink.webp')},
-  //   {category: 'All-In-1 Meals', image: require('../images/allinonemeal.jpeg')},
-  //   {category: 'Mini Meals', image: require('../images/minimeal.jpg')},
-  //   {
-  //     category: 'Chicken Starters',
-  //     image: require('../images/chickenmeal.png'),
-  //   },
-  // ];
-
-  const sliderData = [
-    {
-      id: 1,
-      image:
-        'https://img.freepik.com/premium-vector/special-offer-sale-discount-banner_180786-46.jpg',
-    },
-    {
-      id: 2,
-      image:
-        'https://t3.ftcdn.net/jpg/03/46/18/98/360_F_346189806_SzptQ1X7BbpcAY4RRrp9iwaJw5UI1vVJ.jpg',
-    },
-  ];
+  const [loading,setLoading] = useState(false);
 
   const recomendedProducts=[
     {
@@ -83,10 +64,9 @@ const Home = ({navigation}) => {
 
   const getCategories= async()=>{
     const devideId= await getFromStorage('deviceId');
-    const token = await getFromStorage('token');
     const categories= await clientRequest('api/v1/public/categories','GET',{deviceid: devideId,devicename: 'Android'});
     if( categories?.data){
-      setCategories(categories.data)
+       return categories.data;
     }
   };
 
@@ -95,14 +75,25 @@ const Home = ({navigation}) => {
     const offers= await clientRequest('api/v1/public/offers','GET',{deviceid: devideId,devicename: 'Android'});
     // console.log(offers,'offers');
     if( offers?.data){
-      setOffers(offers.data)
+      return offers.data
     }
   };
 
+  const fetchPageData= async()=>{
+    setLoading(true);
+    const categoryData= getCategories();
+    const offerData= getOffers();
+
+    const [categories, offers] = await Promise.all([categoryData,offerData]);
+
+    setCategories(categories);
+    setOffers(offers);
+    setLoading(false);
+  }
+
   useEffect(()=>{
     detectLogin();
-    getCategories();
-    getOffers();
+    fetchPageData();
   },[]);
 
   return (
@@ -110,6 +101,11 @@ const Home = ({navigation}) => {
       <View>
         <HomeHeader navigation={navigation}/>
       </View>
+      {
+        loading?
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+          <ActivityIndicator size={'large'} color={colors.red}/>
+        </View>:
       <ScrollView>
         <View>
           <FlatList
@@ -193,6 +189,7 @@ const Home = ({navigation}) => {
           />
         </View>
       </ScrollView>
+      }
     </View>
   );
 };

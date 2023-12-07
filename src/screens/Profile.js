@@ -21,7 +21,7 @@ import { getProfileName } from '../utils/Helper';
 
 const {height, width} = Dimensions.get('window');
 
-const Landing = ({navigation}) => {
+const Profile = ({navigation}) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const {userData,Logout,setUserData}= useContext(Appcontext);
 
@@ -175,7 +175,7 @@ const Landing = ({navigation}) => {
   );
 };
 
-export default Landing;
+export default Profile;
 
 const styles = StyleSheet.create({
   container: {

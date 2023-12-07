@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useCallback, useContext, useEffect} from 'react';
 import {globalStyles} from '../constants/globalStyles';
@@ -25,6 +26,7 @@ const Menu = ({route, navigation}) => {
   const [categories,setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState(categories[0]?.title);
   const [productData, setProductData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const {userCart,cartTotal} = useContext(Appcontext);
 
@@ -32,17 +34,31 @@ const Menu = ({route, navigation}) => {
     setCurrentCategory(category);
   };
 
+  // console.log(currentCategory,'currentCategory')
+
   
 
   useFocusEffect(
     useCallback(() => {
-      if (route?.params?.category) {
+      // console.log(categories)
+      if (route?.params?.category){
         setCurrentCategory(route?.params?.category);
-      } else {
+      } else if(route?.params?.category=== undefined || !route?.params?.category) {
         setCurrentCategory(categories[0]?.title);
       }
-    }, [route?.params?.category]),
+    }, [route?.params?.category,categories]),
   );
+  // const {category}= route?.params || {};
+
+  // useEffect(()=>{
+  //   if(isFocused){
+  //     if(category){
+  //       setCurrentCategory(category)
+  //     }else{
+  //       setCurrentCategory(categories[0]?.title)
+  //     }
+  //   }
+  // },[category,isFocused])
 
   // const getCartTotal= ()=>{
   //   const total= userCart.reduce((init,next)=> init+(Number(next.price)* Number(next.quantity)),0);
@@ -53,25 +69,41 @@ const Menu = ({route, navigation}) => {
     const devideId= await getFromStorage('deviceId');
     const categories= await clientRequest('api/v1/public/categories','GET',{deviceid: devideId,devicename: 'Android'});
     if( categories?.data){
-      setCategories(categories.data)
+        return categories.data
     }
   };
   const getProducts= async()=>{
     const devideId= await getFromStorage('deviceId');
     const products= await clientRequest('api/v1/public/products','GET',{deviceid: devideId,devicename: 'Android'});
     if( products?.data){
-      setProductData(products?.data)
+        return products?.data
     }
   };
 
+  const fetchPageData= async()=>{
+    setLoading(true);
+    const categoryData= getCategories();
+    const productsData= getProducts();
+
+    const [categories, products] = await Promise.all([categoryData,productsData]);
+
+    setCategories(categories);
+    setProductData(products);
+    setLoading(false);
+  }
+
   useEffect(()=>{
-    getCategories();
-    getProducts();
+   fetchPageData();
   },[])
 
   return (
     <View style={styles.container}>
       <CustomHeader route={route} navigation={navigation}/>
+      {
+        loading?
+        <View style={{flex:1, justifyContent:'center',alignItems:'center'}}>
+          <ActivityIndicator color={colors.red} size={'large'}/>
+        </View>:
       <ScrollView style={styles.content}>
         <View style={styles.listcontainer}>
           <FlatList
@@ -99,7 +131,8 @@ const Menu = ({route, navigation}) => {
             ))}
         </View>
       </ScrollView>
-      <View>
+      }
+     { !loading && <View>
         {userCart?.length?(
           <View style={styles.cartSection}>
             <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
@@ -119,7 +152,7 @@ const Menu = ({route, navigation}) => {
             </View>
           </View>
         ):null}
-      </View>
+      </View>}
     </View>
   );
 };

@@ -46,13 +46,13 @@ const Settings = ({route,navigation}) => {
     setEdit(false);
   };
 
-  console.log(inputData,'data');
+  // console.log(inputData,'data');
 
 
   return (
     <View style={globalStyles.container}>
       <ImageBackground
-        source={{uri: 'https://shorturl.at/LXZ16'}}
+        source={{uri: inputData?.profile_picture || 'https://shorturl.at/LXZ16',}}
         style={styles.upperContainer}
         imageStyle={{opacity: 0.5}}>
         <View style={styles.header}>
@@ -75,7 +75,7 @@ const Settings = ({route,navigation}) => {
       <View style={styles.imageContainer}>
         <Image
           source={{
-            uri: 'https://shorturl.at/LXZ16',
+            uri: inputData?.profile_picture || 'https://shorturl.at/LXZ16',
           }}
           style={styles.image}
         />

@@ -8,13 +8,15 @@ import {BottomSheet, Button, ListItem} from '@rneui/base';
 import ManualAdd from '../components/ManualAdd';
 import MapModal from '../components/MapModal';
 import CustomHeader from '../components/CustomHeader';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AddressCard from '../components/AddressCard';
 
-const Addresses = ({route,navigation}) => {
+const Addresses = ({route, navigation}) => {
   const {userAddress, setUserAddress} = useContext(Appcontext);
   const [isVisible, setIsVisible] = useState(false);
   const [visibleManual, setVisibleManual] = useState(false);
   const [mapVisible, setMapVisible] = useState(false);
-  
+
   const list = [
     {title: 'Add Manually', onPress: () => handleManuallyadd()},
     {title: 'Add from Map', onPress: () => handleMapView(false)},
@@ -31,10 +33,10 @@ const Addresses = ({route,navigation}) => {
     setVisibleManual(true);
   };
 
-  const handleMapView=()=>{
+  const handleMapView = () => {
     setIsVisible(false);
     setMapVisible(true);
-  }
+  };
 
   const setDefaultAddress = addressId => {
     const updatedAddresses = userAddress.map(address => ({
@@ -46,53 +48,28 @@ const Addresses = ({route,navigation}) => {
 
   return (
     <View style={styles.container}>
-      <CustomHeader route={route} navigation={navigation}/>
+      <CustomHeader route={route} navigation={navigation} />
       <View>
         <RedLine text="Addresses" />
       </View>
-      <ScrollView>
-        {userAddress?.map((address, i) => (
-          <View
-            key={address.id}
-            style={{
-              width: '90%',
-              alignSelf: 'center',
-              marginVertical: 10,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              padding: 10,
-              borderRadius: 10,
-            }}>
-            <View>
-              <Text style={[globalStyles.text]}>Name</Text>
-              <Text style={[globalStyles.text]}>{address.landmark}</Text>
-              <Text
-                style={[
-                  globalStyles.text,
-                ]}>{`${address.city}, ${address.state}, ${address.pincode}`}</Text>
-              <Text style={[globalStyles.text]}>phone no.</Text>
-            </View>
-            <View>
-              <Button
-                title={address.default ? 'Default' : 'Make as Default'}
-                buttonStyle={{
-                  backgroundColor: 'transparent',
-                  borderWidth: 1,
-                  borderColor: colors.red,
-                  borderRadius: 10,
-                }}
-                containerStyle={{margin: 10}}
-                titleStyle={{
-                  fontSize: 15,
-                  color: address.default ? 'black' : 'white',
-                }}
-                disabled={address.default}
-                onPress={() => setDefaultAddress(address.id)} // Call the function to set as default
-              />
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+      {userAddress?.length ? (
+        <ScrollView>
+          {userAddress?.map((address, i) => (
+            <AddressCard address={address} key={i}/>
+          ))}
+        </ScrollView>
+      ) : (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <MaterialCommunityIcons
+            name="home-group-plus"
+            size={50}
+            color={'white'}
+          />
+          <Text style={[globalStyles.text, {paddingVertical: 10}]}>
+            You Does not have any saved address.
+          </Text>
+        </View>
+      )}
       <Button
         title={'+ Add New Address '}
         containerStyle={{width: '90%', alignSelf: 'center'}}
@@ -103,7 +80,9 @@ const Addresses = ({route,navigation}) => {
         }}
         onPress={() => setIsVisible(true)}
       />
-      <BottomSheet isVisible={isVisible} onBackdropPress={()=>setIsVisible(false)}>
+      <BottomSheet
+        isVisible={isVisible}
+        onBackdropPress={() => setIsVisible(false)}>
         {list.map((l, i) => (
           <ListItem
             key={i}
@@ -116,10 +95,13 @@ const Addresses = ({route,navigation}) => {
         ))}
       </BottomSheet>
       <Modal visible={visibleManual} animationType="slide">
-        <ManualAdd manualVisible={visibleManual} setManualvisible={setVisibleManual}/>
+        <ManualAdd
+          manualVisible={visibleManual}
+          setManualvisible={setVisibleManual}
+        />
       </Modal>
       <Modal visible={mapVisible} animationType="slide">
-         <MapModal visible={mapVisible} setVisible={setMapVisible}/>
+        <MapModal visible={mapVisible} setVisible={setMapVisible} />
       </Modal>
     </View>
   );

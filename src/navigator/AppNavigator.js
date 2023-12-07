@@ -18,6 +18,7 @@ import CustomHeader from '../components/CustomHeader';
 import Offline from '../screens/Offline';
 import VideoDetails from '../screens/VideoDetails';
 import Offers from '../screens/Offers';
+import withConnection from '../components/WithConnection';
 
 const Stack = createStackNavigator();
 
@@ -25,19 +26,19 @@ function AppNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Main" component={TabNavigator} options={{headerShown:false}}/>
-      <Stack.Screen name="Auth" component={Auth} options={{headerShown:false}}/>
-      <Stack.Screen name="Menu" component={Menu} options={{headerShown:false}}/>
-      <Stack.Screen name="Offers" component={Offers} options={{headerShown:false}}/>
-      <Stack.Screen name="ProductDetails" component={ProductDetails} options={{headerShown:false}}/>
-      <Stack.Screen name="VideoDetails" component={VideoDetails} options={{headerShown:false}}/>
-      <Stack.Screen name="Settings" component={Settings} options={{headerShown:false}}/>
-      <Stack.Screen name="Rewards" component={Rewards} options={{headerShown:false}}/>
-      <Stack.Screen name="Addresses" component={Addresses} options={{headerShown:false}}/>
-      <Stack.Screen name="Help" component={Help} options={{headerShown:false}}/>
-      <Stack.Screen name="Passwords" component={Passwords} options={{headerShown:false}}/>
-      <Stack.Screen name="Orders" component={Orders} options={{headerShown:false}}/>
-      <Stack.Screen name="Success" component={Success} options={{headerShown:false}}/>
-      <Stack.Screen name="Error" component={Error} options={{headerShown:false}}/>
+      <Stack.Screen name="Auth" component={withConnection(Auth)} options={{headerShown:false}}/>
+      <Stack.Screen name="Menu" component={withConnection(Menu)} options={{headerShown:false}}/>
+      <Stack.Screen name="Offers" component={withConnection(Offers)} options={{headerShown:false}}/>
+      <Stack.Screen name="ProductDetails" component={withConnection(ProductDetails)} options={{headerShown:false}}/>
+      <Stack.Screen name="VideoDetails" component={withConnection(VideoDetails)} options={{headerShown:false}}/>
+      <Stack.Screen name="Settings" component={withConnection(Settings)} options={{headerShown:false}}/>
+      <Stack.Screen name="Rewards" component={withConnection(Rewards)} options={{headerShown:false}}/>
+      <Stack.Screen name="Addresses" component={withConnection(Addresses)} options={{headerShown:false}}/>
+      <Stack.Screen name="Help" component={withConnection(Help)} options={{headerShown:false}}/>
+      <Stack.Screen name="Passwords" component={withConnection(Passwords)} options={{headerShown:false}}/>
+      <Stack.Screen name="Orders" component={withConnection(Orders)} options={{headerShown:false}}/>
+      <Stack.Screen name="Success" component={withConnection(Success)} options={{headerShown:false}}/>
+      <Stack.Screen name="Error" component={withConnection(Error)} options={{headerShown:false}}/>
       <Stack.Screen name="Offline" component={Offline} options={{headerShown:false}}/>
     </Stack.Navigator>
   );

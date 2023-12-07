@@ -1,6 +1,7 @@
 import React, {createContext, useEffect, useState} from 'react';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import { removeFromStorage } from '../utils/Helper';
+import { getFromStorage, removeFromStorage } from '../utils/Helper';
+import { clientRequest } from '../utils/ApiRequests';
 
 
 export const Appcontext = createContext();
@@ -32,28 +33,20 @@ export const AppContextProvider = ({children}) => {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
-  useEffect(() => {
-    setUserAddress([
-      {
-        id: 1,
-        landmark: 'Abc',
-        city: 'city1',
-        state: 'state1',
-        pincode: '1111111',
-        default: true,
-      },
-      {
-        id: 2,
-        landmark: 'Def',
-        city: 'city2',
-        state: 'state2',
-        pincode: '222222',
-        default: false,
-      },
-    ]);
-  }, []);
+  const getAddress = async()=>{
+    const devideId= await getFromStorage('deviceId');
+    const address= await clientRequest('api/v1/private/address','GET',{deviceid: devideId,devicename: 'Android',userid:userData[0]?._id || null});
+    // console.log(address,'address')
+    if(address.data){
+      setUserAddress(address.data);
+    }
+  };
+
+  useEffect(()=>{
+    getAddress();
+  },[userData])
 
   const values = {
     userData,
@@ -65,7 +58,8 @@ export const AppContextProvider = ({children}) => {
     setUserAddress,
     userOrders,
     setUserOrders,
-    Logout
+    Logout,
+    getAddress,
   };
 
   return <Appcontext.Provider value={values}>{children}</Appcontext.Provider>;
