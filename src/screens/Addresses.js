@@ -38,13 +38,13 @@ const Addresses = ({route, navigation}) => {
     setMapVisible(true);
   };
 
-  const setDefaultAddress = addressId => {
-    const updatedAddresses = userAddress.map(address => ({
-      ...address,
-      default: address.id === addressId,
-    }));
-    setUserAddress(updatedAddresses);
-  };
+  // const setDefaultAddress = addressId => {
+  //   const updatedAddresses = userAddress.map(address => ({
+  //     ...address,
+  //     default: address.id === addressId,
+  //   }));
+  //   setUserAddress(updatedAddresses);
+  // };
 
   return (
     <View style={styles.container}>
@@ -79,6 +79,7 @@ const Addresses = ({route, navigation}) => {
           borderRadius: 10,
         }}
         onPress={() => setIsVisible(true)}
+        disabled={userAddress?.length >=5}
       />
       <BottomSheet
         isVisible={isVisible}

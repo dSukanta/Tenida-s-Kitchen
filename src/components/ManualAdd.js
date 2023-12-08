@@ -20,6 +20,7 @@ const ManualAdd = ({manualVisible, setManualvisible}) => {
   });
 
   const {userData,getAddress}= useContext(Appcontext);
+  const [loading,setLoading]= useState(false);
 
 
 
@@ -43,18 +44,17 @@ const ManualAdd = ({manualVisible, setManualvisible}) => {
     if(!numberRegex.test(userInput.pincode)){
       return Alert.alert('Pin code required','Please enter a valid pincode')
     }; 
+    setLoading(true);
     const devideId= await getFromStorage('deviceId');
     const AddaddressRes= await serverRequest('api/v1/private/address','POST',userInput,{deviceid: devideId,devicename: 'Android',userid:userData[0]?._id || null});
-    // console.log(AddaddressRes,'response')
-    // console.log(userInput);
-    // setManualvisible(false);
     if(AddaddressRes?.success){
       setManualvisible(false);
-      await getAddress()
+      await getAddress();
       Alert.alert('Success',AddaddressRes?.message);
     }else{
         Alert.alert('Error!',AddaddressRes?.message || 'Unable to add address, try again later')
     }
+    setLoading(false);
   }
 
 
@@ -132,6 +132,9 @@ const ManualAdd = ({manualVisible, setManualvisible}) => {
           borderRadius: 10,
         }}
         onPress={handleSubmit}
+        loading={loading}
+        disabled={loading}
+        disabledStyle={{backgroundColor: colors.disabledRed}}
       />
       </View>
       </ScrollView>

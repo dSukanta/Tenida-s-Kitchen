@@ -31,12 +31,14 @@ const Cart = ({navigation}) => {
     userData,
   } = useContext(Appcontext);
 
-  const defAdd = userAddress?.filter(add => add?.default);
+  const defAdd = userAddress?.length?userAddress.filter(add => add?.default):null;
+  const [grandTotal, setGrandTotal] = useState(0);
 
-  // console.log(RAZORPAY_KEY,'key');
+  // console.log(defAdd,'def');
 
-  const handleCheckout = () => {
-    if (!userData?.length) {
+  const handleCheckout = async() => {
+
+      if (!userData?.length) {
       return navigation.navigate('Auth', {source: 'Cart'});
     }
     var options = {
@@ -44,7 +46,7 @@ const Cart = ({navigation}) => {
       image: 'https://i.imgur.com/3g7nmJC.jpg',
       currency: 'INR',
       key: RAZORPAY_KEY,
-      amount: cartTotal * 100,
+      amount: grandTotal *100,
       name: `Sukanta`,
       order_id: '',
       prefill: {
@@ -60,7 +62,7 @@ const Cart = ({navigation}) => {
         const order = {
           order_data: data,
           orderId: data.razorpay_payment_id,
-          totalAmount: cartTotal,
+          totalAmount: grandTotal *100,
           products: [],
         };
         userCart?.forEach(item => {
@@ -75,6 +77,23 @@ const Cart = ({navigation}) => {
         navigation.navigate('Error', {data: error});
       });
   };
+
+  useEffect(()=>{
+    const cartTotalAmount= cartTotal;
+    const gst= (cartTotal * 12) / 100;
+
+    const grandTotal = cartTotalAmount+ gst;
+    setGrandTotal(grandTotal);
+  },[userData,cartTotal]);
+
+  // useEffect(()=>{
+  //   const defAdd = userAddress?.filter(add => add?.default);
+  //   if(defAdd?.length){
+  //     setDefAddress(defAdd)
+  //   }else if(!defAdd?.length && userAddress?.length){
+  //     setDefAddress(userAddress[0])
+  //   }
+  // },[userAddress])
 
   return (
     <View style={globalStyles.container}>
@@ -122,14 +141,14 @@ const Cart = ({navigation}) => {
               <View style={styles.row}>
                 <Text style={[globalStyles.text]}>Grand Total :</Text>
                 <Text style={[globalStyles.text]}>
-                  {cartTotal + (cartTotal * 18) / 100}
+                  {grandTotal}
                 </Text>
               </View>
             </View>
             <View style={{width: '90%', alignSelf: 'center'}}>
               <Text style={[globalStyles.text]}>Address:</Text>
             </View>
-            {(userData?.length && defAdd && userAddress?.length) ? (
+            {(userData?.length && defAdd?.length && userAddress?.length) ? (
               <View
                 style={{
                   width: '90%',
@@ -143,13 +162,13 @@ const Cart = ({navigation}) => {
                   borderRadius: 10,
                 }}>
                 <View>
-                  <Text style={[globalStyles.text]}>Name</Text>
+                  <Text style={[globalStyles.text]}>{defAdd[0]?.userInfo?.fullname}</Text>
                   <Text style={[globalStyles.text]}>{defAdd[0]?.landmark}</Text>
                   <Text
                     style={[
                       globalStyles.text,
                     ]}>{`${defAdd[0]?.city}, ${defAdd[0]?.state}, ${defAdd[0]?.pincode}`}</Text>
-                  <Text style={[globalStyles.text]}>phone no.</Text>
+                  <Text style={[globalStyles.text]}>{defAdd[0]?.phone}</Text>
                 </View>
                 <View>
                   <Button
@@ -167,7 +186,7 @@ const Cart = ({navigation}) => {
             ):(
               <View>
                 <Button 
-                  title={'+ Add a new address'}
+                  title={'Add / Set a address'}
                   buttonStyle={{backgroundColor:'transparent', borderRadius:10,borderWidth:1,borderColor:colors.red}}
                   containerStyle={{width:'90%',alignSelf: 'center', marginVertical:10}}
                   onPress={()=> userData?.length? navigation.navigate('Addresses'):navigation.navigate('Auth',{source:'Addresses'})}

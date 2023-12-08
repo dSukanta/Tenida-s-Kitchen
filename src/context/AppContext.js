@@ -1,7 +1,7 @@
 import React, {createContext, useEffect, useState} from 'react';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import { getFromStorage, removeFromStorage } from '../utils/Helper';
-import { clientRequest } from '../utils/ApiRequests';
+import { clientRequest, serverRequest } from '../utils/ApiRequests';
 
 
 export const Appcontext = createContext();
@@ -13,7 +13,7 @@ export const AppContextProvider = ({children}) => {
   const [userOrders, setUserOrders] = useState([]);
 
 
-  const cartTotal = userCart.reduce(
+  const cartTotal = userCart?.reduce(
     (init, next) => init + Number(next.price) * Number(next.quantity),
     0,
   );
@@ -44,8 +44,60 @@ export const AppContextProvider = ({children}) => {
     }
   };
 
+  const getCartItems = async()=>{
+    const devideId= await getFromStorage('deviceId');
+    let headerObj={
+      deviceid: devideId,
+      devicename: 'Android',
+    }
+    if(userData?.length){
+      headerObj.userid= userData[0]?._id
+    };
+
+    const cartItems= await clientRequest('api/v1/public/cart','GET',headerObj);
+    // console.log(cartItems,'cart')
+    if(cartItems.data){
+      setUserCart(cartItems.data);
+    }
+  };
+
+  const addToCart = async(productid)=>{
+    const devideId= await getFromStorage('deviceId');
+    let headerObj={
+      deviceid: devideId,
+      devicename: 'Android',
+    }
+    if(userData?.length){
+      headerObj.userid= userData[0]?._id
+    };
+
+    const cartData = userCart.find(item => item._id === productid);
+    if (cartData) {
+      const updatedCart = userCart.map(item =>
+        item._id === data._id ? {...item, quantity: item.quantity + 1} : item,
+      );
+      setUserCart(updatedCart);
+    } else {
+      setUserCart([
+        ...userCart,
+        {
+          product: productid,
+          quantity: 1,
+        },
+      ]);
+    }
+
+    const addTocartRes= await serverRequest('api/v1/public/cart','POST',{cartItems: userCart},headerObj);
+    // console.log(addTocartRes,'addToCart')
+    // console.log(cartItems,'cart')
+    // if(cartItems.data){
+    //   setUserCart(address.data);
+    // }
+  }
+
   useEffect(()=>{
     getAddress();
+    getCartItems();
   },[userData])
 
   const values = {
@@ -60,6 +112,8 @@ export const AppContextProvider = ({children}) => {
     setUserOrders,
     Logout,
     getAddress,
+    addToCart,
+    getCartItems,
   };
 
   return <Appcontext.Provider value={values}>{children}</Appcontext.Provider>;
