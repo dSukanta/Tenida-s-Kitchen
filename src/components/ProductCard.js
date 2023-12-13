@@ -15,6 +15,7 @@ const ProductCard = ({data}) => {
   const [readMore, setReadMore] = useState(false);
   const cartData = userCart?.find(item => item?.product?._id === data._id);
   const quantity = cartData ? cartData.quantity : 0;
+  const [loading,setLoading]= useState({state:false,type: ''});
 
   // const handleAddToCart = async product => {
   //   if (cartData) {
