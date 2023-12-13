@@ -17,13 +17,14 @@ import colors from '../constants/colors';
 import RazorpayCheckout from 'react-native-razorpay';
 import {RAZORPAY_KEY} from '@env';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { getCart } from '../utils/Functions';
 
 const {height, width} = Dimensions.get('window');
 
 const Cart = ({navigation}) => {
   const {
     userCart,
-    cartTotal,
+    getCartTotal,
     userAddress,
     setUserCart,
     userOrders,
@@ -78,29 +79,24 @@ const Cart = ({navigation}) => {
       });
   };
 
+
   useEffect(()=>{
-    const cartTotalAmount= cartTotal;
-    const gst= (cartTotal * 12) / 100;
+    const cartTotalAmount= getCartTotal();
+    const gst= (getCartTotal() * 12) / 100;
 
     const grandTotal = cartTotalAmount+ gst;
     setGrandTotal(grandTotal);
-  },[userData,cartTotal]);
+  },[userData,userCart]);
 
-  // useEffect(()=>{
-  //   const defAdd = userAddress?.filter(add => add?.default);
-  //   if(defAdd?.length){
-  //     setDefAddress(defAdd)
-  //   }else if(!defAdd?.length && userAddress?.length){
-  //     setDefAddress(userAddress[0])
-  //   }
-  // },[userAddress])
+  console.log(userCart,'cart data')
+
 
   return (
     <View style={globalStyles.container}>
       <View>
         <RedLine text={'your cart'} />
       </View>
-      {userCart.length ? (
+      {userCart?.length ? (
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
@@ -130,12 +126,12 @@ const Cart = ({navigation}) => {
             <View style={styles.rowContainer}>
               <View style={styles.row}>
                 <Text style={[globalStyles.text]}>Total Price :</Text>
-                <Text style={[globalStyles.text]}>{cartTotal}</Text>
+                <Text style={[globalStyles.text]}>{getCartTotal()}</Text>
               </View>
               <View style={styles.row}>
                 <Text style={[globalStyles.text]}>GST :</Text>
                 <Text style={[globalStyles.text]}>
-                  {(cartTotal * 12) / 100}
+                  {(getCartTotal() * 12) / 100}
                 </Text>
               </View>
               <View style={styles.row}>

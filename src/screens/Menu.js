@@ -28,13 +28,13 @@ const Menu = ({route, navigation}) => {
   const [productData, setProductData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const {userCart,cartTotal} = useContext(Appcontext);
+  const {userCart,getCartTotal} = useContext(Appcontext);
 
   const handleClick = (category) => {
     setCurrentCategory(category);
   };
 
-  // console.log(currentCategory,'currentCategory')
+  console.log(userCart,'price')
 
   
 
@@ -94,7 +94,7 @@ const Menu = ({route, navigation}) => {
 
   useEffect(()=>{
    fetchPageData();
-  },[])
+  },[]);
 
   return (
     <View style={styles.container}>
@@ -137,12 +137,12 @@ const Menu = ({route, navigation}) => {
           <View style={styles.cartSection}>
             <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
               <Image
-                source={{uri: `${BASE_URI}${userCart[0]?.image}`}}
+                source={{uri: `${BASE_URI}${userCart[0]?.product?.images[0]}`}}
                 style={{width: 50, height: 50, resizeMode: 'cover',borderRadius:5}}
               />
               <View>
-              <Text style={[globalStyles.text,{color:'black'}]}>{userCart[userCart?.length - 1]?.name} {userCart.length>=2 ? <Text>{`+${userCart?.length-1} more`}</Text>:null}</Text>
-              <Text style={[globalStyles.text,{color:'black'}]}>{userCart?.length} Item(s) | <Text style={[globalStyles.text,{color:'black'}]}>Total: ₹{cartTotal}</Text></Text>
+              <Text style={[globalStyles.text,{color:'black'}]}>{userCart[userCart?.length - 1]?.product?.title} {userCart.length>=2 ? <Text>{`+${userCart?.length-1} more`}</Text>:null}</Text>
+              <Text style={[globalStyles.text,{color:'black'}]}>{userCart?.length} Item(s) | <Text style={[globalStyles.text,{color:'black'}]}>Total: ₹{getCartTotal()}</Text></Text>
               </View>
             </View>
             <View>

@@ -18,12 +18,12 @@ import {globalStyles} from '../constants/globalStyles';
 import RedLine from '../components/RedLine';
 import CategoriesCard from '../components/CategoriesCard';
 import CarouselComp from '../components/CarouselComp';
-import RecomendedCard from '../components/RecomendedCard';
 import HomeHeader from '../components/HomeHeader';
 import { Appcontext } from '../context/AppContext';
 import { getFromStorage } from '../utils/Helper';
 import { clientRequest } from '../utils/ApiRequests';
 import colors from '../constants/colors';
+import ProductCard from '../components/ProductCard';
 
 const {height, width} = Dimensions.get('window');
 
@@ -176,18 +176,18 @@ const Home = ({navigation}) => {
         <View>
           <RedLine text={'Recomended for you'} />
         </View>
-        <View style={{alignSelf: 'center', marginBottom: '18%'}}>
+        {/* <View style={{alignSelf: 'center', marginBottom: '18%'}}>
           <FlatList
             data={recomendedProducts}
             renderItem={({item, index}) => (
-              <RecomendedCard
+              <ProductCard
                 data={item}
                 navigation={navigation}
                 index={index}
               />
             )}
           />
-        </View>
+        </View> */}
       </ScrollView>
       }
     </View>

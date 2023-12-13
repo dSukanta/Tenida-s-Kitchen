@@ -47,6 +47,7 @@ const Auth = ({route,navigation}) => {
       const deviceid = await getFromStorage('deviceId');
 
       // console.log(user,deviceid,'g-user');
+
       if (user && deviceid) {
         const manageUser = await serverRequest(
           'api/v1/userauth/register',
@@ -65,8 +66,8 @@ const Auth = ({route,navigation}) => {
           },
         );
         // console.log(manageUser,'user')
-        await saveToStorage('user', [manageUser?.user]);
-        await saveToStorage('token', manageUser?.user?._id);
+        await saveToStorage('user', [manageUser?.data]);
+        await saveToStorage('token', manageUser?.data?._id);
         setUserData([manageUser]);
         // const {source}= await route?.params?.source
         // console.log(source,'source');

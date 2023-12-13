@@ -8,52 +8,53 @@ import colors from '../constants/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ProductDetails from '../screens/ProductDetails';
 import {BASE_URI} from '@env'
+import { EditCart, handleAddToCart } from '../utils/Functions';
 
 const ProductCard = ({data}) => {
   const {userData, userCart, setUserCart} = useContext(Appcontext);
   const [readMore, setReadMore] = useState(false);
-  const cartData = userCart.find(item => item._id === data._id);
+  const cartData = userCart?.find(item => item?.product?._id === data._id);
   const quantity = cartData ? cartData.quantity : 0;
 
-  const handleAddToCart = async product => {
+  // const handleAddToCart = async product => {
+  //   if (cartData) {
+  //     const updatedCart = userCart.map(item =>
+  //       item._id === data._id ? {...item, quantity: item.quantity + 1} : item,
+  //     );
+  //     setUserCart(updatedCart);
+  //   } else {
+  //     setUserCart([
+  //       ...userCart,
+  //       {
+  //         _id: data._id,
+  //         image: data.images[0],
+  //         name: data.title,
+  //         price: data.price,
+  //         quantity: 1,
+  //       },
+  //     ]);
+  //   }
+  // };
+
+  const handleIncreaseQuantity = async() => {
     if (cartData) {
       const updatedCart = userCart.map(item =>
-        item._id === data._id ? {...item, quantity: item.quantity + 1} : item,
+        item?.product?._id === data._id ? {...item, quantity: item.quantity + 1} : item,
       );
-      setUserCart(updatedCart);
-    } else {
-      setUserCart([
-        ...userCart,
-        {
-          _id: data._id,
-          image: data.images[0],
-          name: data.title,
-          price: data.price,
-          quantity: 1,
-        },
-      ]);
+      await EditCart(userData,updatedCart,setUserCart)
     }
   };
 
-  const handleIncreaseQuantity = () => {
-    if (cartData) {
-      const updatedCart = userCart.map(item =>
-        item._id === data._id ? {...item, quantity: item.quantity + 1} : item,
-      );
-      setUserCart(updatedCart);
-    }
-  };
-
-  const handleDecreaseQuantity = () => {
+  const handleDecreaseQuantity = async() => {
     if (cartData && quantity > 1) {
       const updatedCart = userCart.map(item =>
-        item._id === data._id ? {...item, quantity: item.quantity - 1} : item,
+        item?.product?._id === data._id ? {...item, quantity: item.quantity - 1} : item,
       );
-      setUserCart(updatedCart);
+      await EditCart(userData,updatedCart,setUserCart)
     }
   };
 
-  // console.log(`${BASE_URI}${data?.images[0]}`,'cartitem')
+  // console.log(cartData.quantity,'cartitem')
 
   return (
     <TouchableOpacity style={styles.card} onPress={()=>setReadMore(true)}>
@@ -82,7 +83,6 @@ const ProductCard = ({data}) => {
         <Text style={styles.detailsText}>
           {data?.description?.length>100 ? data?.description.substring(
             0,100)+"...": data?.description}
-
         </Text>
       </View>
       <View style={styles.rightSide}>
@@ -105,7 +105,7 @@ const ProductCard = ({data}) => {
                 backgroundColor: colors.red,
                 borderRadius: 10,
               }}
-              onPress={() => handleAddToCart(data)}
+              onPress={() => handleAddToCart(userData,data,setUserCart)}
             />
           )}
         </View>
