@@ -34,7 +34,7 @@ const Menu = ({route, navigation}) => {
     setCurrentCategory(category);
   };
 
-  console.log(userCart,'price')
+  // console.log(userCart,'price')
 
   
 

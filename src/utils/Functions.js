@@ -106,10 +106,10 @@ export const getCart = async (userData) => {
                 };
                 const updata = formatData.filter((item,i)=>item?.product !== undefined || '');
                 const addLocalToDB= await addToDataBase(userData,updata);
-                // console.log(addLocalToDB,'addLocalToDB success');
+                // console.log(addLocalToDB?.cartItems,'addLocalToDB success');
                 if(addLocalToDB?.cartItems){
-                    // const updatedCart= addLocalToDB?.cartItems?.filter((item,i)=>item?.product!==localCartItems[0]?._id);
-                    // await saveToStorage('cart',updatedCart);
+                    const updatedCart= addLocalToDB?.cartItems?.filter((item,i)=>item?.product!==localCartItems[0]?._id);
+                    await saveToStorage('cart',updatedCart);
                     const getCartres= await clientRequest('api/v1/public/cart','GET',headerObj);
                     // console.log(getCartres,'getCartres success');
                     return getCartres?.data?.cartItems;
@@ -133,7 +133,7 @@ export const handleAddToCart = async (userData,product,setCart) => {
 
     const cartItems = await getCart(userData);
     const localCartItems = await getFromStorage('cart')||[]; 
-    console.log(cartItems,'items')
+    // console.log(cartItems,'items')
     if(userData?.length) {
 
         const formatData= cartItems?.map((item,i)=> {return {product: item?.product?._id, quantity: item?.quantity}}) 
@@ -149,9 +149,9 @@ export const handleAddToCart = async (userData,product,setCart) => {
               const addRes= await getCart(userData);
               setCart(addRes);
         }else{
-            const updatedCart= formatData.push({product: product._id, quantity:1})
-            console.log(updatedCart,'res');
-            const addTocartRes= await addToDataBase(userData,updatedCart)
+            formatData.push({product: product._id, quantity:1});
+            // console.log(updatedCart,'res');
+            const addTocartRes= await addToDataBase(userData,formatData)
             console.log(addTocartRes,'add cart')
             const addRes= await getCart(userData);
             console.log(addRes,'get cart res...');

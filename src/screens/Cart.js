@@ -107,7 +107,7 @@ const Cart = ({navigation}) => {
               style={[globalStyles.text, {alignSelf: 'center', margin: 10}]}>
               Item(s) Added
             </Text>
-            {userCart.map((cart, i) => (
+            {userCart?.map((cart, i) => (
               <CartCard data={cart} key={i} />
             ))}
             <Button
