@@ -19,7 +19,7 @@ const ProductCard = ({data}) => {
 
   const handleAddToCart = async product => {
     if (cartData) {
-      const updatedCart = userCart.map(item =>
+      const updatedCart = userCart?.map(item =>
         item.id === data.id ? {...item, quantity: item.quantity + 1} : item,
       );
       setUserCart(updatedCart);
@@ -39,7 +39,7 @@ const ProductCard = ({data}) => {
 
   const handleIncreaseQuantity = () => {
     if (cartData) {
-      const updatedCart = userCart.map(item =>
+      const updatedCart = userCart?.map(item =>
         item.id === data.id ? {...item, quantity: item.quantity + 1} : item,
       );
       setUserCart(updatedCart);
@@ -48,7 +48,7 @@ const ProductCard = ({data}) => {
 
   const handleDecreaseQuantity = () => {
     if (cartData && quantity > 1) {
-      const updatedCart = userCart.map(item =>
+      const updatedCart = userCart?.map(item =>
         item.id === data.id ? {...item, quantity: item.quantity - 1} : item,
       );
       setUserCart(updatedCart);

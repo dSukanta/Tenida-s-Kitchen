@@ -11,14 +11,14 @@ import { EditCart, handledeleteCart } from '../utils/Functions';
 
 const CartCard = ({ data }) => {
   const { userData, userCart, setUserCart } = useContext(Appcontext);
-  const cartData = userCart.find(item => item._id === data._id);
+  const cartData = userCart?.find(item => item._id === data._id);
   const quantity = cartData ? cartData.quantity : 0;
   const [loading,setLoading]= useState({state:false,type: ''});
 
   const handleIncreaseQuantity = async() => {
     setLoading({state:true,type:'inc'})
     if (cartData) {
-      const updatedCart = userCart.map(item =>
+      const updatedCart = userCart?.map(item =>
         item?.product?._id === data?.product?._id ? {...item, quantity: item.quantity + 1} : item,
       );
       await EditCart(userData,updatedCart,setUserCart)
@@ -27,9 +27,9 @@ const CartCard = ({ data }) => {
   };
 
   const handleDecreaseQuantity = async() => {
-    setLoading({state:true,type:'inc'})
+    setLoading({state:true,type:'dec'})
     if (cartData && quantity > 1) {
-      const updatedCart = userCart.map(item =>
+      const updatedCart = userCart?.map(item =>
         item?.product?._id === data?.product?._id ? {...item, quantity: item.quantity - 1} : item,
       );
       await EditCart(userData,updatedCart,setUserCart)

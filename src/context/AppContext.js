@@ -103,10 +103,21 @@ export const AppContextProvider = ({children}) => {
   //   // }
   // }
 
-  const getUserCart = async ()=>{
-    const data =await getCart(userData);
-    setUserCart(data);
-  }
+  const getUserCart = async () => {
+    try {
+      const data = await getCart(userData);
+  
+      if (Array.isArray(data)) {
+        // Check if 'data' is an array before using map
+        console.log(data, 'data');
+        setUserCart(data);
+      } else {
+        console.error('Error: data is not an array', data);
+      }
+    } catch (error) {
+      console.error('Error in getUserCart:', error);
+    }
+  };
 
   useEffect(()=>{
     getAddress();

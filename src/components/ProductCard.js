@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator} from 'react-native';
 import {globalStyles} from '../constants/globalStyles';
 import {BottomSheet, Button} from '@rneui/base';
 import {Rating, AirbnbRating} from 'react-native-ratings';
@@ -38,24 +38,33 @@ const ProductCard = ({data}) => {
   // };
 
   const handleIncreaseQuantity = async() => {
+    setLoading({state:true,type:'inc'})
     if (cartData) {
-      const updatedCart = userCart.map(item =>
-        item?.product?._id === data._id ? {...item, quantity: item.quantity + 1} : item,
+      const updatedCart = userCart?.map(item =>
+        item?.product?._id === data?._id ? {...item, quantity: item.quantity + 1} : item,
       );
       await EditCart(userData,updatedCart,setUserCart)
     }
+    setLoading({state:false,type:''})
   };
 
   const handleDecreaseQuantity = async() => {
+    setLoading({state:true,type:'dec'})
     if (cartData && quantity > 1) {
-      const updatedCart = userCart.map(item =>
-        item?.product?._id === data._id ? {...item, quantity: item.quantity - 1} : item,
+      const updatedCart = userCart?.map(item =>
+        item?.product?._id === data?._id ? {...item, quantity: item.quantity - 1} : item,
       );
       await EditCart(userData,updatedCart,setUserCart)
     }
+    setLoading({state:false,type:''})
   };
 
-  // console.log(cartData.quantity,'cartitem')
+  const addToCart = async() => {
+    setLoading({state:true,type:'addcart'});
+    await handleAddToCart(userData,data,setUserCart);
+    setLoading({state:false,type:''})
+  }
+
 
   return (
     <TouchableOpacity style={styles.card} onPress={()=>setReadMore(true)}>
@@ -89,12 +98,15 @@ const ProductCard = ({data}) => {
       <View style={styles.rightSide}>
         <Image source={{uri:`${BASE_URI}${data?.images[0]}`}} style={styles.image} />
         <View style={styles.buttonContainer}>
-          {cartData ? (
+          {loading?.state && (loading?.type==='inc'|| loading?.type ==='dec')?
+            <ActivityIndicator size={'small'} color={colors.red}/>:
+          <View>
+          {cartData  ? (
             <View style={styles.quantityContainer}>
               <TouchableOpacity onPress={handleDecreaseQuantity}>
                 <Text style={styles.quantityButton}>-</Text>
               </TouchableOpacity>
-              <Text style={globalStyles.text}>{quantity}</Text>
+              <Text style={globalStyles.text}>{cartData?.quantity}</Text>
               <TouchableOpacity onPress={handleIncreaseQuantity}>
                 <Text style={styles.quantityButton}>+</Text>
               </TouchableOpacity>
@@ -106,9 +118,12 @@ const ProductCard = ({data}) => {
                 backgroundColor: colors.red,
                 borderRadius: 10,
               }}
-              onPress={() => handleAddToCart(userData,data,setUserCart)}
+              onPress={addToCart}
+              loading={loading?.state && loading.type === 'addcart'}
             />
           )}
+          </View>
+          }
         </View>
       </View>
       <BottomSheet isVisible={readMore} onBackdropPress={()=>setReadMore(false)}>

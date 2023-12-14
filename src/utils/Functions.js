@@ -108,7 +108,7 @@ export const getCart = async (userData) => {
                 const addLocalToDB= await addToDataBase(userData,updata);
                 // console.log(addLocalToDB?.cartItems,'addLocalToDB success');
                 if(addLocalToDB?.cartItems){
-                    const updatedCart= addLocalToDB?.cartItems?.filter((item,i)=>item?.product!==localCartItems[0]?._id);
+                    const updatedCart= [];
                     await saveToStorage('cart',updatedCart);
                     const getCartres= await clientRequest('api/v1/public/cart','GET',headerObj);
                     // console.log(getCartres,'getCartres success');
@@ -152,9 +152,9 @@ export const handleAddToCart = async (userData,product,setCart) => {
             formatData.push({product: product._id, quantity:1});
             // console.log(updatedCart,'res');
             const addTocartRes= await addToDataBase(userData,formatData)
-            console.log(addTocartRes,'add cart')
+            // console.log(addTocartRes,'add cart')
             const addRes= await getCart(userData);
-            console.log(addRes,'get cart res...');
+            // console.log(addRes,'get cart res...');
             setCart(addRes)
         }
     }else{
