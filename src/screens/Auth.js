@@ -46,7 +46,7 @@ const Auth = ({route,navigation}) => {
       const {user} = await GoogleSignin.signIn();
       const deviceid = await getFromStorage('deviceId');
 
-      console.log(user,deviceid,'g-user');
+      // console.log(user,deviceid,'g-user');
       if (user && deviceid) {
         const manageUser = await serverRequest(
           'api/v1/userauth/register',
@@ -64,7 +64,7 @@ const Auth = ({route,navigation}) => {
             devicename: 'Android',
           },
         );
-        console.log(manageUser,'user')
+        // console.log(manageUser,'user')
         await saveToStorage('user', [manageUser?.data]);
         await saveToStorage('token', manageUser?.data?._id);
         setUserData([manageUser]);
@@ -113,12 +113,11 @@ const Auth = ({route,navigation}) => {
 
   const phoneAuth = async () => {
     setLoading(true);
+    // console.log(`+91${phoneNumber}`,'phoneAuth');
     try {
-      const confirmation = await auth().signInWithPhoneNumber(
-        `+91${phoneNumber}`,
-      );
-      setConfirm(confirmation);
+      const confirmation = await auth().signInWithPhoneNumber(`+91${phoneNumber}`);
       // console.log(confirmation,'cnf');
+      setConfirm(confirmation);
       Alert.alert('Success!', 'Confirmation code sent to your phone.');
     } catch (error) {
       const errorMessage = extractErrorMessage(error);
@@ -150,8 +149,8 @@ const Auth = ({route,navigation}) => {
               devicename: 'Android',
             },
           );
-          await saveToStorage('user', [manageUser?.user]);
-          await saveToStorage('token', manageUser?.user?._id);
+          await saveToStorage('user', [manageUser?.data]);
+          await saveToStorage('token', manageUser?.data?._id);
           setUserData([manageUser]);
           navigation.reset({
             index: 0,
