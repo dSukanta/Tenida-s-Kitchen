@@ -100,7 +100,7 @@ export const AppContextProvider = ({children}) => {
 
   const getCartItems= async() =>{
     const cartData= await getCurrentCart(userData);
-    console.log(cartData,'cartdata');
+    // console.log(cartData,'cartdata',userData);
     setUserCart(cartData);
   }
 
