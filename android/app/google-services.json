@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "369626514007",
+    "project_id": "food-delivery-fbe45",
+    "storage_bucket": "food-delivery-fbe45.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369626514007:android:369bc9f64264a433c55912",
+        "android_client_info": {
+          "package_name": "com.tdskitchen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "369626514007-53ii8n6jaildg2a4h37lkkd8kb1vnv0p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tdskitchen",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "369626514007-9poim65hkqe105qd9vl2qpbab8ibpahh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tdskitchen",
+            "certificate_hash": "0a25e458cf35465a36834f0c47df041473819890"
+          }
+        },
+        {
+          "client_id": "369626514007-or3ins64v3pn6pm49g5lb7cgmfn30rbc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCT_J2026OEAFQweItIi2viHryvRkFnzf8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "369626514007-or3ins64v3pn6pm49g5lb7cgmfn30rbc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
