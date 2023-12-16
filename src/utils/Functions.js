@@ -1,50 +1,5 @@
-// import {BASE_URI} from '@env';
-// import axios from 'axios';
-
 import {clientRequest, serverRequest} from './ApiRequests';
-import {getFromStorage, removeFromStorage} from './Helper';
-
-// export const getRequest = async (path, method, body) => {
-//   const myHeaders = new Headers();
-
-//   const formData = new FormData();
-
-//   const keys = Object.keys(body);
-
-//   if (keys.length > 0) {
-//     for (let key in body) {
-//       formData.append(key.toString(), body[key]);
-//     }
-//   }
-//   const options = {
-//     method: method,
-//     headers: myHeaders,
-//     body: formData,
-//   };
-//   const res = await fetch(`${BASE_URI}${path}`, options);
-//   const data = res.json();
-//   return data;
-// };
-
-// export async function makeRequest(endpoint, method = 'GET', body = null, headers = {}) {
-//     try {
-//       const config = {
-//         method,
-//         url: `${BASE_URI}/${endpoint}`,
-//         headers,
-//         data: body,
-//       };
-
-//       // console.log(config,'cfg');
-
-//       const response = await axios(config);
-//       return response.data;
-//     } catch (error) {
-//       // Handle errors here
-//       console.error('Request failed:', error.message);
-//       throw error;
-//     }
-//   }
+import {getFromStorage, removeFromStorage, saveToStorage} from './Helper';
 
 export const getCartfromLocal = async () => {
   const cartItems = await getFromStorage('cart');
@@ -66,6 +21,7 @@ export const getCartfromServer = async userData => {
   }
 
   const cartItems = await clientRequest('api/v1/public/cart', 'GET', headerObj);
+  // console.log(cartItems,'cartItems', userData)
   if (cartItems?.success) {
       return cartItems?.data?.cartItems;
   }else{
@@ -107,12 +63,14 @@ export const updateAndSyncCart = async (userData,localStorageCartItems,serverCar
         };
       });
 
-      await removeFromStorage('cart');
-    //   console.log(serverCartItems,'serverCartItems')
+      //   console.log(serverCartItems,'serverCartItems')
       const formatCartData= await serverCartItems.map((pro,i)=> {return{product:pro?.product?._id,quantity: pro?.quantity}});
-    //   console.log(formatCartData,'fmCartData')
-        const responseData= await addCartServer(userData, formatCartData);
-        // console.log(responseData,'responseData')
+      //   console.log(formatCartData,'fmCartData')
+      const responseData= await addCartServer(userData, formatCartData);
+      // console.log(responseData,'responseData')
+      if(responseData?.length){
+        await removeFromStorage('cart');
+      }
       return responseData;
 };
 
@@ -122,7 +80,7 @@ export const getCurrentCart = async userData => {
     const localStorageCartItems = await getCartfromLocal();
     const serverCartItems= await getCartfromServer(userData);
 
-    // console.log(localStorageCartItems,'server cart items')
+    // console.log(serverCartItems,'server cart items')
 
     if(userData?.length){
         if(localStorageCartItems.length){
@@ -139,6 +97,78 @@ export const getCurrentCart = async userData => {
     }
 };
 
+export const updatedAndFormatCart = async (product,isExist,userCart) => {
+  // console.log(product,'update cart func');
+
+  let updatedCart;
+  let formatCartData;
+  if(isExist){
+    updatedCart =await userCart?.map(item =>item?.product?._id === data._id ? {...item, quantity: item.quantity + 1} : item,);
+    formatCartData= await updatedCart?.map((item)=> {return {product: item?.product?._id,quantity:item?.quantity}});
+  }else{
+    updatedCart = [...userCart,{product:product,quantity:1,},];
+    formatCartData= await updatedCart?.map((item)=> {return {product: item?.product?._id,quantity:item?.quantity}});
+  };
+  return {updatedCart,formatCartData}
+};
+
+
+export const addToCart= async(userData,product,isExist,userCart)=>{
+
+  const {updatedCart,formatCartData}= await updatedAndFormatCart(product,isExist,userCart);
+
+  // console.log(updatedCart,'uplocal')
+
+  if(userData?.length){
+    const cartData = await addCartServer(userData, formatCartData);
+    return cartData;
+  }else{
+    await saveToStorage('cart',updatedCart)
+    const cartData= await getCartfromLocal();
+    return cartData;
+  }
+};
+
+
+export const increaseQuantity= async(userData,userCart,isExist,id)=>{
+  let updatedCart;
+
+  if (isExist) {
+      updatedCart = userCart?.map(item =>
+      item?.product?._id === id ? {...item, quantity: item.quantity + 1} : item,
+    );
+  };
+
+  if(userData?.length){
+    // console.log(updatedCart,'inc cart');
+    const formatCartData = await updatedCart?.map((item,i)=> {return {product: item?.product?._id, quantity:item?.quantity}});
+    const cartData = await addCartServer(userData, formatCartData);
+    return cartData;
+  }else{
+    await saveToStorage('cart',updatedCart);
+    return updatedCart;
+  }
+};
+
+export const decreaseQuantity= async(userData,userCart,isExist,id,quantity)=>{
+  let updatedCart;
+
+  if (isExist && quantity > 1) {
+       updatedCart = userCart.map(item =>
+      item?.product?._id === id ? {...item, quantity: item.quantity - 1} : item,
+    );
+  }
+
+  if(userData?.length){
+    // console.log(updatedCart,'dec cart');
+    const formatCartData = await updatedCart?.map((item,i)=> {return {product: item?.product?._id, quantity:item?.quantity}});
+    const cartData = await addCartServer(userData, formatCartData);
+    return cartData;
+  }else{
+    await saveToStorage('cart',updatedCart);
+    return updatedCart;
+  }
+}
 
 
 

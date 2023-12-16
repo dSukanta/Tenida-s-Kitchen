@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator} from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator, Alert} from 'react-native';
 import {globalStyles} from '../constants/globalStyles';
 import {BottomSheet, Button} from '@rneui/base';
 import {Rating, AirbnbRating} from 'react-native-ratings';
@@ -8,7 +8,7 @@ import colors from '../constants/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ProductDetails from '../screens/ProductDetails';
 import {BASE_URI} from '@env'
-import { getCartfromLocal } from '../utils/Functions';
+import { addCartServer, addToCart, decreaseQuantity, getCartfromLocal, increaseQuantity } from '../utils/Functions';
 import { saveToStorage } from '../utils/Helper';
 
 const ProductCard = ({data}) => {
@@ -18,86 +18,43 @@ const ProductCard = ({data}) => {
   const quantity = cartData ? cartData.quantity : 0;
   const [loading, setLoading] = useState({state:false,type:''});
 
-  // const handleAddToCart = async product => {
-  //   if (cartData) {
-  //     const updatedCart = userCart.map(item =>
-  //       item._id === data._id ? {...item, quantity: item.quantity + 1} : item,
-  //     );
-  //     setUserCart(updatedCart);
-  //   } else {
-  //     setUserCart([
-  //       ...userCart,
-  //       {
-  //         _id: data._id,
-  //         image: data.images[0],
-  //         name: data.title,
-  //         price: data.price,
-  //         quantity: 1,
-  //       },
-  //     ]);
-  //   }
-  // };
+  const updatedAndFormatCart = async (product) => {
+    // console.log(product,'update cart func');
+
+    let updatedCart;
+    let formatCartData;
+    if(cartData){
+      updatedCart =await userCart?.map(item =>item?.product?._id === data._id ? {...item, quantity: item.quantity + 1} : item,);
+      formatCartData= await updatedCart?.map((item)=> {return {product: item?.product?._id,quantity:item?.quantity}});
+    }else{
+      updatedCart = [...userCart,{product:product,quantity:1,},];
+      formatCartData= await updatedCart?.map((item)=> {return {product: item?.product?._id,quantity:item?.quantity}});
+    };
+    return {updatedCart,formatCartData}
+  };
+
   const handleAddToCart = async(product) =>{
     setLoading({state:true,type:'addcart'});
-    if(userData?.length){
-      console.log(product,'product')
-    }else{
-      if (cartData) {
-            const updatedCart = userCart.map(item =>
-              item?.product?._id === data._id ? {...item, quantity: item.quantity + 1} : item,
-            );
-            await saveToStorage('cart', updatedCart);
-          } else {
-            const updatedCart = [
-              ...userCart,
-              {product:product,
-              quantity:1,
-              },
-            ];
-            await saveToStorage('cart',updatedCart);
-          }
-      const cartData = await getCartfromLocal();
-      setUserCart(cartData);          
-    };
+    const cartData = await addToCart(userData, product,!!cartData,userCart);
+    // console.log(cartData,'cartData');
+    setUserCart(cartData);
     setLoading({state:false,type:''});
   };
 
-  const handleIncreaseQuantity = async() => {
+  const handleIncreaseQuantity = async(id) => {
     setLoading({state:true,type:'inc'});
-    if(userData?.length){
-      console.log(userCart,'uk')
-    }else{
-      if (cartData) {
-        const updatedCart = userCart.map(item =>
-          item?.product?._id === data._id ? {...item, quantity: item.quantity + 1} : item,
-        );
-        await saveToStorage('cart',updatedCart);
-        const cartData= await getCartfromLocal();
-        setUserCart(cartData);
-      }
-    }
+   
+      const upCartData = await increaseQuantity(userData,userCart,!!cartData,data?._id);
+      setUserCart(upCartData);
     setLoading({state:false,type:''});
   };
 
   const handleDecreaseQuantity = async() => {
-
     setLoading({state:true,type:'dec'});
-
-    if(userData?.length){
-      console.log(userCart,'uk')
-    }else{
-      if (cartData && quantity > 1) {
-        const updatedCart = userCart.map(item =>
-          item?.product?._id === data._id ? {...item, quantity: item.quantity - 1} : item,
-        );
-        await saveToStorage('cart',updatedCart);
-        const cartData= await getCartfromLocal();
-        setUserCart(cartData);
-      }
-    }
+    const upCartData = await decreaseQuantity(userData,userCart,!!cartData,data?._id,quantity);
+    setUserCart(upCartData);
     setLoading({state:false,type:''});
-
-  };
+  }; 
 
   // console.log(`${BASE_URI}${data?.images[0]}`,'cartitem')
 
