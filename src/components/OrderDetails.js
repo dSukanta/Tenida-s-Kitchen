@@ -12,30 +12,42 @@ import {globalStyles} from '../constants/globalStyles';
 import moment from 'moment';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Avatar, ListItem} from '@rneui/base';
+import { getFromStorage } from '../utils/Helper';
+import { clientRequest } from '../utils/ApiRequests';
 
-const OrderDetails = ({orderId, visible, setVisible}) => {
+const OrderDetails = ({orderId,setVisible}) => {
   // console.log(orderId,'orderId')
 
   const [order, setOrder] = useState([]);
-  const {userOrders,userAddress} = useContext(Appcontext);
-  // console.log(userOrders,'userOrders')
-  const [address, setAddress] = useState([]);
+  const {userData}= useContext(Appcontext);
+  const [loading, setLoading] = useState(false);
 
 
-  useEffect(() => {
-    function getOrder() {
-      const curOrder = userOrders?.filter((el, i) => el?.orderId === orderId);
-      setOrder(curOrder);
+  const getOrder= async()=>{
+    setLoading(true);
+    const devideId = await getFromStorage('deviceId');
+    let headerObj = {
+      deviceid: devideId,
+      devicename: 'Android',
     };
-    function getAddress(){
-      const defaultAddress = userAddress?.filter((el, i) => el.default);
-      setAddress(defaultAddress);
+    if (userData?.length) {
+      headerObj.userid = userData[0]?._id;
     };
+
+    // console.log(headerObj,"headerObj")
+
+    const response= await clientRequest(`api/v1/private/order`,'GET',headerObj);
+    if(response?.success){
+      setOrder(response?.data?.filter((item,i)=> item?._id === orderId))
+    }
+    setLoading(false);
+  }
+
+  useEffect(()=>{
     getOrder();
-    getAddress();
-  }, []);
+  },[userData]);
 
-  // console.log(order[0]?.orderedAt,'curorder')
+  // console.log(order[0]?.products,'curorder')
 
   return (
     <View style={styles.container}>
@@ -59,17 +71,17 @@ const OrderDetails = ({orderId, visible, setVisible}) => {
         <View style={styles.card}>
           <View>
             <Text style={[globalStyles.text, {color: 'black'}]}>
-              Order ID: {order[0]?.orderId}
+              Order ID: {order[0]?.order_id}
             </Text>
             <Text style={[globalStyles.text, {color: 'black'}]}>
-              Amount Paid: {order[0]?.totalAmount}
+              Amount Paid: {order[0]?.amount}
             </Text>
             {/* <Text style={[globalStyles.text, {color: 'black'}]}>
               Paid By: {order[0]?.order_data?.method?order[0]?.order_data?.method:'Cash' }
             </Text> */}
             <Text style={[globalStyles.text, {color: 'black'}]}>
               Ordered at:
-              {moment(order[0]?.orderedAt).format('MMMM Do YYYY, h:mm:ss')}
+              {moment(order[0]?.payment_date).format('MMMM Do YYYY, h:mm:ss')}
             </Text>
           </View>
           <View
@@ -93,13 +105,13 @@ const OrderDetails = ({orderId, visible, setVisible}) => {
             {order[0]?.products?.map((el, i) => (
               <ListItem bottomDivider key={i}>
                 <ListItem.Content>
-                  <ListItem.Title>{el?.name}</ListItem.Title>
+                  <ListItem.Title>{el?.product?.title}</ListItem.Title>
                 </ListItem.Content>
                 <ListItem.Content>
                   <ListItem.Title>{el?.quantity}</ListItem.Title>
                 </ListItem.Content>
                 <ListItem.Content>
-                  <ListItem.Title>₹299</ListItem.Title>
+                  <ListItem.Title>₹{el?.product?.price}</ListItem.Title>
                 </ListItem.Content>
               </ListItem>
             ))}
@@ -111,8 +123,8 @@ const OrderDetails = ({orderId, visible, setVisible}) => {
             </Text>
           </View>
           <View>
-              <Text style={[globalStyles.text,{color:'black'}]}>{address[0]?.landmark}</Text>
-              <Text style={[globalStyles.text,{color:'black'}]}>{`${address[0]?.city}, ${address[0]?.state}, ${address[0]?.pincode}`}</Text>
+              <Text style={[globalStyles.text,{color:'black'}]}>{order[0]?.address?.landmark}</Text>
+              <Text style={[globalStyles.text,{color:'black'}]}>{`${order[0]?.address?.city}, ${order[0]?.address?.state}, ${order[0]?.address?.pincode}`}</Text>
           </View>
         </View>
       </ScrollView>

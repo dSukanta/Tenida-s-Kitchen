@@ -6,6 +6,7 @@ import {
   Dimensions,
   Image,
   Modal,
+  Alert,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import RedLine from '../components/RedLine';
@@ -17,6 +18,8 @@ import colors from '../constants/colors';
 import RazorpayCheckout from 'react-native-razorpay';
 import {RAZORPAY_KEY} from '@env';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { serverRequest } from '../utils/ApiRequests';
+import { addCartServer, createOrder, dataBaseOrderCreate } from '../utils/Functions';
 
 const {height, width} = Dimensions.get('window');
 
@@ -34,43 +37,63 @@ const Cart = ({navigation}) => {
   const defAdd = userAddress?.length?userAddress.filter(add => add?.default):null;
   const [grandTotal, setGrandTotal] = useState(0);
 
-  // console.log(defAdd,'def');
+  // console.log(userCart,'def');
 
   const handleCheckout = async() => {
 
       if (!userData?.length) {
       return navigation.navigate('Auth', {source: 'Cart'});
-    }
+    };
+
+    if(!userAddress?.length){
+        return Alert.alert('Address Required','Address is required to make order!')
+    };
+
+    const orderid= await createOrder(userCart,userData);
+
     var options = {
-      description: 'Payment for checkout',
+      description: `Payment for checkout at Tenida's Kitchen`,
       image: 'https://res.cloudinary.com/dcqbgh3vt/image/upload/v1702894890/huroqdadrvgkgw243hki.jpg',
       currency: 'INR',
       key: RAZORPAY_KEY,
-      amount: grandTotal *100,
+      // amount: grandTotal *100,
       name: `Tenida's Kitchen`,
-      order_id: '',
+      order_id: orderid? orderid:'',
       prefill: {
-        email: 'sukanta@example.com',
-        contact: '9191919191',
-        name: 'Sukanta Dolai',
+        email: userData[0]?.email || '',
+        contact: userData[0]?.phone || '',
+        name: userData[0]?.fullname,
       },
       theme: {color: colors.red},
     };
 
+    // console.log(options,'options')
+    
+
     RazorpayCheckout.open(options)
-      .then(data => {
-        const order = {
-          order_data: data,
-          orderId: data.razorpay_payment_id,
-          totalAmount: grandTotal *100,
-          products: [],
-        };
-        userCart?.forEach(item => {
-          order.products.push(item);
-        });
-        setUserOrders([...userOrders, order]);
-        setUserCart([]);
-        navigation.navigate('Success', {data: data});
+      .then(async (data) => {
+        // const order = {
+        //   order_data: data,
+        //   orderId: data.razorpay_payment_id,
+        //   totalAmount: grandTotal *100,
+        //   products: [],
+        // };
+        // userCart?.forEach(item => {
+        //   order.products.push(item);
+        // });
+        // setUserOrders([...userOrders, order]);
+        // setUserCart([]);
+        const captureRes= await dataBaseOrderCreate(userData,orderid,userCart,(defAdd[0]?._id || userAddress[0]?._id));
+        // console.log(captureRes,'capres');
+
+        if(captureRes?.data){
+            const refreshCart= await addCartServer(userData,[]);
+            // console.log(refreshCart,'rfcart')
+            setUserCart(refreshCart);
+            navigation.navigate('Success', {data: {order_id: orderid, payment_id:data?.razorpay_payment_id}}); 
+        }else{
+          Alert.alert('Error','Something went wrong , try again later.');
+        }
       })
       .catch(error => {
         console.log(`Error: ${error.code} | ${error.description}`);

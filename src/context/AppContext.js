@@ -11,7 +11,7 @@ export const AppContextProvider = ({children}) => {
   const [userData, setUserData] = useState([]);
   const [userCart, setUserCart] = useState([]);
   const [userAddress, setUserAddress] = useState();
-  const [userOrders, setUserOrders] = useState([]);
+ 
 
   // console.log(userCart,'contxt')
 
@@ -117,8 +117,6 @@ export const AppContextProvider = ({children}) => {
     cartTotal,
     userAddress,
     setUserAddress,
-    userOrders,
-    setUserOrders,
     Logout,
     getAddress,
     // addToCart,

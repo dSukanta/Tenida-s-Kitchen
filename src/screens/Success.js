@@ -8,7 +8,7 @@ import colors from '../constants/colors';
 const SuccessPage = ({route, navigation }) => {
   const scaleValue = useRef(new Animated.Value(0)).current;
 
-  const {data}= route?.params;
+  const {order_id,payment_id}= route?.params;
 
   useEffect(() => {
     Animated.timing(scaleValue, {
@@ -43,9 +43,9 @@ const SuccessPage = ({route, navigation }) => {
         <Text style={styles.successText}>
           Your payment was successful.
         </Text>
-        <Text style={styles.successText}>
-          Your order ID is: {data?.razorpay_payment_id?data.razorpay_payment_id:'Payment Id will be inform later '}
-        </Text>
+       { order_id && payment_id && <Text style={styles.successText}>
+           Congratulation! We have received your order with order id: {order_id} and payment id: {payment_id}
+        </Text>}
         <Text
           style={styles.linkText}
           onPress={handleSeeOrders}
