@@ -43,11 +43,11 @@ const Cart = ({navigation}) => {
     }
     var options = {
       description: 'Payment for checkout',
-      image: 'https://i.imgur.com/3g7nmJC.jpg',
+      image: 'https://res.cloudinary.com/dcqbgh3vt/image/upload/v1702894890/huroqdadrvgkgw243hki.jpg',
       currency: 'INR',
       key: RAZORPAY_KEY,
       amount: grandTotal *100,
-      name: `Sukanta`,
+      name: `Tenida's Kitchen`,
       order_id: '',
       prefill: {
         email: 'sukanta@example.com',

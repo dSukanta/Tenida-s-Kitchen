@@ -96,6 +96,11 @@ const Home = ({navigation}) => {
     fetchPageData();
   },[]);
 
+  const navigateToSignleOffer= async(id)=>{
+    console.log(id,'id')
+    navigation.navigate('Offers',{offerId: id})
+  }
+
   return (
     <View style={styles.container}>
       <View>
@@ -141,7 +146,7 @@ const Home = ({navigation}) => {
           <RedLine text={'offers for you'} />
         </View>
         <View style={{marginVertical: 10}}>
-          <CarouselComp data={offers} navigation={navigation}/>
+          <CarouselComp data={offers} navigation={navigation} onPress={navigateToSignleOffer}/>
         </View>
 
         <View>

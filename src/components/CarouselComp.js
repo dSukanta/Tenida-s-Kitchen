@@ -5,7 +5,7 @@ import {BASE_URI} from '@env';
 
 const {height, width} = Dimensions.get('window');
 
-const CarouselComp = ({data,navigation}) => {
+const CarouselComp = ({data,navigation,onPress}) => {
   return (
     <View>
       <Carousel
@@ -16,7 +16,7 @@ const CarouselComp = ({data,navigation}) => {
         data={data}
         scrollAnimationDuration={1000}
         renderItem={({item,index}) => (
-          <TouchableOpacity onPress={()=>navigation.navigate('Offers',{offerId: item?._id})}>
+          <TouchableOpacity onPress={()=>onPress? onPress(item?._id):null}>
           <ImageBackground
           source={{
             uri: `${BASE_URI}${item.image}`,

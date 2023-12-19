@@ -35,13 +35,15 @@ async function handleLogout() {
 
 const getLoc= async(lat,long)=>{
    const res= await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${long}`);
-  //  console.log(await res.json(),'response')
-  const data = await res.json();
+   const data = await res.json();
+    // console.log(data,'response')
   setCurlocation(data);
 }
 
 useEffect(()=>{
-  Geolocation.getCurrentPosition(info => getLoc(info?.coords?.latitude,info?.coords?.longitude));
+  Geolocation.getCurrentPosition(info => getLoc(info?.coords?.latitude,info?.coords?.longitude),err=>console.log(err),{
+    enableHighAccuracy: true,
+  });
 },[]);
 
 

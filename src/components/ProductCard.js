@@ -10,6 +10,7 @@ import ProductDetails from '../screens/ProductDetails';
 import {BASE_URI} from '@env'
 import { addCartServer, addToCart, decreaseQuantity, getCartfromLocal, increaseQuantity } from '../utils/Functions';
 import { saveToStorage } from '../utils/Helper';
+import ProductDetailsComp from './ProductDetailsComp';
 
 const ProductCard = ({data}) => {
   const {userData, userCart, setUserCart} = useContext(Appcontext);
@@ -127,7 +128,7 @@ const ProductCard = ({data}) => {
         </View>
       </View>
       <BottomSheet isVisible={readMore} onBackdropPress={()=>setReadMore(false)}>
-        <ProductDetails setReadMore={setReadMore}/>
+        <ProductDetailsComp setReadMore={setReadMore} data={data}/>
       </BottomSheet>
     </TouchableOpacity>
   );

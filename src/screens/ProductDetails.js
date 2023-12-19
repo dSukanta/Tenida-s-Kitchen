@@ -1,4 +1,6 @@
 import {
+  Dimensions,
+  FlatList,
   Image,
   ImageBackground,
   ScrollView,
@@ -11,16 +13,21 @@ import React from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import { Card, color } from '@rneui/base';
-import { globalStyles } from '../constants/globalStyles';
+import {Card, color} from '@rneui/base';
+import {globalStyles} from '../constants/globalStyles';
 import RedLine from '../components/RedLine';
 import colors from '../constants/colors';
+import {BASE_URI} from '@env';
+import CarouselComp from '../components/CarouselComp';
+import Video from 'react-native-video';
 
-const ProductDetails = ({ setReadMore }) => {
+const {height, width} = Dimensions.get('window');
+
+const ProductDetails = ({setReadMore, data}) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Card containerStyle={{ padding: 10, margin: 0, backgroundColor: 'white' }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 15 }}>
+      <Card containerStyle={{padding: 10, margin: 0, backgroundColor: 'white'}}>
+        <View style={{flexDirection: 'row', alignItems: 'center', gap: 15}}>
           <TouchableOpacity
             style={{
               width: 30,
@@ -34,18 +41,31 @@ const ProductDetails = ({ setReadMore }) => {
             onPress={() => setReadMore(false)}>
             <Entypo name="reply" color={'white'} size={20} />
           </TouchableOpacity>
-          <View style={{ flex: 1 }}>
-            <Text style={{ paddingHorizontal: 10, fontWeight: '800', color: colors.red,fontSize:18 }}>
-              Product Name
+          <View style={{flex: 1}}>
+            <Text
+              style={{
+                paddingHorizontal: 10,
+                fontWeight: '800',
+                color: colors.red,
+                fontSize: 18,
+              }}>
+              {data?.title}
             </Text>
           </View>
         </View>
-        <Card.Image
-          source={require('../images/dummy1.jpg')}
-          style={{ width: '100%', borderRadius: 10, marginBottom: 15 }}
-          resizeMode="contain"
-        />
-
+        <View>
+          <View style={{flex:1,width:width/1.3, alignSelf:'center'}}>
+            <Video
+              source={{
+                uri: `https://sendspark.com/share/p2l9iuchofgxmgn1gmi3wcgqqqudzyht`,
+              }}
+              muted={true}
+              style={{flex: 1, width, height: height / 3}}
+              controls={false}
+              repeat
+            />
+          </View>
+        </View>
         <View
           style={{
             padding: 5,
@@ -55,12 +75,17 @@ const ProductDetails = ({ setReadMore }) => {
             borderBottomWidth: 1,
             borderColor: 'red',
           }}>
-          <Text style={[globalStyles.text, { color: 'black', fontWeight: '400' }]}>
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
-            Ipsum has been the industry's standard dummy text ever since the 1500s, when an
-            unknown printer took a galley of type and scrambled it to make a type specimen
-            book
+          <Text
+            style={[globalStyles.text, {color: 'black', fontWeight: '400'}]}>
+            {data?.description}
           </Text>
+        </View>
+        <View>
+          <CarouselComp
+            data={data?.images?.map((image, i) => {
+              return {id: i, image: image};
+            })}
+          />
         </View>
       </Card>
     </ScrollView>
