@@ -18,7 +18,9 @@ import {Appcontext} from '../context/AppContext';
 import EditComp from '../components/EditComp';
 import CustomHeader from '../components/CustomHeader';
 import RedLine from '../components/RedLine';
-import { getProfileName } from '../utils/Helper';
+import { getFromStorage, getProfileName, saveToStorage } from '../utils/Helper';
+import { serverRequest } from '../utils/ApiRequests';
+import moment from 'moment';
 
 const {height, width} = Dimensions.get('window');
 
@@ -42,8 +44,26 @@ const Settings = ({route,navigation}) => {
   };
 
   const handleSubmit= async()=>{
-    console.log(userData,'data');
-    setEdit(false);
+    // console.log(inputData,userData[0]?._id,'data');
+    const devideId = await getFromStorage('deviceId');
+    let headerObj = {
+      deviceid: devideId,
+      devicename: 'Android',
+    };
+    if (userData?.length) {
+      headerObj.userid = userData[0]?._id;
+    };
+    try {
+      const res= await serverRequest(`api/v1/userauth/updateprofile/${userData[0]?._id}`,'PUT',inputData,headerObj);
+      console.log(res,'updated profile response');
+      if(res?.success){
+        setEdit(false);
+        await saveToStorage('user', [res?.data]);
+        setUserData([res?.data]);
+      }
+    } catch (error) {
+        console.log(error,'error')
+    }
   };
 
   // console.log(inputData,'data');
@@ -114,7 +134,7 @@ const Settings = ({route,navigation}) => {
               <ListItem.Subtitle>BirthDay</ListItem.Subtitle>
               </View>
               <ListItem.Title>
-                {inputData?.dob || 'No date of birth provided'}
+                {moment(inputData?.date_of_birth)?.format('ll') || 'No date of birth provided'}
               </ListItem.Title>
             </ListItem.Content>
           </ListItem>
@@ -134,7 +154,7 @@ const Settings = ({route,navigation}) => {
           <View style={globalStyles.container}>
             <MaterialCommunityIcons name='close-circle' size={25} color={'white'} style={{alignSelf:'flex-end',margin:5}} onPress={()=>setEdit(false)}/>
           <RedLine text='Edit Profile'/>
-          <EditComp setEdit={setEdit}/>
+          <EditComp setEdit={setEdit} inputData={inputData} setInputData={setInputData}/>
           <Button title={'Submit'} onPress={handleSubmit} buttonStyle={{backgroundColor:colors.red}}/>
           </View>
         </Modal>

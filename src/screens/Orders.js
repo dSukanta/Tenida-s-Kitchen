@@ -79,6 +79,7 @@ const Orders = ({route, navigation}) => {
     // console.log(headerObj,"headerObj")
 
     const response= await clientRequest(`api/v1/private/order`,'GET',headerObj);
+    // console.log(response,'oredrResponse')
     if(response?.success){
       setUserOrders(response?.data)
     }
@@ -92,7 +93,8 @@ const Orders = ({route, navigation}) => {
   // console.log(userOrders[0]?.products[0]?.product?.images,'product')
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={globalStyles.container}>
+      <ScrollView>
       <CustomHeader route={route} navigation={navigation}/>
       <View>
         <RedLine text={'your orders'} fontSize={12} />
@@ -144,6 +146,7 @@ const Orders = ({route, navigation}) => {
         />
       </BottomSheet>
     </ScrollView>
+    </View>
   );
 };
 

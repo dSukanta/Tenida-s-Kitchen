@@ -21,13 +21,13 @@ import {getProfileName} from '../utils/Helper';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {launchImageLibrary} from 'react-native-image-picker';
+import { serverRequest } from '../utils/ApiRequests';
 
 const {height, width} = Dimensions.get('window');
 
-const EditComp = ({route, navigation,setEdit}) => {
+const EditComp = ({route, navigation,setEdit,inputData,setInputData}) => {
 
-  const [inputData, setInputData] = useState({});
-  const {userData, setUserData} = useContext(Appcontext);
+  // const {userData, setUserData} = useContext(Appcontext);
   const [date, setDate] = useState(new Date('2000-12-31'));
   const [open, setOpen] = useState(false);
 
@@ -35,10 +35,11 @@ const EditComp = ({route, navigation,setEdit}) => {
   const handleChangePicture = async () => {
 
     let result = await launchImageLibrary();
-
+ 
     if (!result.didCancel) {
       try {
-        console.log(result,'image res...')
+          console.log(result,'image res...') ;
+          // const UploadRes= await serverRequest(``,'PUT',{profile_picture:{uri: result.assets[0].uri, name:result.assets[0].fileName ,type: result.assets[0].type,}})
           Alert.alert('Success!','Image was successfully saved');
       } catch (error) {
         console.log(error,':error image res')
@@ -47,29 +48,24 @@ const EditComp = ({route, navigation,setEdit}) => {
     };
   };
 
-
-  useEffect(() => {
-    setInputData(userData[0]);
-  }, [userData]);
-
-  // console.log(inputData.dob || date, 'date');
+  // console.log(inputData.dob,typeof inputData?.dob ,'date');
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
        <ImageBackground
-        source={{uri: 'https://shorturl.at/LXZ16'}}
+        source={{ uri: inputData?.profile_picture || 'https://shorturl.at/LXZ16'}}
         style={styles.upperContainer}
         imageStyle={{opacity: 0.5}}>
       </ImageBackground>
       <TouchableOpacity style={styles.imageContainer} onPress={handleChangePicture}>
         <Image
           source={{
-            uri: 'https://shorturl.at/LXZ16',
+            uri: inputData?.profile_picture || 'https://shorturl.at/LXZ16',
           }}
           style={styles.image}
         />
-        <Text style={[globalStyles.text, {marginBottom: 10, fontSize: 18}]}>
-          Name
+        <Text style={[globalStyles.text, {marginBottom: 10,}]}>
+          {inputData?.fullname.split(' ')[0]}
         </Text>
       </TouchableOpacity>
       <View style={{marginTop:'23%'}}>
@@ -103,8 +99,8 @@ const EditComp = ({route, navigation,setEdit}) => {
           color="white"
         />
         <Text style={globalStyles.text}>
-          {inputData?.dob
-            ? moment(inputData?.dob)?.format('ll')
+          {inputData?.date_of_birth
+            ? moment(inputData?.date_of_birth)?.format('ll')
             : 'Select your date of birth'}
         </Text>
       </TouchableOpacity>
@@ -115,7 +111,7 @@ const EditComp = ({route, navigation,setEdit}) => {
         onConfirm={date => {
           setOpen(false);
           setDate(date);
-          setInputData({...inputData, dob: date});
+          setInputData({...inputData, date_of_birth: date});
         }}
         onCancel={() => {
           setOpen(false);

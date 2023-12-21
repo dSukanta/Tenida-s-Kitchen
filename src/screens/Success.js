@@ -5,10 +5,13 @@ import { Button } from '@rneui/base';
 import { Linking } from 'react-native';
 import colors from '../constants/colors';
 
-const SuccessPage = ({route, navigation }) => {
+const SuccessPage = ({paymentId,orderId,navigation,setPaymentResponse}) => {
   const scaleValue = useRef(new Animated.Value(0)).current;
 
-  const {order_id,payment_id}= route?.params;
+  // const {order_id,payment_id}= route?.params;
+
+  // console.log(route?.params,'params');
+  
 
   useEffect(() => {
     Animated.timing(scaleValue, {
@@ -23,6 +26,7 @@ const SuccessPage = ({route, navigation }) => {
 
   const handleSeeOrders = () => {
     // Navigate to the orders page or your desired route
+    setPaymentResponse({open:false,status:'',payload:null});
     navigation.navigate('Orders');
   };
 
@@ -30,7 +34,8 @@ const SuccessPage = ({route, navigation }) => {
     // Handle the "Explore More" action
     // You can navigate to another screen or perform any desired action
     // For now, we'll go back to the previous screen
-    navigation.navigate('Menu')
+    setPaymentResponse({open:false,status:'',payload:null});
+    // navigation.navigate('Menu')
   };
 
   return (
@@ -43,8 +48,8 @@ const SuccessPage = ({route, navigation }) => {
         <Text style={styles.successText}>
           Your payment was successful.
         </Text>
-       { order_id && payment_id && <Text style={styles.successText}>
-           Congratulation! We have received your order with order id: {order_id} and payment id: {payment_id}
+       { orderId && paymentId && <Text style={styles.successText}>
+           Congratulation! We have received your order with order id: {orderId} and payment id: {paymentId}
         </Text>}
         <Text
           style={styles.linkText}
@@ -53,7 +58,7 @@ const SuccessPage = ({route, navigation }) => {
           See Orders
         </Text>
         <Button
-          title="Explore More"
+          title="Got it"
           buttonStyle={styles.button}
           containerStyle={styles.buttonContainer}
           titleStyle={styles.buttonTitle}

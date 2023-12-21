@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Button } from '@rneui/base';
 
-const ErrorPage = ({ navigation }) => {
+const ErrorPage = ({ data,setPaymentResponse }) => {
   const scaleValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const ErrorPage = ({ navigation }) => {
     // Handle the "Go Back" action
     // You can navigate to a previous screen or perform any desired action
     // For now, we'll go back to the previous screen
-    navigation.goBack();
+    setPaymentResponse({open: false, status:'', payload:null});
   };
 
   return (

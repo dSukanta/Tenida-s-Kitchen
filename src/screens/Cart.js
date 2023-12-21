@@ -13,13 +13,15 @@ import RedLine from '../components/RedLine';
 import {globalStyles} from '../constants/globalStyles';
 import {Appcontext} from '../context/AppContext';
 import CartCard from '../components/CartCard';
-import {Button} from '@rneui/base';
+import {BottomSheet, Button} from '@rneui/base';
 import colors from '../constants/colors';
 import RazorpayCheckout from 'react-native-razorpay';
 import {RAZORPAY_KEY} from '@env';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { serverRequest } from '../utils/ApiRequests';
 import { addCartServer, createOrder, dataBaseOrderCreate } from '../utils/Functions';
+import SuccessPage from './Success';
+import ErrorPage from './Error';
 
 const {height, width} = Dimensions.get('window');
 
@@ -36,10 +38,13 @@ const Cart = ({navigation}) => {
 
   const defAdd = userAddress?.length?userAddress.filter(add => add?.default):null;
   const [grandTotal, setGrandTotal] = useState(0);
+  const [loading,setLoading] = useState(false);
+  const [paymentResponse, setPaymentResponse] = useState({open: false,status:'',payload:null});
 
   // console.log(userCart,'def');
 
   const handleCheckout = async() => {
+    setLoading(true)
 
       if (!userData?.length) {
       return navigation.navigate('Auth', {source: 'Cart'});
@@ -48,6 +53,10 @@ const Cart = ({navigation}) => {
     if(!userAddress?.length){
         return Alert.alert('Address Required','Address is required to make order!')
     };
+
+    if(!userData[0]?.phone){
+      return Alert.alert('Phone Required','Phone number is required to complete purchase')
+    }
 
     const orderid= await createOrder(userCart,userData);
 
@@ -68,37 +77,28 @@ const Cart = ({navigation}) => {
     };
 
     // console.log(options,'options')
-    
 
-    RazorpayCheckout.open(options)
-      .then(async (data) => {
-        // const order = {
-        //   order_data: data,
-        //   orderId: data.razorpay_payment_id,
-        //   totalAmount: grandTotal *100,
-        //   products: [],
-        // };
-        // userCart?.forEach(item => {
-        //   order.products.push(item);
-        // });
-        // setUserOrders([...userOrders, order]);
-        // setUserCart([]);
+    try {
+      const data = await RazorpayCheckout.open(options);
+      if (data && data.razorpay_payment_id){
+        // console.log(data,'payment data...');
         const captureRes= await dataBaseOrderCreate(userData,orderid,userCart,(defAdd[0]?._id || userAddress[0]?._id));
-        // console.log(captureRes,'capres');
-
         if(captureRes?.data){
-            const refreshCart= await addCartServer(userData,[]);
-            // console.log(refreshCart,'rfcart')
-            setUserCart(refreshCart);
-            navigation.navigate('Success', {data: {order_id: orderid, payment_id:data?.razorpay_payment_id}}); 
-        }else{
-          Alert.alert('Error','Something went wrong , try again later.');
-        }
-      })
-      .catch(error => {
-        console.log(`Error: ${error.code} | ${error.description}`);
-        navigation.navigate('Error', {data: error});
-      });
+          const refreshCart= await addCartServer(userData,[]);
+          // console.log(refreshCart,'rfcart')
+          setUserCart(refreshCart);
+          // navigation.navigate('Success', {order_id: orderid, payment_id:data?.razorpay_payment_id}); 
+          setPaymentResponse({open:true, status: 'success', payload:{payment_id:data?.razorpay_payment_id, order_id:orderid}})
+      }else{
+        Alert.alert('Error','Something went wrong , try again later.');
+      }
+      }
+    } catch (error) {
+      console.log(`Error: ${error.code} | ${error.description}`);
+      // navigation.navigate('Error', {data: error});
+      setPaymentResponse({open:true,status:'error',payload:{error}})
+    }
+    setLoading(false);
   };
 
   useEffect(()=>{
@@ -231,6 +231,9 @@ const Cart = ({navigation}) => {
                 alignSelf: 'center',
               }}
               onPress={handleCheckout}
+              loading={loading}
+              disabled={loading}
+              disabledStyle={{backgroundColor: colors.disabledRed}}
             />
           </View>
         </ScrollView>
@@ -264,6 +267,16 @@ const Cart = ({navigation}) => {
           />
         </View>
       )}
+      <BottomSheet isVisible={paymentResponse?.open}>
+        {
+          paymentResponse?.open && paymentResponse?.status ==='success' &&
+          <SuccessPage paymentId={paymentResponse?.payload?.payment_id} orderId={paymentResponse?.payload?.order_id} navigation={navigation} setPaymentResponse={setPaymentResponse}/>
+        }
+        {
+           paymentResponse?.open && paymentResponse?.status ==='error' &&
+           <ErrorPage data={paymentResponse?.payload} setPaymentResponse={setPaymentResponse}/>
+        }
+      </BottomSheet>
     </View>
   );
 };

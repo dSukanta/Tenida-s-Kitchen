@@ -1,4 +1,4 @@
-import {Alert, Image, StyleSheet, Text, View} from 'react-native';
+import {Alert, Image, StyleSheet, Text, View,PermissionsAndroid} from 'react-native';
 import React, { useEffect, useState,useContext } from 'react';
 import {globalStyles} from '../constants/globalStyles';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -12,6 +12,7 @@ import { Appcontext } from '../context/AppContext';
 const HomeHeader = ({navigation}) => {
 const [curLocation,setCurlocation] = useState(null);
 const {userData,Logout}= useContext(Appcontext);
+const [latLong,setLatLong] = useState({latitude:'',longitude:''});
 
 
 async function handleLogout() {
@@ -41,7 +42,7 @@ const getLoc= async(lat,long)=>{
 }
 
 useEffect(()=>{
-  Geolocation.getCurrentPosition(info => getLoc(info?.coords?.latitude,info?.coords?.longitude),err=>console.log(err),{
+  Geolocation.watchPosition(info => getLoc(info?.coords?.latitude,info?.coords?.longitude),err=>console.log(err),{
     enableHighAccuracy: true,
   });
 },[]);

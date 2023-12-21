@@ -37,8 +37,6 @@ function AppNavigator() {
       <Stack.Screen name="Help" component={withConnection(Help)} options={{headerShown:false}}/>
       <Stack.Screen name="Passwords" component={withConnection(Passwords)} options={{headerShown:false}}/>
       <Stack.Screen name="Orders" component={withConnection(Orders)} options={{headerShown:false}}/>
-      <Stack.Screen name="Success" component={withConnection(Success)} options={{headerShown:false}}/>
-      <Stack.Screen name="Error" component={withConnection(Error)} options={{headerShown:false}}/>
       <Stack.Screen name="Offline" component={Offline} options={{headerShown:false}}/>
     </Stack.Navigator>
   );
